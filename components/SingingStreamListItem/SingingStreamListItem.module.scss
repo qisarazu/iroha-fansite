@@ -1,0 +1,40 @@
+.root {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.thumbnail {
+  flex-shrink: 0;
+}
+
+.info {
+  margin-left: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.song {
+  display: flex;
+  align-items: flex-end;
+}
+
+.songTitle {
+  font-size: 1.5em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.songArtist {
+  &::before {
+    content: '/';
+    margin: 0 0.5em;
+  }
+}
+
+.originalLink {
+  display: block;
+  margin-top: auto;
+  margin-left: auto;
+}
