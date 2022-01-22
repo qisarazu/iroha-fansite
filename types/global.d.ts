@@ -13,7 +13,10 @@ declare namespace YT {
         height?: number;
         videoId?: string;
         playerVars?: Record<string, unknown>;
-        events?: Record<string, Function>;
+        events?: {
+          onReady?: (event: { target: Player }) => void;
+          onStateChange?: (event: { target: Player; data: number }) => void;
+        };
       }
     );
 

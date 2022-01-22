@@ -8,7 +8,7 @@ module.exports = {
   async redirects() {
     return [
       {
-        source: '/singing-stream',
+        source: '/singing-streams',
         destination: '/singing-stream/search',
         permanent: true
       }

@@ -1,32 +1,61 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { ComponentPropsWithoutRef, useContext, useEffect } from 'react';
+import { YTPlayer } from '../components/YTPlayer/YTPlayer';
 import { YTPlayerContext } from '../contexts/ytplayer';
 
 type Args = {
   mountId: string;
-  url: string;
+  videoId: string;
+  options?: {
+    width?: number;
+    height?: number;
+    start?: number;
+    end?: number;
+  };
   events?: {
     onStateChange?: (event: { target: YT.Player; data: number }) => void;
   };
 };
 
-export function useYTPlayer({ mountId, url, events }: Args) {
+export function useYTPlayer({
+  mountId,
+  videoId,
+  options,
+  events
+}: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
+  player: YT.Player | null;
+} {
   const { player, setYTPlayer, ready } = useContext(YTPlayerContext);
-  const [loaded, setLoaded] = useState(false);
-
-  const onIframeLoad = useCallback(() => {
-    setLoaded(true);
-  }, []);
 
   useEffect(() => {
-    if (!ready || !loaded) return;
-    setYTPlayer(mountId);
-  }, [loaded, mountId, ready, setYTPlayer]);
+    if (!ready || !videoId) return;
+    setYTPlayer(mountId, {
+      videoId,
+      width: options?.width,
+      height: options?.height,
+      playerVars: {
+        start: options?.start,
+        end: options?.end,
+        origin: location.origin,
+        widget_referrer: location.origin
+      },
+      events: {
+        onStateChange: events?.onStateChange
+      }
+    });
+  }, [
+    events?.onStateChange,
+    mountId,
+    options?.end,
+    options?.height,
+    options?.start,
+    options?.width,
+    ready,
+    setYTPlayer,
+    videoId
+  ]);
 
   return {
     player,
-    id: mountId,
-    onIframeLoad,
-    src: url,
-    events
+    id: mountId
   };
 }
