@@ -1,14 +1,11 @@
-export type Video = {
+export type SingingStream = {
   id: string;
+  video_id: string;
   title: string;
   length: number;
   url: string;
-};
-
-export type SingingStream = Video & {
-  songId: string;
-  songTitle: string;
-  songArtist: string;
-  startAt: number;
-  endAt: number;
+  song_title: string;
+  song_artist: string;
+  start: number;
+  end: number;
 };

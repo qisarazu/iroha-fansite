@@ -28,7 +28,7 @@ function SingingStreamsWatchPage() {
     (player: YT.Player) => {
       if (!video) return;
 
-      player.seekTo(video.startAt);
+      player.seekTo(video.start);
     },
     [video]
   );
@@ -44,7 +44,7 @@ function SingingStreamsWatchPage() {
 
       // playing
       if (event.data === 1) {
-        if (video && event.target.getCurrentTime() < video.startAt) {
+        if (video && event.target.getCurrentTime() < video.start) {
           seekToStartAt(event.target);
         }
       }
@@ -56,8 +56,8 @@ function SingingStreamsWatchPage() {
     mountId: 'singing-stream-player',
     videoId: video?.id || '',
     options: {
-      start: video?.startAt,
-      end: video?.endAt,
+      start: video?.start,
+      end: video?.end,
       width: 640,
       height: 360
     },

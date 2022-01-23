@@ -1,19 +1,37 @@
-import useSWR from 'swr';
+import { useCallback, useEffect, useState } from 'react';
 import { SingingStreamListItem } from '../../components/SingingStreamListItem/SingingStreamListItem';
 import { SingingStream } from '../../types';
-import { fetcher } from '../../utils/fetcher';
+import { supabase } from '../../utils/supabaseClient';
 
 function SingingStreamsSearchPage() {
-  const { data: videos, error } = useSWR<SingingStream[]>('/api/singing-streams', fetcher);
+  const [videos, setVideos] = useState<SingingStream[]>([]);
+  const getSingingStreams = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from('singing_streams').select();
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setVideos(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getSingingStreams();
+  }, [getSingingStreams]);
+
   if (!videos) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
   return (
     <section>
       <h1>Search</h1>
       <main>
         <ul>
           {videos.map((video) => (
-            <li key={video.songId}>
+            <li key={video.id}>
               <SingingStreamListItem video={video} />
             </li>
           ))}
