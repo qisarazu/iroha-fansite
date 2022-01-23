@@ -11,13 +11,12 @@ export function SingingStreamListItem({ video }: Props) {
   return (
     <article className={styles.root}>
       <Link href={`/singing-streams/${video.songId}`}>
-        <a>
+        <a className={styles.thumbnail}>
           <Image
-            className={styles.thumbnail}
             src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
             alt={video.title}
-            width={160}
-            height={90}
+            layout="fill"
+            objectFit='cover'
           />
         </a>
       </Link>
