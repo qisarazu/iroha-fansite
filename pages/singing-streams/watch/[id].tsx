@@ -42,8 +42,8 @@ function SingingStreamsWatchPage() {
       if (event.data === 1) {
         if (
           stream &&
-          stream.end < event.target.getCurrentTime() &&
-          event.target.getCurrentTime() < stream.start
+          (stream.end < event.target.getCurrentTime() ||
+            event.target.getCurrentTime() < stream.start)
         ) {
           seekToStartAt(event.target);
         }
