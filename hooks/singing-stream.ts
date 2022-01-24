@@ -11,8 +11,11 @@ const KEYS = {
   watch: `${PREFIX}watch`
 } as const;
 
-export function useSingingStreamsForSearch() {
-  const { data, error } = useSWRImmutable(KEYS.search, getForList);
+export function useSingingStreamsForSearch(keyword: string = '') {
+  const { data, error } = useSWRImmutable(
+    `${KEYS.search}-${keyword}`,
+    getForList
+  );
   return {
     streams: data,
     error
@@ -33,8 +36,6 @@ export function useSingingStreamForWatch(id: string | undefined) {
 
 async function getForWatch(key: string) {
   const match = new RegExp(`${KEYS.watch}-(.*)`).exec(key);
-  console.log('match', match);
-  console.log('key', key);
   if (!match) return null;
 
   const id = match[1];
@@ -52,18 +53,29 @@ async function getForWatch(key: string) {
   return data;
 }
 
-async function getForList(): Promise<SingingStreamForSearch[] | null> {
-  const { data, error } = await supabase
+async function getForList(
+  key: string
+): Promise<SingingStreamForSearch[] | null> {
+  const match = new RegExp(`${KEYS.search}-(.*)`).exec(key);
+  if (!match) return null;
+
+  const keyword = match[1];
+  const query = supabase
     .from('singing_stream')
     .select(
       'id, song_artist, song_title, video_id, video( title, url, published_at )'
-    )
-    .order('created_at', {
-      nullsFirst: false,
-      ascending: true,
-    });
-  if (error) {
-    throw error;
+    );
+
+  if (keyword) {
+    query.ilike('song_title', `%${keyword}%`);
   }
+  query.order('created_at', {
+    nullsFirst: false,
+    ascending: true
+  });
+
+  const { data, error } = await query;
+
+  if (error) throw error;
   return data;
 }

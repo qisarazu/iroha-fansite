@@ -5,6 +5,7 @@ import { MdRepeat } from 'react-icons/md';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
+import { Layout } from '../../../layout/Layout/Layout';
 
 function SingingStreamsWatchPage() {
   const router = useRouter();
@@ -39,7 +40,11 @@ function SingingStreamsWatchPage() {
 
       // playing
       if (event.data === 1) {
-        if (stream && event.target.getCurrentTime() < stream.start) {
+        if (
+          stream &&
+          stream.end < event.target.getCurrentTime() &&
+          event.target.getCurrentTime() < stream.start
+        ) {
           seekToStartAt(event.target);
         }
       }
@@ -70,7 +75,7 @@ function SingingStreamsWatchPage() {
 
   if (!stream) return <div>loading...</div>;
   return (
-    <section>
+    <Layout title="歌枠視聴">
       <Link href="/singing-streams/search">
         <a>リストに戻る</a>
       </Link>
@@ -83,7 +88,7 @@ function SingingStreamsWatchPage() {
           <MdRepeat color={isRepeat ? '#000' : '#aaa'} />
         </button>
       </footer>
-    </section>
+    </Layout>
   );
 }
 

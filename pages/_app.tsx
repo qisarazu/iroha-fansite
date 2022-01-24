@@ -1,4 +1,4 @@
-import { AppProps } from 'next/app';
+import type { AppProps } from 'next/app';
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
 import '../styles/global.scss';
 

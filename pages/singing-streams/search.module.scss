@@ -1,19 +1,62 @@
+@import 'variable.scss';
 @import 'mixin.scss';
 
-.root {
-  margin: 0 32px;
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+}
 
-  @include responsive(sm) {
-    margin: 0;
+.form {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 1em;
+}
+
+.searchForm {
+  display: flex;
+  align-items: center;
+  flex: 1 0;
+  border: 1px solid gray;
+  border-radius: 4px 0 0 4px;
+  overflow: hidden;
+  outline: none;
+
+  &:focus-within {
+    border-color: #8bc34a;
   }
 }
 
-.main {
-  width: 50vw;
-  margin: 0 auto;
+.input {
+  border: none;
+  flex: 1 0;
+  padding: 0.5em 0.875em;
+  background-color: transparent;
+  color: $base-white;
 
-  @include responsive(sm) {
-    width: 95vw;
+  &:focus {
+    outline: none;
+  }
+}
+
+.reset {
+  background: none;
+  border: none;
+  right: 0;
+  margin: 0 0.5em;
+}
+
+.submit {
+  padding: 0.25em 0.875em;
+  background-color: lighten($base-black, 80);
+  border: 1px solid gray;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+
+  &:hover {
+    background-color: lighten($base-black, 90);
+  }
+  &:active {
+    background-color: lighten($base-black, 95);
   }
 }
 
@@ -21,4 +64,8 @@
   & + & {
     margin-top: 1em;
   }
+}
+
+.spinner {
+  margin: 10em auto;
 }

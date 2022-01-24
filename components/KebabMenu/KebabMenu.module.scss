@@ -1,0 +1,33 @@
+@import 'variable.scss';
+@import 'mixin.scss';
+
+.button {
+  background-color: transparent;
+  border: 1px solid lighten($base-black, 80);
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+
+  &:active {
+    background-color: #616161;
+  }
+}
+
+.body {
+  background-color: lighten($base-black, 5);
+  border: 1px solid lighten($base-black, 20);
+  padding: 0.5em 0;
+
+  & > * {
+    display: block;
+    min-width: 232px;
+    padding: 0.25em 1em;
+
+    &:hover {
+      background-color: lighten($base-black, 15);
+    }
+
+    @include responsive(sm) {
+      min-width: 128px;
+    }
+  }
+}

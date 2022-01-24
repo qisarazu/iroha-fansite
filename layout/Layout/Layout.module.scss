@@ -1,0 +1,9 @@
+@import 'mixin.scss';
+
+.root {
+  padding: 2em 4em;
+
+  @include responsive(sm) {
+    padding: 1em;
+  }
+}

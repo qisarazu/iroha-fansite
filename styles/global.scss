@@ -1,3 +1,5 @@
+@import 'variable.scss';
+
 *,
 *::before,
 *::after {
@@ -16,9 +18,12 @@ body {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  background-color: $base-black;
+  color: $base-white;
 }
 
 a {
+  color: $base-white;
   text-decoration: none;
 }
 

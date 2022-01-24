@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { SingingStreamForSearch } from '../../types';
+import { KebabMenu } from '../KebabMenu/KebabMenu';
+import { format } from 'date-fns';
 import styles from './SingingStreamMediaObject.module.scss';
 
 type Props = {
@@ -34,6 +36,11 @@ export function SingingStreamMediaObject({ singingStream }: Props) {
             </span>
           </a>
         </Link>
+        <span className={styles.publishedAt}>
+          {format(new Date(singingStream.video.published_at), 'yyyy/MM/dd')}
+        </span>
+      </div>
+      <KebabMenu buttonClassName={styles.menu} placement="bottom-end">
         <a
           className={styles.originalLink}
           href={singingStream.video.url}
@@ -42,7 +49,7 @@ export function SingingStreamMediaObject({ singingStream }: Props) {
         >
           元動画を見る
         </a>
-      </div>
+      </KebabMenu>
     </article>
   );
 }

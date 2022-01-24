@@ -42,7 +42,12 @@
   font-weight: bold;
   line-height: 1.2;
 
+  @include responsive(lg) {
+    font-size: 1.25em;
+  }
+
   @include responsive(sm) {
+    @include lineClamp(1);
     font-size: 1em;
   }
 }
@@ -58,6 +63,7 @@
       content: '';
       margin: 0;
     }
+    @include lineClamp(1);
     font-size: 0.7em;
   }
 }
@@ -67,8 +73,19 @@
 
   @include responsive(sm) {
     @include lineClamp(1);
-    font-size: 0.7em;
+    font-size: 0.5em;
   }
+}
+
+.publishedAt {
+  margin-top: auto;
+  @include responsive(sm) {
+    font-size: 0.5em;
+  }
+}
+
+.menu {
+  align-self: flex-start;
 }
 
 .originalLink {
@@ -77,6 +94,7 @@
   margin-left: auto;
 
   @include responsive(sm) {
+    @include lineClamp(1);
     font-size: 0.7em;
   }
 }

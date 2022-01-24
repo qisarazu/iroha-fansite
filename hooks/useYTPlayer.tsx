@@ -49,6 +49,8 @@ export function useYTPlayer({
   }, [
     events?.onStateChange,
     mountId,
+    options?.autoplay,
+    options?.controls,
     options?.end,
     options?.height,
     options?.start,
