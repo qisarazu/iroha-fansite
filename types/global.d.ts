@@ -1,7 +1,3 @@
-declare interface Window {
-  onYouTubeIframeAPIReady: () => void;
-}
-
 declare namespace YT {
   export function ready(callback: () => void): void;
 
