@@ -35,6 +35,8 @@ export function useYTPlayer({
       playerVars: {
         start: options?.start,
         end: options?.end,
+        controls: 0,
+        autoplay: 1,
         origin: location.origin,
         widget_referrer: location.origin
       },

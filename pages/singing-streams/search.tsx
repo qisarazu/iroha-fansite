@@ -1,38 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
-import { SingingStreamListItem } from '../../components/SingingStreamListItem/SingingStreamListItem';
-import { SingingStream } from '../../types';
-import { supabase } from '../../utils/supabaseClient';
+import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
+import { useSingingStreams } from '../../hooks/useSingingStreams';
+import styles from './search.module.scss';
 
 function SingingStreamsSearchPage() {
-  const [videos, setVideos] = useState<SingingStream[]>([]);
-  const getSingingStreams = useCallback(async () => {
-    try {
-      const { data, error } = await supabase.from('singing_streams').select();
-      if (error) {
-        throw error;
-      }
+  const streams = useSingingStreams({ ready: true });
 
-      if (data) {
-        setVideos(data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getSingingStreams();
-  }, [getSingingStreams]);
-
-  if (!videos) return <div>Loading...</div>;
+  if (!streams) return <div>Loading...</div>;
   return (
-    <section>
-      <h1>Search</h1>
-      <main>
-        <ul>
-          {videos.map((video) => (
-            <li key={video.id}>
-              <SingingStreamListItem video={video} />
+    <section className={styles.root}>
+      <h1 className={styles.title}>Search</h1>
+      <main className={styles.main}>
+        <ul className={styles.list}>
+          {streams.map((stream) => (
+            <li className={styles.listItem} key={stream.id}>
+              <SingingStreamMediaObject singingStream={stream} />
             </li>
           ))}
         </ul>

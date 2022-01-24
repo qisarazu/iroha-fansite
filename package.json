@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "storybook": "start-storybook -p 6006 -s ./public",
+    "build-storybook": "build-storybook -s public"
   },
   "keywords": [],
   "author": "",
@@ -23,11 +25,20 @@
     "url-assembler": "^2.1.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@storybook/addon-actions": "^6.4.14",
+    "@storybook/addon-essentials": "^6.4.14",
+    "@storybook/addon-links": "^6.4.14",
+    "@storybook/builder-webpack5": "^6.4.14",
+    "@storybook/manager-webpack5": "^6.4.14",
+    "@storybook/react": "^6.4.14",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "@types/url-assembler": "^2.1.0",
+    "babel-loader": "^8.2.3",
     "eslint": "8.7.0",
     "eslint-config-next": "12.0.8",
+    "sass-loader": "^12.4.0",
     "typescript": "^4.5.5"
   }
 }

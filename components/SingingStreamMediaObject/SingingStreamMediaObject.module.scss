@@ -1,0 +1,82 @@
+@import 'mixin.scss';
+
+.root {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.thumbnail {
+  position: relative;
+  display: block;
+  width: 256px;
+  height: 144px;
+  flex-shrink: 0;
+
+  @include responsive(sm) {
+    width: 128px;
+    height: 72px;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 0;
+  margin-left: 1em;
+}
+
+.song {
+  display: flex;
+  align-items: flex-end;
+
+  @include responsive(sm) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.songTitle {
+  font-size: 1.5em;
+  font-weight: bold;
+  line-height: 1.2;
+
+  @include responsive(sm) {
+    font-size: 1em;
+  }
+}
+
+.songArtist {
+  &::before {
+    content: '/';
+    margin: 0 0.5em;
+  }
+
+  @include responsive(sm) {
+    &::before {
+      content: '';
+      margin: 0;
+    }
+    font-size: 0.7em;
+  }
+}
+
+.videoTitle {
+  @include lineClamp(3);
+
+  @include responsive(sm) {
+    @include lineClamp(1);
+    font-size: 0.7em;
+  }
+}
+
+.originalLink {
+  display: block;
+  margin-top: auto;
+  margin-left: auto;
+
+  @include responsive(sm) {
+    font-size: 0.7em;
+  }
+}

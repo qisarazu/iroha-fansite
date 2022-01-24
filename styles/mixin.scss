@@ -1,0 +1,30 @@
+$breakpoints: (
+  'xs': (
+    max-width: 576px
+  ),
+  'sm': (
+    max-width: 768px
+  ),
+  'md': (
+    max-width: 992px
+  ),
+  'lg': (
+    max-width: 1200px
+  ),
+  'xl': (
+    max-width: 1400px
+  )
+);
+
+@mixin responsive($breakpoint) {
+  @media screen and #{inspect(map-get($breakpoints, $breakpoint))} {
+    @content;
+  }
+}
+
+@mixin lineClamp($line) {
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -2,20 +2,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { MdRepeat } from 'react-icons/md';
-import useSWR from 'swr';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
+import { useSingingStreams } from '../../../hooks/useSingingStreams';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import { SingingStream } from '../../../types';
-import { fetcher } from '../../../utils/fetcher';
 
 function SingingStreamsWatchPage() {
   const router = useRouter();
-  const { id } = router.query;
-  const { data: video } = useSWR<SingingStream>(
-    id ? `/api/singing-streams/${id}` : null,
-    fetcher
-  );
+  const id = router.query.id as string;
   const [isRepeat, setRepeat] = useState(false);
+  const stream = useSingingStreams({ id: id, ready: router.isReady });
 
   const onRepeatClick = useCallback(() => {
     setRepeat((state) => {
@@ -26,11 +21,11 @@ function SingingStreamsWatchPage() {
 
   const seekToStartAt = useCallback(
     (player: YT.Player) => {
-      if (!video) return;
+      if (!stream) return;
 
-      player.seekTo(video.start);
+      player.seekTo(stream.start);
     },
-    [video]
+    [stream]
   );
 
   const onStateChange = useCallback(
@@ -44,22 +39,22 @@ function SingingStreamsWatchPage() {
 
       // playing
       if (event.data === 1) {
-        if (video && event.target.getCurrentTime() < video.start) {
+        if (stream && event.target.getCurrentTime() < stream.start) {
           seekToStartAt(event.target);
         }
       }
     },
-    [isRepeat, seekToStartAt, video]
+    [isRepeat, seekToStartAt, stream]
   );
 
-  const YTPlayerProps = useYTPlayer({
+  const ytPlayerProps = useYTPlayer({
     mountId: 'singing-stream-player',
-    videoId: video?.id || '',
+    videoId: stream?.video_id || '',
     options: {
-      start: video?.start,
-      end: video?.end,
+      start: stream?.start,
+      end: stream?.end,
       width: 640,
-      height: 360
+      height: 360,
     },
     events: {
       onStateChange
@@ -71,15 +66,15 @@ function SingingStreamsWatchPage() {
     setRepeat(localStorage.getItem('isRepeat') === 'true');
   }, []);
 
-  if (!video) return <div>loading...</div>;
+  if (!stream) return <div>loading...</div>;
   return (
     <section>
       <Link href="/singing-streams/search">
         <a>リストに戻る</a>
       </Link>
       <h1>watch</h1>
-      <main>
-        <YTPlayer {...YTPlayerProps} />
+      <main hidden>
+        <YTPlayer {...ytPlayerProps} />
       </main>
       <footer>
         <button onClick={onRepeatClick}>

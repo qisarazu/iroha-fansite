@@ -1,0 +1,24 @@
+@import 'mixin.scss';
+
+.root {
+  margin: 0 32px;
+
+  @include responsive(sm) {
+    margin: 0;
+  }
+}
+
+.main {
+  width: 50vw;
+  margin: 0 auto;
+
+  @include responsive(sm) {
+    width: 95vw;
+  }
+}
+
+.listItem {
+  & + & {
+    margin-top: 1em;
+  }
+}
