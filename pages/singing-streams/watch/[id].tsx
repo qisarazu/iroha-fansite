@@ -3,14 +3,14 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { MdRepeat } from 'react-icons/md';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
-import { useSingingStreams } from '../../../hooks/useSingingStreams';
+import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
 
 function SingingStreamsWatchPage() {
   const router = useRouter();
-  const id = router.query.id as string;
+  const id = router.query.id as string | undefined;
   const [isRepeat, setRepeat] = useState(false);
-  const stream = useSingingStreams({ id: id, ready: router.isReady });
+  const { stream } = useSingingStreamForWatch(id);
 
   const onRepeatClick = useCallback(() => {
     setRepeat((state) => {
@@ -53,8 +53,10 @@ function SingingStreamsWatchPage() {
     options: {
       start: stream?.start,
       end: stream?.end,
+      controls: true,
+      autoplay: true,
       width: 640,
-      height: 360,
+      height: 360
     },
     events: {
       onStateChange
@@ -73,7 +75,7 @@ function SingingStreamsWatchPage() {
         <a>リストに戻る</a>
       </Link>
       <h1>watch</h1>
-      <main hidden>
+      <main>
         <YTPlayer {...ytPlayerProps} />
       </main>
       <footer>

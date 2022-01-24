@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef, useContext, useEffect } from 'react';
-import { YTPlayer } from '../components/YTPlayer/YTPlayer';
+import type { YTPlayer } from '../components/YTPlayer/YTPlayer';
 import { YTPlayerContext } from '../contexts/ytplayer';
 
 type Args = {
@@ -10,6 +10,8 @@ type Args = {
     height?: number;
     start?: number;
     end?: number;
+    autoplay?: boolean;
+    controls?: boolean;
   };
   events?: {
     onStateChange?: (event: { target: YT.Player; data: number }) => void;
@@ -35,8 +37,8 @@ export function useYTPlayer({
       playerVars: {
         start: options?.start,
         end: options?.end,
-        controls: 0,
-        autoplay: 1,
+        controls: options?.controls ? 1 : 0,
+        autoplay: options?.autoplay ? 1 : 0,
         origin: location.origin,
         widget_referrer: location.origin
       },

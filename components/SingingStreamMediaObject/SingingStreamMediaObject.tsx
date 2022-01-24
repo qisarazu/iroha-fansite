@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { SingingStream } from '../../types';
+import type { SingingStreamForSearch } from '../../types';
 import styles from './SingingStreamMediaObject.module.scss';
 
 type Props = {
-  singingStream: SingingStream;
+  singingStream: SingingStreamForSearch;
 };
 
 export function SingingStreamMediaObject({ singingStream }: Props) {

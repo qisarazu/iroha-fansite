@@ -20,3 +20,15 @@ export type SingingStream = {
   updated_at: string;
   video: Video;
 };
+
+export type SingingStreamForSearch = Pick<
+  SingingStream,
+  'id' | 'song_title' | 'song_artist' | 'video_id'
+> & {
+  video: Pick<Video, 'title' | 'url' | 'published_at'>;
+};
+
+export type SingingStreamForWatch = Pick<
+  SingingStream,
+  'id' | 'song_title' | 'song_artist' | 'start' | 'end' | 'video_id'
+>;

@@ -1,9 +1,9 @@
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
-import { useSingingStreams } from '../../hooks/useSingingStreams';
+import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
 import styles from './search.module.scss';
 
 function SingingStreamsSearchPage() {
-  const streams = useSingingStreams({ ready: true });
+  const { streams } = useSingingStreamsForSearch();
 
   if (!streams) return <div>Loading...</div>;
   return (
