@@ -42,7 +42,7 @@ async function getForWatch(key: string) {
   const { data, error } = await supabase
     .from<SingingStreamForWatch>('singing_stream')
     .select(
-      'song_artist, song_title, start, end, video_id, video( title, url, published_at )'
+      'start, end, video_id, song(title, artist), video( title, url, published_at )'
     )
     .eq('id', id)
     .single();
@@ -63,11 +63,11 @@ async function getForList(
   const query = supabase
     .from('singing_stream')
     .select(
-      'id, song_artist, song_title, video_id, video( title, url, published_at )'
+      'id, video_id, song(title, artist), video(title, url, published_at)'
     );
 
   if (keyword) {
-    query.ilike('song_title', `%${keyword}%`);
+    query.select('id, video_id, video(title, url, published_at)' + ', song!inner(title, artist)').ilike('song.title', `%${keyword}%`);
   }
   query.order('created_at', {
     nullsFirst: false,

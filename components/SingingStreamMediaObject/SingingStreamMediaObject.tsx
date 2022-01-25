@@ -26,9 +26,9 @@ export function SingingStreamMediaObject({ singingStream }: Props) {
         <Link href={`/singing-streams/watch/${singingStream.id}`}>
           <a>
             <div className={styles.song}>
-              <h2 className={styles.songTitle}>{singingStream.song_title}</h2>
+              <h2 className={styles.songTitle}>{singingStream.song.title}</h2>
               <span className={styles.songArtist}>
-                {singingStream.song_artist}
+                {singingStream.song.artist}
               </span>
             </div>
             <span className={styles.videoTitle}>

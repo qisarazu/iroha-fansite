@@ -60,7 +60,11 @@ function SingingStreamsSearchPage() {
           </button>
         </form>
         <div className={styles.result}>
-          {streams ? (
+          {!streams ? (
+            <Spinner className={styles.spinner} />
+          ) : !streams.length ? (
+            <div>empty</div>
+          ) : (
             <ul className={styles.list}>
               {streams.map((stream) => (
                 <li className={styles.listItem} key={stream.id}>
@@ -68,8 +72,6 @@ function SingingStreamsSearchPage() {
                 </li>
               ))}
             </ul>
-          ) : (
-            <Spinner className={styles.spinner} />
           )}
         </div>
       </main>

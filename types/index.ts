@@ -9,6 +9,16 @@ export type Video = {
   updated_at: string;
 };
 
+export type Song = {
+  id: string;
+  title: string;
+  artist: string;
+  title_en?: string;
+  artist_en?: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type SingingStream = {
   id: string;
   song_title: string;
@@ -21,14 +31,12 @@ export type SingingStream = {
   video: Video;
 };
 
-export type SingingStreamForSearch = Pick<
-  SingingStream,
-  'id' | 'song_title' | 'song_artist' | 'video_id'
-> & {
+export type SingingStreamForSearch = Pick<SingingStream, 'id' | 'video_id'> & {
+  song: Pick<Song, 'title' | 'artist' | 'title_en' | 'artist_en'>;
   video: Pick<Video, 'title' | 'url' | 'published_at'>;
 };
 
 export type SingingStreamForWatch = Pick<
   SingingStream,
-  'id' | 'song_title' | 'song_artist' | 'start' | 'end' | 'video_id'
->;
+  'id' | 'start' | 'end' | 'video_id'
+> & { song: Pick<Song, 'title' | 'artist' | 'title_en' | 'artist_en'> };
