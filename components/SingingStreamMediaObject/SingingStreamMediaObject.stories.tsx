@@ -17,8 +17,7 @@ Default.args = {
   singingStream: {
     id: 'fca89a73-8f7f-41f1-8343-6b898dffc960',
     video_id: 'v-bCLl7zR00',
-    song_title: '群青',
-    song_artist: 'YOASOBI',
+    song: { title: '群青', artist: 'YOASOBI' },
     video: {
       title: '【歌枠】良いお知らせ✨週1歌枠🎤【風真いろは/ホロライブ】',
       url: 'https://www.youtube.com/watch?v=v-bCLl7zR00',
