@@ -23,8 +23,9 @@ const useSlider = (
   const [value, setValue] = useState(defaultValue);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.style.userSelect = 'none';
+    const refCurrent = ref.current;
+    if (refCurrent) {
+      refCurrent.style.userSelect = 'none';
     }
 
     const startScrubbing = () => {
@@ -76,8 +77,8 @@ const useSlider = (
       cancelAnimationFrame(frame.current);
 
       frame.current = requestAnimationFrame(() => {
-        if (isMounted() && ref.current) {
-          const rect = ref.current.getBoundingClientRect();
+        if (isMounted() && refCurrent) {
+          const rect = refCurrent.getBoundingClientRect();
           const pos = rect.left;
           const length = rect.width;
 
@@ -100,12 +101,12 @@ const useSlider = (
       });
     };
 
-    on(ref.current, 'mousedown', onMouseDown);
-    on(ref.current, 'touchstart', onTouchStart);
+    on(refCurrent, 'mousedown', onMouseDown);
+    on(refCurrent, 'touchstart', onTouchStart);
 
     return () => {
-      off(ref.current, 'mousedown', onMouseDown);
-      off(ref.current, 'touchstart', onTouchStart);
+      off(refCurrent, 'mousedown', onMouseDown);
+      off(refCurrent, 'touchstart', onTouchStart);
     };
   }, [isMounted, maxValue, onChange, ref]);
 
