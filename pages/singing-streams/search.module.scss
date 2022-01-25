@@ -63,6 +63,8 @@
 .listItem {
   & + & {
     margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid lighten($base-black, 50);
   }
 }
 
