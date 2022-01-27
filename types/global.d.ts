@@ -3,8 +3,6 @@ declare interface Window {
 }
 
 declare namespace YT {
-  export function ready(callback: () => void): void;
-
   export class Player {
     constructor(
       mountId: string,
@@ -19,9 +17,7 @@ declare namespace YT {
         };
       },
     );
-
     public loadVideoById(videoId: string, startSeconds?: number, suggestedQuality?: string): void;
-
     public loadVideoById({
       videoId,
       startSeconds,
@@ -33,9 +29,7 @@ declare namespace YT {
       endSeconds?: number;
       suggestedQuality?: string;
     }): void;
-
     public cueVideoByUrl(mediaContentUrl: string, startSeconds?: number, suggestedQuality?: string): void;
-
     public cueVideoByUrl({
       mediaContentUrl,
       startSeconds,
@@ -47,33 +41,21 @@ declare namespace YT {
       endSeconds?: number;
       suggestedQuality?: string;
     }): void;
-
     public playVideo(): void;
-
     public pauseVideo(): void;
-
     public stopVideo(): void;
-
     public seekTo(seconds: number, allowSeekAhead?: boolean): void;
-
     public clearVideo(): void;
-
     public mute(): void;
-
     public unMute(): void;
-
     public isMuted(): boolean;
-
     public setVolume(volume: number): void;
-
     public getVolume(): number;
-
     public getIframe(): HTMLIFrameElement;
-
     public getCurrentTime(): number;
-
+    public getIframe(): Node;
+    public destroy(): void;
     public addEventListener(event: string, listener: Function): void;
-
     public removeEventListener(event: string, listener: Function): Void;
   }
 

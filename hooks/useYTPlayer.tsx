@@ -13,15 +13,12 @@ type Args = {
     autoplay?: boolean;
     controls?: boolean;
   };
-  events?: {
-    onStateChange?: (event: { target: YT.Player; data: number }) => void;
-  };
 };
 
-export function useYTPlayer({ mountId, videoId, options, events }: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
+export function useYTPlayer({ mountId, videoId, options }: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
   player: YT.Player | null;
 } {
-  const { player, setYTPlayer, scriptLoaded } = useContext(YTPlayerContext);
+  const { player, setYTPlayer, scriptLoaded, unmountYTPlayer } = useContext(YTPlayerContext);
 
   useEffect(() => {
     if (!scriptLoaded || !videoId) return;
@@ -37,12 +34,13 @@ export function useYTPlayer({ mountId, videoId, options, events }: Args): Compon
         origin: location.origin,
         widget_referrer: location.origin,
       },
-      events: {
-        onStateChange: events?.onStateChange,
-      },
     });
+
+    return () => {
+      if (!scriptLoaded || !videoId) return;
+      unmountYTPlayer();
+    };
   }, [
-    events?.onStateChange,
     mountId,
     options?.autoplay,
     options?.controls,
@@ -52,6 +50,7 @@ export function useYTPlayer({ mountId, videoId, options, events }: Args): Compon
     options?.width,
     scriptLoaded,
     setYTPlayer,
+    unmountYTPlayer,
     videoId,
   ]);
 
