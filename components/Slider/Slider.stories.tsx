@@ -16,7 +16,8 @@ const Template: ComponentStory<typeof Slider> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  defaultValue: 50
+  defaultValue: 50,
+  max: 50,
 };
 
 export const LabelDisplay = Template.bind({});

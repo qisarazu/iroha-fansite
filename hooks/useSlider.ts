@@ -1,26 +1,54 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useMountedState } from 'react-use';
 
-export interface State {
+export type State = {
   isSliding: boolean;
   value: number;
-}
+  posX: number;
+};
 
-export interface Options {
+export type Props = {
+  value?: number;
   defaultValue?: number;
-  maxValue?: number;
+  min?: number;
+  max?: number;
   onChange?: (value: number) => void;
-}
+};
 
-const useSlider = (
+export const useSlider = (
   ref: RefObject<HTMLElement>,
-  { defaultValue = 0, maxValue = 100, onChange }: Options = {}
+  { value: valueProp, defaultValue, min = 0, max = 100, onChange }: Props = {},
 ): State => {
   const isMounted = useMountedState();
   const isSlidingRef = useRef(false);
   const frame = useRef(0);
   const [isSliding, setSliding] = useState(false);
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useState(defaultValue ?? min);
+
+  const calc = useCallback(
+    (xValue: number, clicked: boolean = false) => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const posX = rect.left;
+      const length = rect.width;
+
+      if (!length) {
+        return;
+      }
+
+      const value = clamp(clicked ? ((xValue - posX) / length) * max : xValue, min, max);
+
+      setValue(value);
+      onChange?.(value);
+    },
+    [max, min, onChange, ref],
+  );
+
+  useEffect(() => {
+    if (valueProp !== undefined) {
+      calc(valueProp);
+    }
+  }, [calc, valueProp]);
 
   useEffect(() => {
     const refCurrent = ref.current;
@@ -54,8 +82,7 @@ const useSlider = (
       startScrubbing();
       onTouchMove(event);
     };
-    const onTouchMove = (event: TouchEvent) =>
-      onScrub(event.changedTouches[0].clientX);
+    const onTouchMove = (event: TouchEvent) => onScrub(event.changedTouches[0].clientX);
 
     const bindEvents = () => {
       on(document, 'mousemove', onMouseMove);
@@ -73,30 +100,12 @@ const useSlider = (
       off(document, 'touchend', stopScrubbing);
     };
 
-    const onScrub = (clientXY: number) => {
+    const onScrub = (clientX: number) => {
       cancelAnimationFrame(frame.current);
 
       frame.current = requestAnimationFrame(() => {
         if (isMounted() && refCurrent) {
-          const rect = refCurrent.getBoundingClientRect();
-          const pos = rect.left;
-          const length = rect.width;
-
-          // Prevent returning 0 when element is hidden by CSS
-          if (!length) {
-            return;
-          }
-
-          let value = ((clientXY - pos) * maxValue) / length;
-
-          if (value > maxValue) {
-            value = maxValue;
-          } else if (value < 0) {
-            value = 0;
-          }
-
-          setValue(value);
-          onChange?.(value);
+          calc(clientX, true);
         }
       });
     };
@@ -108,33 +117,42 @@ const useSlider = (
       off(refCurrent, 'mousedown', onMouseDown);
       off(refCurrent, 'touchstart', onTouchStart);
     };
-  }, [isMounted, maxValue, onChange, ref]);
+  }, [calc, isMounted, ref]);
 
-  return { isSliding, value };
+  const posX = useMemo(() => {
+    const offset = valueToPercent(min, min, max);
+    const percent = valueToPercent(value, min, max) - offset;
+    return percent;
+  }, [max, min, value]);
+
+  return { isSliding, value, posX };
 };
 
-export default useSlider;
+function clamp(value: number, min: number, max: number) {
+  if (value == null) {
+    return min;
+  }
+  return Math.min(Math.max(min, value), max);
+}
+
+function valueToPercent(value: number, min: number, max: number) {
+  return ((value - min) * 100) / (max - min);
+}
 
 function on<T extends Window | Document | HTMLElement | EventTarget>(
   obj: T | null,
   ...args: Parameters<T['addEventListener']> | [string, Function | null, ...any]
 ): void {
   if (obj && obj.addEventListener) {
-    obj.addEventListener(
-      ...(args as Parameters<HTMLElement['addEventListener']>)
-    );
+    obj.addEventListener(...(args as Parameters<HTMLElement['addEventListener']>));
   }
 }
 
 function off<T extends Window | Document | HTMLElement | EventTarget>(
   obj: T | null,
-  ...args:
-    | Parameters<T['removeEventListener']>
-    | [string, Function | null, ...any]
+  ...args: Parameters<T['removeEventListener']> | [string, Function | null, ...any]
 ): void {
   if (obj && obj.removeEventListener) {
-    obj.removeEventListener(
-      ...(args as Parameters<HTMLElement['removeEventListener']>)
-    );
+    obj.removeEventListener(...(args as Parameters<HTMLElement['removeEventListener']>));
   }
 }

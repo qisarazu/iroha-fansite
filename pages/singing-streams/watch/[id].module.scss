@@ -1,0 +1,28 @@
+@import 'variable.scss';
+
+.title {
+  color: red;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.controller {
+  position: fixed;
+  background-color: lighten($base-black, 10);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4em;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+}
