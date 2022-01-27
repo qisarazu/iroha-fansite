@@ -9,46 +9,33 @@ export type State = {
 
 export type Props = {
   value?: number;
-  defaultValue?: number;
   min?: number;
   max?: number;
-  onChange?: (value: number) => void;
+  onScrub?: (value: number) => void;
 };
 
 export const useSlider = (
   ref: RefObject<HTMLElement>,
-  { value: valueProp, defaultValue, min = 0, max = 100, onChange }: Props = {},
+  { value: valueProp, min = 0, max = 100, onScrub }: Props = {},
 ): State => {
   const isMounted = useMountedState();
   const isSlidingRef = useRef(false);
   const frame = useRef(0);
+  const [value, setValue] = useState(valueProp ?? min);
   const [isSliding, setSliding] = useState(false);
-  const [value, setValue] = useState(defaultValue ?? min);
 
   const calc = useCallback(
-    (xValue: number, clicked: boolean = false) => {
-      if (!ref.current) return;
-      const rect = ref.current.getBoundingClientRect();
-      const posX = rect.left;
-      const length = rect.width;
-
-      if (!length) {
-        return;
-      }
-
-      const value = clamp(clicked ? ((xValue - posX) / length) * max : xValue, min, max);
-
-      setValue(value);
-      onChange?.(value);
+    (valueX: number) => {
+      return clamp(valueX, min, max);
     },
-    [max, min, onChange, ref],
+    [max, min],
   );
 
   useEffect(() => {
-    if (valueProp !== undefined) {
-      calc(valueProp);
-    }
-  }, [calc, valueProp]);
+    if (!valueProp) return;
+    const newValue = calc(valueProp);
+    setValue(newValue);
+  }, [calc, min, valueProp]);
 
   useEffect(() => {
     const refCurrent = ref.current;
@@ -76,13 +63,13 @@ export const useSlider = (
       startScrubbing();
       onMouseMove(event);
     };
-    const onMouseMove = (event: MouseEvent) => onScrub(event.clientX);
+    const onMouseMove = (event: MouseEvent) => _onScrub(event.clientX);
 
     const onTouchStart = (event: TouchEvent) => {
       startScrubbing();
       onTouchMove(event);
     };
-    const onTouchMove = (event: TouchEvent) => onScrub(event.changedTouches[0].clientX);
+    const onTouchMove = (event: TouchEvent) => _onScrub(event.changedTouches[0].clientX);
 
     const bindEvents = () => {
       on(document, 'mousemove', onMouseMove);
@@ -100,12 +87,23 @@ export const useSlider = (
       off(document, 'touchend', stopScrubbing);
     };
 
-    const onScrub = (clientX: number) => {
+    const _onScrub = (clientX: number) => {
       cancelAnimationFrame(frame.current);
 
       frame.current = requestAnimationFrame(() => {
         if (isMounted() && refCurrent) {
-          calc(clientX, true);
+          const rect = ref.current.getBoundingClientRect();
+          const posX = rect.left;
+          const length = rect.width;
+
+          if (!length) {
+            return min;
+          }
+
+          const v = ((clientX - posX) / length) * max;
+          const value = calc(v);
+          setValue(value);
+          onScrub?.(value);
         }
       });
     };
@@ -117,7 +115,7 @@ export const useSlider = (
       off(refCurrent, 'mousedown', onMouseDown);
       off(refCurrent, 'touchstart', onTouchStart);
     };
-  }, [calc, isMounted, ref]);
+  }, [calc, isMounted, max, min, onScrub, ref]);
 
   const posX = useMemo(() => {
     const offset = valueToPercent(min, min, max);

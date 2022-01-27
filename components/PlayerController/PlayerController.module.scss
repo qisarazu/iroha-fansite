@@ -1,0 +1,30 @@
+@import 'variable.scss';
+
+.controller {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4em;
+  background-color: lighten($base-black, 10);
+}
+
+.leftControls {
+}
+
+.middleControls {
+}
+
+.rightControls {
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+}

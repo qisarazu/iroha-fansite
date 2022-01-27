@@ -1,3 +1,7 @@
+declare interface Window {
+  onYouTubeIframeAPIReady: () => void;
+}
+
 declare namespace YT {
   export function ready(callback: () => void): void;
 
@@ -13,20 +17,16 @@ declare namespace YT {
           onReady?: (event: { target: Player }) => void;
           onStateChange?: (event: { target: Player; data: number }) => void;
         };
-      }
+      },
     );
 
-    public loadVideoById(
-      videoId: string,
-      startSeconds?: number,
-      suggestedQuality?: string
-    ): void;
+    public loadVideoById(videoId: string, startSeconds?: number, suggestedQuality?: string): void;
 
     public loadVideoById({
       videoId,
       startSeconds,
       endSeconds,
-      suggestedQuality
+      suggestedQuality,
     }: {
       videoId: string;
       startSeconds?: number;
@@ -34,17 +34,13 @@ declare namespace YT {
       suggestedQuality?: string;
     }): void;
 
-    public cueVideoByUrl(
-      mediaContentUrl: string,
-      startSeconds?: number,
-      suggestedQuality?: string
-    ): void;
+    public cueVideoByUrl(mediaContentUrl: string, startSeconds?: number, suggestedQuality?: string): void;
 
     public cueVideoByUrl({
       mediaContentUrl,
       startSeconds,
       endSeconds,
-      suggestedQuality
+      suggestedQuality,
     }: {
       mediaContentUrl: string;
       startSeconds?: number;
@@ -80,4 +76,12 @@ declare namespace YT {
 
     public removeEventListener(event: string, listener: Function): Void;
   }
+
+  export const PlayerState: {
+    ENDED: 0;
+    PLAYING: 1;
+    PAUSED: 2;
+    BUFFERING: 3;
+    CUED: 5;
+  };
 }

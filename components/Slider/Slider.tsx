@@ -2,33 +2,26 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { useMouseHovered } from 'react-use';
-import { useSlider } from '../../hooks/useSlider';
+import { useSlider } from './useSlider';
+
 import styles from './Slider.module.scss';
 
 type Props = {
   className?: string;
   value?: number;
-  defaultValue?: number;
+  min?: number;
   max?: number;
   label?: (value: number) => string | number;
   labelDisplay?: boolean;
-  onChange?: (value: number) => void;
+  onScrub?: (value: number) => void;
 };
 
-export function Slider({
-  className,
-  value: valueProp,
-  defaultValue,
-  max = 100,
-  label,
-  labelDisplay = false,
-  onChange,
-}: Props) {
+export function Slider({ className, value: valueProp, min, max, label, labelDisplay = false, onScrub }: Props) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isLabelDisplay, setLabelDisplay] = useState(false);
   const [thumbRef, setThumbRef] = useState<HTMLDivElement | null>(null);
   const [labelRef, setLabelRef] = useState<HTMLDivElement | null>(null);
-  const { isSliding, value, posX } = useSlider(sliderRef, { value: valueProp, defaultValue, max, onChange });
+  const { isSliding, value, posX } = useSlider(sliderRef, { value: valueProp, min, max, onScrub });
   const {
     styles: popperStyles,
     attributes,
@@ -50,12 +43,12 @@ export function Slider({
         <div className={styles.rail} />
         <div className={clsx(styles.track, styles.sliding)} style={{ width: `${posX}%` }} />
         <div className={clsx(styles.thumb, isSliding && styles.active)} style={{ left: `${posX}%` }} ref={setThumbRef}>
-          <input className={styles.input} type="range" min={0} max={1} value={value} onChange={(e) => {}} />
+          <input className={styles.input} type="range" min={0} max={1} defaultValue={value} />
         </div>
       </div>
-      {isLabelDisplay && label ? (
+      {isLabelDisplay ? (
         <div className={styles.label} style={popperStyles.popper} ref={setLabelRef} {...attributes.popper}>
-          {label(value)}
+          {label ? label(value) : value}
         </div>
       ) : null}
     </>

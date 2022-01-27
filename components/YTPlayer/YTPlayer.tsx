@@ -1,6 +1,7 @@
 type Props = {
   className?: string;
   id: string;
+  hidden?: boolean;
 };
 
 /**
@@ -10,6 +11,6 @@ type Props = {
  * const { player, ytPlayerProps } = useYTPlayer({ ... });
  * return <YTPlayer {...ytPlayerProps} />
  */
-export function YTPlayer({ className, id }: Props) {
-  return <div className={className} id={id} />;
+export function YTPlayer({ className, id, hidden = false }: Props) {
+  return <div className={className} id={id} hidden={hidden} />;
 }

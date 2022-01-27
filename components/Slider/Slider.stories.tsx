@@ -5,7 +5,7 @@ import { Slider } from './Slider';
 
 export default {
   title: 'components/Slider',
-  component: Slider
+  component: Slider,
 } as ComponentMeta<typeof Slider>;
 
 const Template: ComponentStory<typeof Slider> = (args) => (
@@ -16,11 +16,11 @@ const Template: ComponentStory<typeof Slider> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  defaultValue: 50,
+  value: 50,
   max: 50,
 };
 
 export const LabelDisplay = Template.bind({});
 LabelDisplay.args = {
-  labelDisplay: true
+  labelDisplay: true,
 };

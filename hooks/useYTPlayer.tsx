@@ -18,18 +18,13 @@ type Args = {
   };
 };
 
-export function useYTPlayer({
-  mountId,
-  videoId,
-  options,
-  events
-}: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
+export function useYTPlayer({ mountId, videoId, options, events }: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
   player: YT.Player | null;
 } {
-  const { player, setYTPlayer, ready } = useContext(YTPlayerContext);
+  const { player, setYTPlayer, scriptLoaded } = useContext(YTPlayerContext);
 
   useEffect(() => {
-    if (!ready || !videoId) return;
+    if (!scriptLoaded || !videoId) return;
     setYTPlayer(mountId, {
       videoId,
       width: options?.width,
@@ -40,11 +35,11 @@ export function useYTPlayer({
         controls: options?.controls ? 1 : 0,
         autoplay: options?.autoplay ? 1 : 0,
         origin: location.origin,
-        widget_referrer: location.origin
+        widget_referrer: location.origin,
       },
       events: {
-        onStateChange: events?.onStateChange
-      }
+        onStateChange: events?.onStateChange,
+      },
     });
   }, [
     events?.onStateChange,
@@ -55,13 +50,13 @@ export function useYTPlayer({
     options?.height,
     options?.start,
     options?.width,
-    ready,
+    scriptLoaded,
     setYTPlayer,
-    videoId
+    videoId,
   ]);
 
   return {
     player,
-    id: mountId
+    id: mountId,
   };
 }

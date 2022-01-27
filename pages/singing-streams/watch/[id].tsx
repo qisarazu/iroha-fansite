@@ -1,7 +1,9 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { MdRepeat } from 'react-icons/md';
+import { MdPause, MdPlayArrow, MdRepeat, MdVolumeUp } from 'react-icons/md';
+import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Slider } from '../../../components/Slider/Slider';
 import { Spinner } from '../../../components/Spinner/Spinner';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
@@ -99,12 +101,6 @@ function SingingStreamsWatchPage() {
     };
   }, [isPlaying, player, stream]);
 
-  if (!stream)
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Spinner />
-      </div>
-    );
   return (
     <Layout title="歌枠視聴">
       <Link href="/singing-streams/search">
@@ -112,20 +108,32 @@ function SingingStreamsWatchPage() {
       </Link>
       <h1 className={styles.title}>watch</h1>
       <main className={styles.main}>
-        <YTPlayer className={styles.player} {...ytPlayerProps} />
+        <div className={styles.player}>
+          {!stream || !player ? (
+            <div className={styles.playerSpinner}>
+              <Spinner />
+            </div>
+          ) : null}
+          <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
+        </div>
       </main>
-      <div className={styles.controller}>
-        <Slider
-          className={styles.slider}
-          value={currentTime}
-          max={stream.end - stream.start}
-          label={(value) => formatVideoLength(value)}
-          labelDisplay
+      {stream && player ? (
+        <PlayerController
+          isPlaying={isPlaying}
+          isRepeat={isRepeat}
+          length={stream.end - stream.start}
+          volume={player?.getVolume() || 0}
+          videoId={stream.video_id}
+          songTitle={stream.song.title}
+          songArtist={stream.song.artist}
+          currentTime={currentTime}
+          onPlay={() => player.playVideo()}
+          onPause={() => player.pauseVideo()}
+          onRepeat={onRepeatClick}
+          onSeek={(time) => player.seekTo(time)}
+          onVolumeChange={(value) => player.setVolume(value)}
         />
-        <button onClick={onRepeatClick}>
-          <MdRepeat color={isRepeat ? '#000' : '#aaa'} />
-        </button>
-      </div>
+      ) : null}
     </Layout>
   );
 }
