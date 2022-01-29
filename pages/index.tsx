@@ -1,13 +1,10 @@
-import Link from 'next/link';
+import { Layout } from '../components/Layout/Layout';
 
 function IndexPage() {
   return (
-    <div>
+    <Layout title="ホーム">
       <h1>iroha fan site.</h1>
-      <Link href="/singing-streams/search">
-        <a>歌枠検索</a>
-      </Link>
-    </div>
+    </Layout>
   );
 }
 

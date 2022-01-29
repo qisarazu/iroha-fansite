@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import type { ReactNode } from 'react';
+import { Header } from '../Header/Header';
 import styles from './Layout.module.scss';
 
 type Props = {
@@ -14,7 +15,10 @@ export function Layout({ className, title, children }: Props) {
       <Head>
         <title>{title}</title>
       </Head>
-      <section className={`${styles.root} ${className}`}>{children}</section>
+      <div>
+        <Header />
+        <section className={`${styles.root} ${className}`}>{children}</section>
+      </div>
     </>
   );
 }

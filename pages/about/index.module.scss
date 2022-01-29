@@ -1,4 +1,5 @@
 @import 'variable.scss';
+@import 'mixin.scss';
 
 .root {
   max-width: 1280px;
@@ -8,12 +9,20 @@
 .title {
   font-size: 3.75rem;
   margin-bottom: 0.875rem;
+
+  @include responsive(sm) {
+    font-size: 2.125rem;
+  }
 }
 
 .subtitle {
   font-size: 2.215rem;
   border-bottom: 1px solid $base-white;
   margin: 1.5rem 0 0.875rem;
+
+  @include responsive(sm) {
+    font-size: 1.5rem;
+  }
 }
 
 .section {

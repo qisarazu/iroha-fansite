@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Layout } from '../../layout/Layout/Layout';
+import { Layout } from '../../components/Layout/Layout';
 import styles from './index.module.scss';
 
 function AboutPage() {

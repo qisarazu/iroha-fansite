@@ -1,11 +1,7 @@
 @import 'variable.scss';
 @import 'mixin.scss';
 
-.header {
-  margin-bottom: 2rem;
-}
-
-.main {
+.root {
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -13,7 +9,7 @@
 .form {
   display: flex;
   align-items: stretch;
-  margin-bottom: 1em;
+  margin-bottom: 3rem;
 }
 
 .searchForm {

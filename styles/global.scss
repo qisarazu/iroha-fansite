@@ -17,11 +17,12 @@ body {
 }
 
 body {
+  font-family: 'M PLUS Rounded 1c', 'Nunito', sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  font-family: 'M PLUS Rounded 1c', 'Nunito', sans-serif;
   background-color: $base-black;
   color: $base-white;
+  overflow-y: scroll;
 }
 
 a {

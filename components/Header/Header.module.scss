@@ -1,0 +1,31 @@
+@import 'variable.scss';
+@import 'mixin.scss';
+
+.root {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem 1rem;
+  background-color: $base-black;
+  z-index: 1;
+}
+
+.middle {
+  font-size: 1.25rem;
+
+  @include responsive(sm) {
+    font-size: 1rem;
+  }
+}
+
+.link {
+  color: darken($base-white, 40);
+}
+
+.activeLink {
+  color: $base-white;
+}
