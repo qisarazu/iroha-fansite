@@ -1,18 +1,5 @@
 @import 'variable.scss';
 
-.header {
-  margin-bottom: 2rem;
-}
-
-.backToList {
-  display: inline-flex;
-  align-items: center;
-  background-color: transparent;
-  border: none;
-  color: $base-white;
-  text-decoration: underline;
-}
-
 .main {
   display: flex;
   justify-content: center;

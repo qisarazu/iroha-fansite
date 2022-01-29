@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { MdArrowBackIosNew } from 'react-icons/md';
+import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Spinner } from '../../../components/Spinner/Spinner';
@@ -10,7 +10,6 @@ import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import { Layout } from '../../../components/Layout/Layout';
 import styles from './[id].module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
@@ -39,10 +38,6 @@ function SingingStreamsWatchPage() {
       height: '100%',
     },
   });
-
-  const onBackToListClick = useCallback(() => {
-    router.back();
-  }, [router]);
 
   const onPlay = useCallback(() => {
     if (!player) return;
@@ -157,12 +152,6 @@ function SingingStreamsWatchPage() {
 
   return (
     <Layout title="歌枠視聴">
-      <header className={styles.header}>
-        <button className={styles.backToList} onClick={onBackToListClick}>
-          <MdArrowBackIosNew />
-          戻る
-        </button>
-      </header>
       <main className={styles.main}>
         <div className={styles.player}>
           {!stream || !player ? (
