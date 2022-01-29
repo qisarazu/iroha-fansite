@@ -13,7 +13,7 @@ export function Layout({ className, title, children }: Props) {
   return (
     <>
       <Head>
-        <title>{title}</title>
+        <title>{title} | gozaru.fans</title>
       </Head>
       <div>
         <Header />

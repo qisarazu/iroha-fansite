@@ -151,7 +151,7 @@ function SingingStreamsWatchPage() {
   }, [onStateChange, player]);
 
   return (
-    <Layout title="歌枠視聴">
+    <Layout title={stream?.song.title || ''}>
       <main className={styles.main}>
         <div className={styles.player}>
           {!stream || !player ? (

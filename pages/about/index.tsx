@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
+import { IconLink } from '../../components/IconLink/IconLink';
 import { Layout } from '../../components/Layout/Layout';
 import styles from './index.module.scss';
 
@@ -7,9 +8,8 @@ function AboutPage() {
   return (
     <Layout className={styles.root} title="当サイトについて">
       <h1 className={styles.title}>当サイトについて</h1>
-      {/* FIXME: site name */}
       <p>
-        iroha-fansite (以下、当サイト) はホロライブ6期生 (holoX) の用心棒、風真いろはさんの<b>非公式</b>
+        gozaru.fans (以下、当サイト) はホロライブ6期生 (holoX) の用心棒、風真いろはさんの<b>非公式</b>
         ファンサイトです。
       </p>
       <p>カバー株式会社様、およびホロライブプロダクション、その他関係者とは⼀切関係ありません。</p>
@@ -49,12 +49,20 @@ function AboutPage() {
         <h2 className={styles.subtitle}>製作者</h2>
         <div className={styles.developer}>
           きさらず (@qisarazu)
-          <a className={styles.iconLink} href="https://twitter.com/qisarazu" target="_blank" rel="noopener noreferrer">
-            <FaTwitter />
-          </a>
-          <a className={styles.iconLink} href="https://github.com/qisarazu" target="_blank" rel="noopener noreferrer">
-            <FaGithub />
-          </a>
+          <IconLink
+            className={styles.iconLink}
+            Icon={FaTwitter}
+            href="https://twitter.com/qisarazu"
+            target="_blank"
+            rel="noopener noreferrer"
+          ></IconLink>
+          <IconLink
+            className={styles.iconLink}
+            Icon={FaGithub}
+            href="https://github.com/qisarazu"
+            target="_blank"
+            rel="noopener noreferrer"
+          ></IconLink>
         </div>
       </section>
     </Layout>
