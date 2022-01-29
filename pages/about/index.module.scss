@@ -4,6 +4,7 @@
 .root {
   max-width: 1280px;
   margin: 0 auto;
+  font-size: 0.875rem;
 }
 
 .title {
@@ -33,4 +34,16 @@
 
 .link {
   text-decoration: underline;
+}
+
+.developer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
