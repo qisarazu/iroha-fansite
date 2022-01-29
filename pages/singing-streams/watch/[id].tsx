@@ -8,6 +8,7 @@ import { Spinner } from '../../../components/Spinner/Spinner';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
 import { Layout } from '../../../layout/Layout/Layout';
 import styles from './[id].module.scss';
@@ -18,10 +19,11 @@ let isRepeatVariable = false;
 function SingingStreamsWatchPage() {
   const router = useRouter();
   const id = router.query.id as string | undefined;
-  const [isMute, setMute] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isRepeat, setRepeat] = useState(false);
+  const [isMute, setMute] = useLocalStorage('isMute', false);
+  const [isRepeat, setRepeat] = useLocalStorage('isRepeat', false);
+  const [volume, setVolume] = useLocalStorage('volume', 80);
   const isMobile = useIsMobile();
   const { stream } = useSingingStreamForWatch(id);
 
@@ -56,18 +58,17 @@ function SingingStreamsWatchPage() {
     (value) => {
       if (!player) return;
       player.setVolume(value);
-      localStorage.setItem('volume', value);
+      setVolume(value);
     },
-    [player],
+    [player, setVolume],
   );
 
   const onMute = useCallback(
     (mute: boolean) => {
       mute ? player?.mute() : player?.unMute();
       setMute(mute);
-      localStorage.setItem('muted', `${mute}`);
     },
-    [player],
+    [player, setMute],
   );
 
   const onSeek = useCallback(
@@ -78,11 +79,13 @@ function SingingStreamsWatchPage() {
     [player, stream],
   );
 
-  const onRepeat = useCallback((repeat) => {
-    isRepeatVariable = repeat;
-    setRepeat(repeat);
-    localStorage.setItem('isRepeat', `${repeat}`);
-  }, []);
+  const onRepeat = useCallback(
+    (repeat) => {
+      isRepeatVariable = repeat;
+      setRepeat(repeat);
+    },
+    [setRepeat],
+  );
 
   const seekToStartAt = useCallback(
     (player: YT.Player) => {
@@ -117,9 +120,8 @@ function SingingStreamsWatchPage() {
 
   // Initialize watch page
   useEffect(() => {
-    isRepeatVariable = localStorage.getItem('isRepeat') === 'true';
-    setRepeat(isRepeatVariable);
-  }, []);
+    isRepeatVariable = isRepeat;
+  }, [isRepeat]);
 
   // Update current time
   useEffect(() => {
@@ -142,9 +144,8 @@ function SingingStreamsWatchPage() {
 
   useEffect(() => {
     if (!player) return;
-    player.setVolume(parseInt(localStorage.getItem('volume') || '80', 10));
-    localStorage.getItem('muted') === 'true' ? player.mute() : player.unMute();
-  }, [player]);
+    player.setVolume(volume);
+  }, [player, volume]);
 
   useEffect(() => {
     if (!player) return;
