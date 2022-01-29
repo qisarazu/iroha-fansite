@@ -61,10 +61,10 @@ function SingingStreamsWatchPage() {
     [player],
   );
 
-  const onMuteClick = useCallback(
+  const onMute = useCallback(
     (mute: boolean) => {
-      setMute(mute);
       mute ? player?.mute() : player?.unMute();
+      setMute(mute);
       localStorage.setItem('muted', `${mute}`);
     },
     [player],
@@ -78,7 +78,7 @@ function SingingStreamsWatchPage() {
     [player, stream],
   );
 
-  const onRepeatClick = useCallback((repeat) => {
+  const onRepeat = useCallback((repeat) => {
     isRepeatVariable = repeat;
     setRepeat(repeat);
     localStorage.setItem('isRepeat', `${repeat}`);
@@ -191,7 +191,7 @@ function SingingStreamsWatchPage() {
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
-              onRepeat={onRepeatClick}
+              onRepeat={onRepeat}
               onSeek={onSeek}
             />
           ) : (
@@ -204,12 +204,13 @@ function SingingStreamsWatchPage() {
               videoId={stream.video_id}
               songTitle={stream.song.title}
               songArtist={stream.song.artist}
+              publishedAt={stream.published_at}
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
-              onRepeat={onRepeatClick}
+              onRepeat={onRepeat}
               onSeek={onSeek}
-              onMute={onMuteClick}
+              onMute={onMute}
               onVolumeChange={onVolumeChange}
             />
           )}

@@ -26,6 +26,16 @@
   justify-content: center;
 }
 
+.info {
+  margin-left: 1rem;
+  font-size: 0.875rem;;
+}
+
+.sonTitle {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
 .rightControls {
   justify-content: flex-end;
 }
@@ -38,6 +48,10 @@
 .volumeControl {
   width: 5rem;
   margin-right: 1.5rem;
+}
+
+.repeat {
+  margin-left: 1rem;
 }
 
 .slider {

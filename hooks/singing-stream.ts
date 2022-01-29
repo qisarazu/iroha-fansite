@@ -53,7 +53,7 @@ async function getForList(key: string): Promise<SingingStreamForSearch[] | null>
 
   if (keyword) {
     query
-      .select('id, start, video_id, published_at, video(title, url), song!inner(title, artist)')
+      .select('id, start, video_id, published_at, video!video_id(title, url), song!inner(title, artist)')
       .ilike('song.title', `%${keyword}%`);
   }
   query

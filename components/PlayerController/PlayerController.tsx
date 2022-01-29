@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MdPause, MdPlayArrow, MdRepeatOne, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
@@ -17,6 +18,7 @@ type Props = {
   videoId: string;
   songTitle: string;
   songArtist: string;
+  publishedAt: string;
   onPlay: () => void;
   onPause: () => void;
   onSeek: (time: number) => void;
@@ -35,6 +37,7 @@ export function PlayerController({
   videoId,
   songTitle,
   songArtist,
+  publishedAt,
   onPlay,
   onPause,
   onSeek,
@@ -101,9 +104,13 @@ export function PlayerController({
           src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
           objectFit="cover"
         />
-        <div>
-          <div>{songTitle}</div>
-          <div>{songArtist}</div>
+        <div className={styles.info}>
+          <div className={styles.sonTitle}>{songTitle}</div>
+          <div>
+            <span>{songArtist}</span>
+            <span> / </span>
+            <span>{format(new Date(publishedAt), 'yyyy-MM-dd')}</span>
+          </div>
         </div>
       </div>
       <div className={styles.rightControls}>
@@ -115,7 +122,7 @@ export function PlayerController({
           ) : null}
           <IconButton onClick={onMuteClick}>{isMute || volume === 0 ? <MdVolumeOff /> : <MdVolumeUp />}</IconButton>
         </div>
-        <IconButton onClick={onRepeatClick}>
+        <IconButton className={styles.repeat} onClick={onRepeatClick}>
           <MdRepeatOne color={isRepeat ? '#ffffff' : '#757575'} />
         </IconButton>
       </div>
