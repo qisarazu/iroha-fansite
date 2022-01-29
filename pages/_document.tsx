@@ -11,6 +11,7 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <link rel="icon" sizes="32x32" href="/favicon.ico" />
           <link
             href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Nunito:wght@400;700&display=swap"
             rel="stylesheet"
