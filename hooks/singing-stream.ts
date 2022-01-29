@@ -17,7 +17,7 @@ export function useSingingStreamsForSearch(keyword: string = '') {
 }
 
 export function useSingingStreamForWatch(id: string | undefined) {
-  // when id is undefined, do not fetch
+  // Do not fetch when id is falsy
   const { data, error } = useSWRImmutable(id ? `${KEYS.watch}-${id}` : null, getForWatch);
   return {
     stream: data,

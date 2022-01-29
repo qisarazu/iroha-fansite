@@ -4,12 +4,13 @@ import type { SingingStreamForSearch } from '../../types';
 import { KebabMenu } from '../KebabMenu/KebabMenu';
 import { format } from 'date-fns';
 import styles from './SingingStreamMediaObject.module.scss';
+import { memo } from 'react';
 
 type Props = {
   singingStream: SingingStreamForSearch;
 };
 
-export function SingingStreamMediaObject({ singingStream }: Props) {
+export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({ singingStream }: Props) {
   return (
     <article className={styles.root}>
       <Link href={`/singing-streams/watch/${singingStream.id}`}>
@@ -46,4 +47,4 @@ export function SingingStreamMediaObject({ singingStream }: Props) {
       </KebabMenu>
     </article>
   );
-}
+});

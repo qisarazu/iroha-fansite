@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useState, useRef, useLayoutEffect } from 'react';
 
+// based on https://github.com/streamich/react-use/blob/3685b7502a/src/useLocalStorage.ts
 const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>, () => void] => {
   if (!key) {
     throw new Error('useLocalStorage key may not be falsy');

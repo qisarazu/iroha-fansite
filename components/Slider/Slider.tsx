@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { useMouseHovered } from 'react-use';
 import { useSlider } from './useSlider';
@@ -16,7 +16,15 @@ type Props = {
   onScrub?: (value: number) => void;
 };
 
-export function Slider({ className, value: valueProp, min, max, label, labelDisplay = false, onScrub }: Props) {
+export const Slider = memo(function Slider({
+  className,
+  value: valueProp,
+  min,
+  max,
+  label,
+  labelDisplay = false,
+  onScrub,
+}: Props) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isLabelDisplay, setLabelDisplay] = useState(false);
   const [thumbRef, setThumbRef] = useState<HTMLDivElement | null>(null);
@@ -53,4 +61,4 @@ export function Slider({ className, value: valueProp, min, max, label, labelDisp
       ) : null}
     </>
   );
-}
+});

@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MdPause, MdPlayArrow, MdRepeatOne, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
 import { useHoverDirty } from 'react-use';
 import { formatVideoLength } from '../../utils/formatVideoLength';
@@ -27,7 +27,7 @@ type Props = {
   onVolumeChange: (volume: number) => void;
 };
 
-export function PlayerController({
+export const PlayerController = memo(function PlayerController({
   isPlaying,
   isMute,
   isRepeat,
@@ -128,4 +128,4 @@ export function PlayerController({
       </div>
     </div>
   );
-}
+});

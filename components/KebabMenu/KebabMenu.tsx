@@ -1,5 +1,5 @@
 import type PopperJS from '@popperjs/core';
-import { useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { MdMoreVert } from 'react-icons/md';
 import { usePopper } from 'react-popper';
 import { useClickAway } from 'react-use';
@@ -12,24 +12,15 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function KebabMenu({ buttonClassName, menuClassName, placement, children }: Props) {
+export const KebabMenu = memo(function KebabMenu({ buttonClassName, menuClassName, placement, children }: Props) {
   const [isOpen, setOpen] = useState(false);
 
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] =
-    useState<HTMLDivElement | null>(null);
-  const { styles: popperStyles, attributes } = usePopper(
-    referenceElement,
-    popperElement,
-    {
-      placement,
-      modifiers: [
-        { name: 'offset', options: { offset: [0, 8] } },
-        { name: 'flip' }
-      ]
-    }
-  );
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const { styles: popperStyles, attributes } = usePopper(referenceElement, popperElement, {
+    placement,
+    modifiers: [{ name: 'offset', options: { offset: [0, 8] } }, { name: 'flip' }],
+  });
 
   useClickAway({ current: popperElement }, (e) => {
     if (referenceElement?.contains(e.target as Node)) return;
@@ -42,11 +33,7 @@ export function KebabMenu({ buttonClassName, menuClassName, placement, children 
 
   return (
     <>
-      <button
-        className={`${styles.button} ${buttonClassName}`}
-        onClick={onClick}
-        ref={setReferenceElement}
-      >
+      <button className={`${styles.button} ${buttonClassName}`} onClick={onClick} ref={setReferenceElement}>
         <MdMoreVert color="#ffffff" />
       </button>
       {isOpen ? (
@@ -61,4 +48,4 @@ export function KebabMenu({ buttonClassName, menuClassName, placement, children 
       ) : null}
     </>
   );
-}
+});

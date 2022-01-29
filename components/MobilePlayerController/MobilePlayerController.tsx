@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { MdPause, MdPlayArrow, MdRepeatOne } from 'react-icons/md';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
@@ -22,7 +22,7 @@ type Props = {
   onRepeat: (isRepeat: boolean) => void;
 };
 
-export function MobilePlayerController({
+export const MobilePlayerController = memo(function MobilePlayerController({
   isPlaying,
   isRepeat,
   currentTime,
@@ -90,4 +90,4 @@ export function MobilePlayerController({
       </div>
     </div>
   );
-}
+});
