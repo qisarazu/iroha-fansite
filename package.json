@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "deploy": "npx vercel --prod",
     "test": "jest",
     "storybook": "start-storybook -p 6006 -s ./public",
     "build-storybook": "build-storybook -s public"
@@ -37,6 +38,7 @@
     "@storybook/builder-webpack5": "^6.4.15",
     "@storybook/manager-webpack5": "^6.4.15",
     "@storybook/react": "^6.4.15",
+    "@types/gtag.js": "^0.0.8",
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
