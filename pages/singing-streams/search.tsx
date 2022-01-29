@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
 import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
@@ -14,7 +14,7 @@ type SearchForm = {
 
 function SingingStreamsSearchPage() {
   const router = useRouter();
-  const { register, handleSubmit, resetField, getValues, setValue } = useForm<SearchForm>();
+  const { register, handleSubmit, resetField, watch, setValue } = useForm<SearchForm>();
   const { streams } = useSingingStreamsForSearch((router.query.keyword || '') as string);
 
   const onSubmit = useCallback(
@@ -50,7 +50,7 @@ function SingingStreamsSearchPage() {
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.searchForm}>
             <input className={styles.input} placeholder="曲名" {...register('keyword')} />
-            {getValues().keyword ? (
+            {watch().keyword ? (
               <button className={styles.reset} type="reset" onClick={onReset}>
                 <MdClear color="#ffffff" />
               </button>
