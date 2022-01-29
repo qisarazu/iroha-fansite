@@ -6,8 +6,8 @@ type Args = {
   mountId: string;
   videoId: string;
   options?: {
-    width?: number;
-    height?: number;
+    width?: string | number;
+    height?: string | number;
     start?: number;
     end?: number;
     autoplay?: boolean;
@@ -18,10 +18,10 @@ type Args = {
 export function useYTPlayer({ mountId, videoId, options }: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
   player: YT.Player | null;
 } {
-  const { player, setYTPlayer, scriptLoaded, unmountYTPlayer } = useContext(YTPlayerContext);
+  const { player, setYTPlayer, scriptLoaded, apiReady, unmountYTPlayer } = useContext(YTPlayerContext);
 
   useEffect(() => {
-    if (!scriptLoaded || !videoId) return;
+    if (!scriptLoaded || !apiReady || !videoId) return;
     setYTPlayer(mountId, {
       videoId,
       width: options?.width,
@@ -35,12 +35,11 @@ export function useYTPlayer({ mountId, videoId, options }: Args): ComponentProps
         widget_referrer: location.origin,
       },
     });
-
     return () => {
-      if (!scriptLoaded || !videoId) return;
       unmountYTPlayer();
     };
   }, [
+    apiReady,
     mountId,
     options?.autoplay,
     options?.controls,

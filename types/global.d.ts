@@ -7,8 +7,8 @@ declare namespace YT {
     constructor(
       mountId: string,
       options?: {
-        width?: number;
-        height?: number;
+        width?: string | number;
+        height?: string | number;
         videoId?: string;
         playerVars?: Record<string, unknown>;
         events?: {

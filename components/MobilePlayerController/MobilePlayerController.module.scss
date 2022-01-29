@@ -1,0 +1,55 @@
+@import 'variable.scss';
+@import 'mixin.scss';
+
+.root {
+  background-color: lighten($base-black, 10);
+  padding: 16px 32px;
+}
+
+.stream {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.songTitle {
+  @include lineClamp(1);
+}
+
+.songArtist {
+  @include lineClamp(1);
+  font-size: 0.75rem;
+}
+
+.publishedAt {
+  margin-top: auto;
+  font-size: 0.75rem;
+}
+
+.slider {
+  margin: 24px 0 8px;
+}
+
+.lengths {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+}
+
+.play {
+  justify-self: center;
+}
+
+.repeat {
+  justify-self: end;
+}

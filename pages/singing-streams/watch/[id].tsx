@@ -1,16 +1,19 @@
-import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { MdArrowBackIosNew } from 'react-icons/md';
+import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Spinner } from '../../../components/Spinner/Spinner';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
 import { Layout } from '../../../layout/Layout/Layout';
 import styles from './[id].module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
-let isRepeat = false;
+let isRepeatVariable = false;
 
 function SingingStreamsWatchPage() {
   const router = useRouter();
@@ -18,6 +21,8 @@ function SingingStreamsWatchPage() {
   const [isMute, setMute] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isRepeat, setRepeat] = useState(false);
+  const isMobile = useIsMobile();
   const { stream } = useSingingStreamForWatch(id);
 
   const { player, ...ytPlayerProps } = useYTPlayer({
@@ -28,10 +33,14 @@ function SingingStreamsWatchPage() {
       end: stream?.end,
       controls: false,
       autoplay: true,
-      width: 1280,
-      height: 720,
+      width: '100%',
+      height: '100%',
     },
   });
+
+  const onBackToListClick = useCallback(() => {
+    router.back();
+  }, [router]);
 
   const onPlay = useCallback(() => {
     if (!player) return;
@@ -70,7 +79,8 @@ function SingingStreamsWatchPage() {
   );
 
   const onRepeatClick = useCallback((repeat) => {
-    isRepeat = repeat;
+    isRepeatVariable = repeat;
+    setRepeat(repeat);
     localStorage.setItem('isRepeat', `${repeat}`);
   }, []);
 
@@ -86,7 +96,7 @@ function SingingStreamsWatchPage() {
     (event: { target: YT.Player; data: number }) => {
       // ended
       if (event.data === 0) {
-        if (isRepeat) {
+        if (isRepeatVariable) {
           seekToStartAt(event.target);
         }
       }
@@ -107,24 +117,24 @@ function SingingStreamsWatchPage() {
 
   // Initialize watch page
   useEffect(() => {
-    isRepeat = localStorage.getItem('isRepeat') === 'true';
+    isRepeatVariable = localStorage.getItem('isRepeat') === 'true';
+    setRepeat(isRepeatVariable);
   }, []);
 
   // Update current time
   useEffect(() => {
-    let id: number;
-    if (stream && isPlaying) {
-      const step = () => {
-        if (!player || !player.getCurrentTime) return;
+    if (!stream || !isPlaying || !player) return;
 
-        const currentTime = player.getCurrentTime();
-        setCurrentTime(Math.max(0, currentTime - stream.start));
-        if (isPlaying) {
-          requestAnimationFrame(step);
-        }
-      };
-      id = requestAnimationFrame(step);
-    }
+    let id: number;
+    const step = () => {
+      if (!player) return;
+      const currentTime = player.getCurrentTime();
+      setCurrentTime(Math.max(0, currentTime - stream.start));
+      if (isPlaying) {
+        requestAnimationFrame(step);
+      }
+    };
+    id = requestAnimationFrame(step);
     return () => {
       id && cancelAnimationFrame(id);
     };
@@ -146,10 +156,12 @@ function SingingStreamsWatchPage() {
 
   return (
     <Layout title="歌枠視聴">
-      <Link href="/singing-streams/search">
-        <a>リストに戻る</a>
-      </Link>
-      <h1 className={styles.title}>watch</h1>
+      <header className={styles.header}>
+        <button className={styles.backToList} onClick={onBackToListClick}>
+          <MdArrowBackIosNew />
+          戻る
+        </button>
+      </header>
       <main className={styles.main}>
         <div className={styles.player}>
           {!stream || !player ? (
@@ -161,23 +173,47 @@ function SingingStreamsWatchPage() {
         </div>
       </main>
       {stream && player ? (
-        <PlayerController
-          isPlaying={isPlaying}
-          isRepeat={isRepeat}
-          isMute={isMute}
-          length={stream.end - stream.start}
-          volume={player.getVolume()}
-          videoId={stream.video_id}
-          songTitle={stream.song.title}
-          songArtist={stream.song.artist}
-          currentTime={currentTime}
-          onPlay={onPlay}
-          onPause={onPause}
-          onRepeat={onRepeatClick}
-          onSeek={onSeek}
-          onMute={onMuteClick}
-          onVolumeChange={onVolumeChange}
-        />
+        <motion.div
+          className={styles.controller}
+          initial={{ y: '100%' }}
+          animate={{ y: 0 }}
+          transition={{ ease: 'circOut', duration: 0.5 }}
+        >
+          {isMobile ? (
+            <MobilePlayerController
+              isPlaying={isPlaying}
+              isRepeat={isRepeat}
+              length={stream.end - stream.start}
+              videoId={stream.video_id}
+              publishedAt={stream.published_at}
+              songTitle={stream.song.title}
+              songArtist={stream.song.artist}
+              currentTime={currentTime}
+              onPlay={onPlay}
+              onPause={onPause}
+              onRepeat={onRepeatClick}
+              onSeek={onSeek}
+            />
+          ) : (
+            <PlayerController
+              isPlaying={isPlaying}
+              isRepeat={isRepeat}
+              isMute={isMute}
+              length={stream.end - stream.start}
+              volume={player.getVolume()}
+              videoId={stream.video_id}
+              songTitle={stream.song.title}
+              songArtist={stream.song.artist}
+              currentTime={currentTime}
+              onPlay={onPlay}
+              onPause={onPause}
+              onRepeat={onRepeatClick}
+              onSeek={onSeek}
+              onMute={onMuteClick}
+              onVolumeChange={onVolumeChange}
+            />
+          )}
+        </motion.div>
       ) : null}
     </Layout>
   );

@@ -1,6 +1,10 @@
 @import 'variable.scss';
 @import 'mixin.scss';
 
+.header {
+  margin-bottom: 2rem;
+}
+
 .main {
   max-width: 1280px;
   margin: 0 auto;

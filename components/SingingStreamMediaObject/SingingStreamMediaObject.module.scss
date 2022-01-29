@@ -30,17 +30,18 @@
 .song {
   display: flex;
   align-items: flex-end;
+  margin-bottom: 1rem;
 
   @include responsive(sm) {
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: 0;
   }
 }
 
 .songTitle {
   font-size: 1.5em;
   font-weight: bold;
-  line-height: 1.2;
 
   @include responsive(lg) {
     font-size: 1.25em;
@@ -70,7 +71,7 @@
 
 .videoTitle {
   @include lineClamp(3);
-
+  margin: 0.25rem 0;
   @include responsive(sm) {
     @include lineClamp(1);
     font-size: 0.5em;

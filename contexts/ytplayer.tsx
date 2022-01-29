@@ -1,9 +1,10 @@
 import Script from 'next/script';
-import { createContext, ReactNode, useCallback, useRef, useState } from 'react';
+import { createContext, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 type YTPlayerContext = {
   player: YT.Player | null;
   scriptLoaded: boolean;
+  apiReady: boolean;
   setYTPlayer: (mountId: string, options?: ConstructorParameters<typeof YT.Player>[1]) => void;
   unmountYTPlayer: () => void;
 };
@@ -12,15 +13,16 @@ export const YTPlayerContext = createContext<YTPlayerContext>({} as YTPlayerCont
 
 export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [apiReady, setApiReady] = useState(false);
+  const [playerReady, setPlayerReady] = useState(false);
   const [player, setPlayer] = useState<YTPlayerContext['player']>(null);
 
   const onScriptLoad = useCallback(() => {
     setScriptLoaded(true);
   }, []);
 
-  const onReady = useCallback(() => {
-    setReady(true);
+  const onPlayerReady = useCallback(() => {
+    setPlayerReady(true);
   }, []);
 
   const setYTPlayer = useCallback(
@@ -29,21 +31,31 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
         new YT.Player(mountId, {
           ...options,
           events: {
-            onReady,
+            onReady: onPlayerReady,
           },
         }),
       );
     },
-    [onReady],
+    [onPlayerReady],
   );
 
+  useEffect(() => {
+    if (scriptLoaded) {
+      window.onYouTubeIframeAPIReady = () => {
+        setApiReady(true);
+      };
+    }
+  }, [scriptLoaded]);
+
   const unmountYTPlayer = useCallback(() => {
-    setReady(false);
+    setPlayerReady(false);
     setPlayer(null);
   }, []);
 
   return (
-    <YTPlayerContext.Provider value={{ player: ready ? player : null, scriptLoaded, setYTPlayer, unmountYTPlayer }}>
+    <YTPlayerContext.Provider
+      value={{ player: playerReady ? player : null, scriptLoaded, apiReady, setYTPlayer, unmountYTPlayer }}
+    >
       {children}
       <Script src="https://www.youtube.com/iframe_api" strategy="afterInteractive" onLoad={onScriptLoad} />
     </YTPlayerContext.Provider>

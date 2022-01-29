@@ -27,23 +27,17 @@ export function SingingStreamMediaObject({ singingStream }: Props) {
           <a>
             <div className={styles.song}>
               <h2 className={styles.songTitle}>{singingStream.song.title}</h2>
-              <span className={styles.songArtist}>
-                {singingStream.song.artist}
-              </span>
+              <span className={styles.songArtist}>{singingStream.song.artist}</span>
             </div>
-            <span className={styles.videoTitle}>
-              {singingStream.video.title}
-            </span>
+            <span className={styles.videoTitle}>{singingStream.video.title}</span>
           </a>
         </Link>
-        <span className={styles.publishedAt}>
-          {format(new Date(singingStream.video.published_at), 'yyyy/MM/dd')}
-        </span>
+        <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')}</span>
       </div>
       <KebabMenu buttonClassName={styles.menu} placement="bottom-end">
         <a
           className={styles.originalLink}
-          href={singingStream.video.url}
+          href={`${singingStream.video.url}&t=${singingStream.start}`}
           target="_blank"
           rel="noopener noreferrer"
         >

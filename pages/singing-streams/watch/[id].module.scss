@@ -1,20 +1,40 @@
 @import 'variable.scss';
 
-.title {
-  color: red;
+.header {
+  margin-bottom: 2rem;
+}
+
+.backToList {
+  display: inline-flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  color: $base-white;
+  text-decoration: underline;
 }
 
 .main {
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
 .player {
   position: relative;
-  width: 1280px;
-  height: 720px;
   background-color: lighten($base-black, 10);
+  width: 100%;
+  max-width: 1080px;
+
+  &::before {
+    content: '';
+    display: block;
+    padding-top: 56.25%;
+  }
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }
 
 .playerSpinner {
@@ -22,4 +42,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.controller {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

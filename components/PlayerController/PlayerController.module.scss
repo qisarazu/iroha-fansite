@@ -1,17 +1,13 @@
 @import 'variable.scss';
+@import 'mixin.scss';
 
 .controller {
-  position: fixed;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
   justify-content: space-between;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  // height: 4em;
+  padding: 0.5rem 0.875rem;
   background-color: lighten($base-black, 10);
-  padding: 0.5em 0.875em;
 }
 
 .leftControls,
@@ -22,7 +18,7 @@
 }
 
 .time {
-  margin-left: 0.5em;
+  margin-left: 0.5rem;
 }
 
 .middleControls {

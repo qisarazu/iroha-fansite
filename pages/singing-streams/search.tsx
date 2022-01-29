@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
 import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
@@ -14,11 +14,8 @@ type SearchForm = {
 
 function SingingStreamsSearchPage() {
   const router = useRouter();
-  const { register, handleSubmit, resetField, formState } =
-    useForm<SearchForm>();
-  const { streams } = useSingingStreamsForSearch(
-    (router.query.keyword || '') as string
-  );
+  const { register, handleSubmit, resetField, getValues, setValue } = useForm<SearchForm>();
+  const { streams } = useSingingStreamsForSearch((router.query.keyword || '') as string);
 
   const onSubmit = useCallback(
     (data: SearchForm) => {
@@ -26,11 +23,11 @@ function SingingStreamsSearchPage() {
         router.push({ query: {} });
       } else {
         router.push({
-          query: { keyword: data.keyword }
+          query: { keyword: data.keyword },
         });
       }
     },
-    [router]
+    [router],
   );
 
   const onReset = useCallback(() => {
@@ -38,18 +35,22 @@ function SingingStreamsSearchPage() {
     router.push({ query: {} });
   }, [resetField, router]);
 
+  useEffect(() => {
+    if (router.query.keyword && typeof router.query.keyword === 'string') {
+      setValue('keyword', router.query.keyword);
+    }
+  }, [router.query.keyword, setValue]);
+
   return (
     <Layout title="歌枠検索" className={styles.root}>
-      <h1 className={styles.title}>歌枠検索</h1>
+      <header className={styles.header}>
+        <h1 className={styles.title}>歌枠検索</h1>
+      </header>
       <main className={styles.main}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.searchForm}>
-            <input
-              className={styles.input}
-              placeholder="曲名"
-              {...register('keyword')}
-            />
-            {formState.isDirty ? (
+            <input className={styles.input} placeholder="曲名" {...register('keyword')} />
+            {getValues().keyword ? (
               <button className={styles.reset} type="reset" onClick={onReset}>
                 <MdClear color="#ffffff" />
               </button>
@@ -63,7 +64,7 @@ function SingingStreamsSearchPage() {
           {!streams ? (
             <Spinner className={styles.spinner} />
           ) : !streams.length ? (
-            <div>empty</div>
+            <div>検索結果はありません</div>
           ) : (
             <ul className={styles.list}>
               {streams.map((stream) => (
