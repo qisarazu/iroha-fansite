@@ -10,7 +10,7 @@ import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import { Layout } from '../../../layout/Layout/Layout';
+import { Layout } from '../../../components/Layout/Layout';
 import styles from './[id].module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
