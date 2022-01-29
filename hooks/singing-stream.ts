@@ -56,10 +56,14 @@ async function getForList(key: string): Promise<SingingStreamForSearch[] | null>
       .select('id, start, video_id, published_at, video(title, url), song!inner(title, artist)')
       .ilike('song.title', `%${keyword}%`);
   }
-  query.order('published_at', {
-    nullsFirst: false,
-    ascending: false,
-  });
+  query
+    .order('published_at', {
+      nullsFirst: false,
+      ascending: false,
+    })
+    .order('start', {
+      ascending: true,
+    });
 
   const { data, error } = await query;
 

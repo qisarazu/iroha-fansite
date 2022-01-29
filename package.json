@@ -27,8 +27,7 @@
     "react-popper": "^2.2.5",
     "react-use": "^17.3.2",
     "sass": "^1.49.0",
-    "swr": "^1.2.0",
-    "url-assembler": "^2.1.1"
+    "swr": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.12",
@@ -41,7 +40,6 @@
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
-    "@types/url-assembler": "^2.1.0",
     "babel-loader": "^8.2.3",
     "eslint": "8.7.0",
     "eslint-config-next": "12.0.9",
