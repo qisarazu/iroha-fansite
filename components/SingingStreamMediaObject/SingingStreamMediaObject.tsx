@@ -5,6 +5,7 @@ import { KebabMenu } from '../KebabMenu/KebabMenu';
 import { format } from 'date-fns';
 import styles from './SingingStreamMediaObject.module.scss';
 import { memo } from 'react';
+import { ExternalLink } from '../ExternalLink/ExternalLink';
 
 type Props = {
   singingStream: SingingStreamForSearch;
@@ -36,14 +37,9 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')}</span>
       </div>
       <KebabMenu buttonClassName={styles.menu} placement="bottom-end" aria-label="動画メニュー">
-        <a
-          className={styles.originalLink}
-          href={`${singingStream.video.url}&t=${singingStream.start}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
           元動画を見る
-        </a>
+        </ExternalLink>
       </KebabMenu>
     </article>
   );
