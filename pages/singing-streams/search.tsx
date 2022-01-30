@@ -42,7 +42,11 @@ function SingingStreamsSearchPage() {
   }, [router.query.keyword, setValue]);
 
   return (
-    <Layout title="歌枠検索" className={styles.root}>
+    <Layout
+      title="歌枠検索"
+      description="風真いろはさんが歌枠等の放送内で歌った曲を検索することが出来ます"
+      className={styles.root}
+    >
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.searchForm}>
           <input className={styles.input} placeholder="曲名" {...register('keyword')} />
