@@ -1,18 +1,24 @@
 import type PopperJS from '@popperjs/core';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useState, ComponentPropsWithoutRef } from 'react';
 import { MdMoreVert } from 'react-icons/md';
 import { usePopper } from 'react-popper';
 import { useClickAway } from 'react-use';
 import styles from './KebabMenu.module.scss';
 
-type Props = {
+type Props = ComponentPropsWithoutRef<'button'> & {
   buttonClassName?: string;
   menuClassName?: string;
   placement?: PopperJS.Placement;
   children: React.ReactNode;
 };
 
-export const KebabMenu = memo(function KebabMenu({ buttonClassName, menuClassName, placement, children }: Props) {
+export const KebabMenu = memo(function KebabMenu({
+  buttonClassName,
+  menuClassName,
+  placement,
+  children,
+  ...buttonProps
+}: Props) {
   const [isOpen, setOpen] = useState(false);
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -33,7 +39,12 @@ export const KebabMenu = memo(function KebabMenu({ buttonClassName, menuClassNam
 
   return (
     <>
-      <button className={`${styles.button} ${buttonClassName}`} onClick={onClick} ref={setReferenceElement}>
+      <button
+        {...buttonProps}
+        className={`${styles.button} ${buttonClassName}`}
+        onClick={onClick}
+        ref={setReferenceElement}
+      >
         <MdMoreVert color="#ffffff" />
       </button>
       {isOpen ? (

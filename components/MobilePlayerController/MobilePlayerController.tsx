@@ -73,17 +73,17 @@ export const MobilePlayerController = memo(function MobilePlayerController({
         <div />
         <div className={styles.play}>
           {isPlaying ? (
-            <IconButton size="large" onClick={onPause}>
+            <IconButton size="large" aria-label="停止" onClick={onPause}>
               <MdPause />
             </IconButton>
           ) : (
-            <IconButton size="large" onClick={onPlay}>
+            <IconButton size="large" aria-label="再生" onClick={onPlay}>
               <MdPlayArrow />
             </IconButton>
           )}
         </div>
         <div className={styles.repeat}>
-          <IconButton onClick={onRepeatClick}>
+          <IconButton aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'} onClick={onRepeatClick}>
             <MdRepeatOne color={isRepeat ? '#ffffff' : '#757575'} />
           </IconButton>
         </div>

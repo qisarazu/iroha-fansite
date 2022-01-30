@@ -8,5 +8,5 @@ type Props = ComponentPropsWithoutRef<'button'> & {
 };
 
 export const IconButton = memo(function IconButton({ className, size = 'medium', ...props }: Props) {
-  return <button className={clsx(styles.root, styles[size], className)} {...props} />;
+  return <button {...props} className={clsx(styles.root, styles[size], className)} />;
 });

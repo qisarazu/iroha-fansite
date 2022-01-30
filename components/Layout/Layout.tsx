@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { memo, ReactNode, useMemo } from 'react';
+import { memo, ReactNode } from 'react';
 import { Header } from '../Header/Header';
 import styles from './Layout.module.scss';
 

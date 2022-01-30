@@ -86,11 +86,11 @@ export const PlayerController = memo(function PlayerController({
       />
       <div className={styles.leftControls}>
         {isPlaying ? (
-          <IconButton size="large" onClick={onPause}>
+          <IconButton size="large" aria-label="停止" onClick={onPause}>
             <MdPause />
           </IconButton>
         ) : (
-          <IconButton size="large" onClick={onPlay}>
+          <IconButton size="large" aria-label="再生" onClick={onPlay}>
             <MdPlayArrow />
           </IconButton>
         )}
@@ -120,9 +120,15 @@ export const PlayerController = memo(function PlayerController({
               <Slider value={volume} onScrub={onVolumeChange} label={(value) => Math.floor(value)} labelDisplay />
             </div>
           ) : null}
-          <IconButton onClick={onMuteClick}>{isMute || volume === 0 ? <MdVolumeOff /> : <MdVolumeUp />}</IconButton>
+          <IconButton aria-label={isMute ? 'ミュートをやめる' : 'ミュートする'} onClick={onMuteClick}>
+            {isMute || volume === 0 ? <MdVolumeOff /> : <MdVolumeUp />}
+          </IconButton>
         </div>
-        <IconButton className={styles.repeat} onClick={onRepeatClick}>
+        <IconButton
+          className={styles.repeat}
+          aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'}
+          onClick={onRepeatClick}
+        >
           <MdRepeatOne color={isRepeat ? '#ffffff' : '#757575'} />
         </IconButton>
       </div>

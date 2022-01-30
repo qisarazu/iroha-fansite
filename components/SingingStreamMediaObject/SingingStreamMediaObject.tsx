@@ -35,7 +35,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         </Link>
         <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')}</span>
       </div>
-      <KebabMenu buttonClassName={styles.menu} placement="bottom-end">
+      <KebabMenu buttonClassName={styles.menu} placement="bottom-end" aria-label="動画メニュー">
         <a
           className={styles.originalLink}
           href={`${singingStream.video.url}&t=${singingStream.start}`}

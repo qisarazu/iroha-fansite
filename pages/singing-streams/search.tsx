@@ -51,12 +51,12 @@ function SingingStreamsSearchPage() {
         <div className={styles.searchForm}>
           <input className={styles.input} placeholder="曲名" {...register('keyword')} />
           {watch().keyword ? (
-            <button className={styles.reset} type="reset" onClick={onReset}>
+            <button className={styles.reset} type="reset" aria-label='フォームリセット' onClick={onReset}>
               <MdClear color="#ffffff" />
             </button>
           ) : null}
         </div>
-        <button className={styles.submit} type="submit">
+        <button className={styles.submit} type="submit" aria-label="検索">
           <MdSearch />
         </button>
       </form>
