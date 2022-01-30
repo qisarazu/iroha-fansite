@@ -4,7 +4,9 @@
 .root {
   max-width: 1280px;
   margin: 0 auto;
-  font-size: 0.875rem;
+  @include responsive(sm) {
+    font-size: 0.875rem;
+  }
 }
 
 .title {
@@ -33,7 +35,7 @@
 }
 
 .link {
-  text-decoration: underline;
+  border-bottom: 1px solid currentColor;
 }
 
 .developer {

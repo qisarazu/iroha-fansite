@@ -13,8 +13,8 @@ function IndexPage() {
         <p>
           <Link href="/singing-streams/search">
             <a className={styles.link}>歌枠検索</a>
-          </Link>
-          をご利用ください
+          </Link>{' '}
+          をご利用ください !
         </p>
       </div>
       <p>

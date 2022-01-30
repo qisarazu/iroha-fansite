@@ -75,7 +75,7 @@ export const PlayerController = memo(function PlayerController({
   }, [isRepeat, onRepeat]);
 
   return (
-    <div className={styles.controller} onMouseEnter={onControllerMouseEnter} onMouseLeave={onControllerMouseLeave}>
+    <div className={styles.root} onMouseEnter={onControllerMouseEnter} onMouseLeave={onControllerMouseLeave}>
       <Slider
         className={styles.slider}
         value={currentTime}

@@ -42,7 +42,7 @@ export const MobilePlayerController = memo(function MobilePlayerController({
 
   return (
     <div className={styles.root}>
-      <div className={styles.stream}>
+      <div className={styles.streamInfo}>
         <Image
           alt={songTitle}
           width={96}
@@ -57,17 +57,11 @@ export const MobilePlayerController = memo(function MobilePlayerController({
         </div>
       </div>
       <div className={styles.slider}>
-        <Slider
-          value={currentTime}
-          max={length}
-          label={(value) => formatVideoLength(value)}
-          onScrub={onSeek}
-          labelDisplay
-        />
-      </div>
-      <div className={styles.lengths}>
-        <span>{formatVideoLength(currentTime)}</span>
-        <span>{formatVideoLength(length)}</span>
+        <Slider value={currentTime} max={length} onScrub={onSeek} />
+        <div className={styles.lengths}>
+          <span>{formatVideoLength(currentTime)}</span>
+          <span>{formatVideoLength(length)}</span>
+        </div>
       </div>
       <div className={styles.controls}>
         <div />
