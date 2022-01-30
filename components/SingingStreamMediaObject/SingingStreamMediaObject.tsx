@@ -38,7 +38,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
       </div>
       <KebabMenu buttonClassName={styles.menu} placement="bottom-end" aria-label="動画メニュー">
         <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
-          元動画を見る
+          YouTubeで見る
         </ExternalLink>
       </KebabMenu>
     </article>
