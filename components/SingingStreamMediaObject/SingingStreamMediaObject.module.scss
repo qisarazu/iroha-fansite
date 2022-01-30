@@ -91,12 +91,7 @@
 }
 
 .originalLink {
-  display: block;
-  margin-top: auto;
-  margin-left: auto;
-
   @include responsive(sm) {
-    @include lineClamp(1);
     font-size: 0.7em;
   }
 }
