@@ -28,6 +28,10 @@
 }
 
 .socialLink {
+  &:hover {
+    text-decoration: underline;
+  }
+
   & + & {
     margin-top: 1.2rem;
   }

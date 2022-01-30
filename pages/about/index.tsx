@@ -42,7 +42,7 @@ function AboutPage() {
       </section>
       <section className={styles.section}>
         <h2 className={styles.subtitle}>当サイト上でのYouTube動画の再生について</h2>
-        <p>当サイトでは、YouTube から提供されている IFrame Player API を利用してます。</p>
+        <p>当サイトでは、YouTube から提供されている IFrame Player API を利用し、すべて元動画を再生しています。</p>
         <ExternalLink className={styles.link} href="https://developers.google.com/youtube/iframe_api_reference">
           IFrame API reference
         </ExternalLink>
