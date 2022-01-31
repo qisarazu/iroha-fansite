@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 type Props = {
   className?: string;
   id: string;
@@ -11,6 +13,6 @@ type Props = {
  * const { player, ytPlayerProps } = useYTPlayer({ ... });
  * return <YTPlayer {...ytPlayerProps} />
  */
-export function YTPlayer({ className, id, hidden = false }: Props) {
+export const YTPlayer = memo(({ className, id, hidden = false }: Props) => {
   return <div className={className} id={id} hidden={hidden} />;
-}
+});

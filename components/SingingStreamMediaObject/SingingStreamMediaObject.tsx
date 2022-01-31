@@ -16,7 +16,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
   const isMobile = useIsMobile();
   return (
     <article className={styles.root}>
-      <Link href={`/singing-streams/watch/${singingStream.id}`}>
+      <Link href={`/singing-streams/watch?v=${singingStream.id}`}>
         <a className={styles.thumbnail}>
           <Image
             src={`https://i.ytimg.com/vi/${singingStream.video_id}/hqdefault.jpg`}
@@ -27,7 +27,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         </a>
       </Link>
       <div className={styles.info}>
-        <Link href={`/singing-streams/watch/${singingStream.id}`}>
+        <Link href={`/singing-streams/watch?v=${singingStream.id}`}>
           <a>
             <div className={styles.song}>
               <h2 className={styles.songTitle}>{singingStream.song.title}</h2>

@@ -4,20 +4,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
-import { Spinner } from '../../../components/Spinner/Spinner';
+import { Playlist } from '../../../components/Playlist/Playlist';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
-import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
+import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import styles from './[id].module.scss';
+import type { SingingStreamForSearch } from '../../../types';
+import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
 let isRepeatVariable = false;
+let startSeconds = 0;
+let endSeconds = 0;
 
 function SingingStreamsWatchPage() {
   const router = useRouter();
-  const id = router.query.id as string | undefined;
+  const id = router.query.v as string | undefined;
   const [isPlaying, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMute, setMute] = useLocalStorage('isMute', false);
@@ -25,18 +28,14 @@ function SingingStreamsWatchPage() {
   const [volume, setVolume] = useLocalStorage('volume', 80);
   const isMobile = useIsMobile();
   const { stream } = useSingingStreamForWatch(id);
+  const { streams } = useSingingStreamsForSearch();
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
-    videoId: stream?.video_id || '',
-    options: {
-      start: stream?.start,
-      end: stream?.end,
-      controls: false,
-      autoplay: true,
-      width: '100%',
-      height: '100%',
-    },
+    controls: false,
+    autoplay: true,
+    width: '100%',
+    height: '100%',
   });
 
   const onPlay = useCallback(() => {
@@ -90,6 +89,13 @@ function SingingStreamsWatchPage() {
     [stream],
   );
 
+  const onPlaylistItemClick = useCallback(
+    (stream: SingingStreamForSearch) => {
+      router.push(`/singing-streams/watch?v=${stream.id}`, undefined, { shallow: true });
+    },
+    [router],
+  );
+
   const onStateChange = useCallback(
     (event: { target: YT.Player; data: number }) => {
       // ended
@@ -102,7 +108,7 @@ function SingingStreamsWatchPage() {
       // playing
       if (event.data === 1) {
         const currentTime = event.target.getCurrentTime();
-        if (stream && (stream.end < currentTime || currentTime < stream.start)) {
+        if (endSeconds < currentTime || currentTime < startSeconds) {
           seekToStartAt(event.target);
         }
         setPlaying(true);
@@ -110,30 +116,32 @@ function SingingStreamsWatchPage() {
         setPlaying(false);
       }
     },
-    [seekToStartAt, stream],
+    [seekToStartAt],
   );
 
   // Initialize watch page
   useEffect(() => {
     isRepeatVariable = isRepeat;
   }, [isRepeat]);
+  useEffect(() => {
+    startSeconds = stream?.start ?? 0;
+    endSeconds = stream?.end ?? 0;
+  }, [stream?.start, stream?.end]);
 
   // Update current time
   useEffect(() => {
-    if (!stream || !isPlaying || !player) return;
-
     let id: number;
     const step = () => {
-      if (!player) return;
+      if (!player || !stream) return;
       const currentTime = player.getCurrentTime();
       setCurrentTime(Math.max(0, currentTime - stream.start));
       if (isPlaying) {
-        requestAnimationFrame(step);
+        id = requestAnimationFrame(step);
       }
     };
     id = requestAnimationFrame(step);
     return () => {
-      id && cancelAnimationFrame(id);
+      cancelAnimationFrame(id);
     };
   }, [isPlaying, player, stream]);
 
@@ -150,17 +158,19 @@ function SingingStreamsWatchPage() {
     };
   }, [onStateChange, player]);
 
+  useEffect(() => {
+    if (stream && player) {
+      player.loadVideoById({ videoId: stream.video_id, startSeconds: stream.start, endSeconds: stream.end });
+    }
+  }, [player, stream]);
+
   return (
-    <Layout title={stream?.song.title || ''}>
+    <Layout className={styles.root} title={stream?.song.title || ''}>
       <main className={styles.main}>
         <div className={styles.player}>
-          {!stream || !player ? (
-            <div className={styles.playerSpinner}>
-              <Spinner />
-            </div>
-          ) : null}
           <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
         </div>
+        {streams ? <Playlist streams={streams} onItemClick={onPlaylistItemClick} /> : null}
       </main>
       {stream && player ? (
         <motion.div

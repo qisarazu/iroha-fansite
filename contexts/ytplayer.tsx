@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import { createContext, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { createContext, ReactNode, useCallback, useEffect, useState } from 'react';
 
 type YTPlayerContext = {
   player: YT.Player | null;

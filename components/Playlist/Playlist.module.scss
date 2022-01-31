@@ -1,0 +1,20 @@
+.root {
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+
+  & + & {
+    margin-top: 1rem;
+  }
+}
+
+.info {
+  margin-left: 0.5rem;
+}
+
+.songTitle {
+  font-weight: bold;
+}
