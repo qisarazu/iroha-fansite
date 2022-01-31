@@ -26,4 +26,8 @@
   &:active {
     background-color: rgba(#ffffff, 0.2);
   }
+
+  & svg {
+    display: block;
+  }
 }

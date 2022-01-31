@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState, useRef, useLayoutEffect } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState, useRef, useEffect } from 'react';
 
 // based on https://github.com/streamich/react-use/blob/3685b7502a/src/useLocalStorage.ts
 const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>, () => void] => {
@@ -20,7 +20,7 @@ const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetState
     typeof window === 'undefined' ? initialValue : initializer.current(key),
   );
 
-  useLayoutEffect(() => setState(initializer.current(key)), [key]);
+  useEffect(() => setState(initializer.current(key)), [key]);
 
   const set: Dispatch<SetStateAction<T>> = useCallback(
     (state) => {
