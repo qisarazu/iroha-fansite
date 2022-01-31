@@ -36,7 +36,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
             <span className={styles.videoTitle}>{singingStream.video.title}</span>
           </a>
         </Link>
-        <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')}</span>
+        <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')} 配信</span>
       </div>
       <KebabMenu
         buttonClassName={styles.menu}

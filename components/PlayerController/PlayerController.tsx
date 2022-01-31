@@ -109,7 +109,7 @@ export const PlayerController = memo(function PlayerController({
           <div>
             <span>{songArtist}</span>
             <span> / </span>
-            <span>{format(new Date(publishedAt), 'yyyy-MM-dd')}</span>
+            <span>{format(new Date(publishedAt), 'yyyy-MM-dd')} 配信</span>
           </div>
         </div>
       </div>

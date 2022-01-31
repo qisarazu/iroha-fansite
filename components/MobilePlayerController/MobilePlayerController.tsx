@@ -53,7 +53,7 @@ export const MobilePlayerController = memo(function MobilePlayerController({
         <div className={styles.meta}>
           <div className={styles.songTitle}>{songTitle}</div>
           <div className={styles.songArtist}>{songArtist}</div>
-          <div className={styles.publishedAt}>{format(new Date(publishedAt), 'yyyy/MM/dd')}</div>
+          <div className={styles.publishedAt}>{format(new Date(publishedAt), 'yyyy/MM/dd')} 配信</div>
         </div>
       </div>
       <div className={styles.slider}>
