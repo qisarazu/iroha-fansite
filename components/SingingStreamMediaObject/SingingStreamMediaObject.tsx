@@ -6,12 +6,14 @@ import { format } from 'date-fns';
 import styles from './SingingStreamMediaObject.module.scss';
 import { memo } from 'react';
 import { ExternalLink } from '../ExternalLink/ExternalLink';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 type Props = {
   singingStream: SingingStreamForSearch;
 };
 
 export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({ singingStream }: Props) {
+  const isMobile = useIsMobile();
   return (
     <article className={styles.root}>
       <Link href={`/singing-streams/watch/${singingStream.id}`}>
@@ -36,7 +38,12 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         </Link>
         <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')}</span>
       </div>
-      <KebabMenu buttonClassName={styles.menu} placement="bottom-end" aria-label="動画メニュー">
+      <KebabMenu
+        buttonClassName={styles.menu}
+        placement="bottom-end"
+        aria-label="動画メニュー"
+        size={isMobile ? 'small' : 'medium'}
+      >
         <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
           YouTubeで見る
         </ExternalLink>

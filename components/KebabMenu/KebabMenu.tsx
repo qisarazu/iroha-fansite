@@ -3,9 +3,10 @@ import { memo, useCallback, useState, ComponentPropsWithoutRef } from 'react';
 import { MdMoreVert } from 'react-icons/md';
 import { usePopper } from 'react-popper';
 import { useClickAway } from 'react-use';
+import { IconButton } from '../IconButton/IconButton';
 import styles from './KebabMenu.module.scss';
 
-type Props = ComponentPropsWithoutRef<'button'> & {
+type Props = ComponentPropsWithoutRef<typeof IconButton> & {
   buttonClassName?: string;
   menuClassName?: string;
   placement?: PopperJS.Placement;
@@ -39,14 +40,14 @@ export const KebabMenu = memo(function KebabMenu({
 
   return (
     <>
-      <button
+      <IconButton
         {...buttonProps}
         className={`${styles.button} ${buttonClassName}`}
         onClick={onClick}
         ref={setReferenceElement}
       >
         <MdMoreVert color="#ffffff" />
-      </button>
+      </IconButton>
       {isOpen ? (
         <div
           className={`${styles.body} ${menuClassName}`}
