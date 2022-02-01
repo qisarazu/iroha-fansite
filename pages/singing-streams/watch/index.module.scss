@@ -1,7 +1,7 @@
 @import 'variable.scss';
 @import 'mixin.scss';
 
-$mobile-playlist-draggable-height: 36px;
+$mobile-playlist-draggable-height: 48px;
 
 .main {
   display: flex;
@@ -67,19 +67,10 @@ $mobile-playlist-draggable-height: 36px;
   border-radius: 4px 4px 0 0;
 }
 
-.draggable {
-  padding: 1rem 0;
-  display: flex;
-  justify-content: center;
-  height: $mobile-playlist-draggable-height;
-  &::before {
-    content: '';
-    display: block;
-    width: 4rem;
-    height: 4px;
-    border-radius: 4px;
-    background-color: $base-white;
-  }
+.mobilePlaylistVisibilityToggle {
+  display: block;
+  margin: 0.25rem;
+  margin-left: auto;
 }
 
 .mobilePlaylist {

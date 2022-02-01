@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { useWindowSize } from 'react-use';
+import { IconButton } from '../../../components/IconButton/IconButton';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
@@ -29,7 +30,7 @@ function SingingStreamsWatchPage() {
   const isMobile = useIsMobile();
   const { stream } = useSingingStreamForWatch(id);
   const { streams } = useSingingStreamsForSearch();
-  const [isMobilePlayerVisible, setMobilePlaylistVisible] = useState(false);
+  const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
@@ -113,14 +114,8 @@ function SingingStreamsWatchPage() {
     [seekToStartAt],
   );
 
-  const onMobilePlayerVisibleChange = useCallback((e, pointInfo) => {
-    if ((e.target as Element).classList.contains(styles.draggable)) {
-      if (pointInfo.delta.y < 0) {
-        setMobilePlaylistVisible(true);
-      } else {
-        setMobilePlaylistVisible(false);
-      }
-    }
+  const onMobilePlayerVisibleChange = useCallback(() => {
+    setMobilePlaylistVisible((visible) => !visible);
   }, []);
 
   // Initialize watch page
@@ -234,16 +229,17 @@ function SingingStreamsWatchPage() {
       {isMobile && streams ? (
         <motion.div
           className={styles.mobilePlaylistWrapper}
-          onPan={onMobilePlayerVisibleChange}
-          animate={isMobilePlayerVisible ? 'visible' : 'hidden'}
+          animate={isMobilePlaylistVisible ? 'visible' : 'hidden'}
           initial="hidden"
           transition={{ ease: 'circOut' }}
           variants={{
             visible: { y: 0 },
-            hidden: { y: 'calc(100% - 36px)' },
+            hidden: { y: 'calc(100% - 48px)' },
           }}
         >
-          <div className={styles.draggable} />
+          <IconButton className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
+            {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />}
+          </IconButton>
           <Playlist className={styles.mobilePlaylist} streams={streams} />
         </motion.div>
       ) : null}
