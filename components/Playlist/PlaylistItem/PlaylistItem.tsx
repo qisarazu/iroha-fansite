@@ -42,12 +42,14 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
           ) : null}
         </a>
       </Link>
-      <div className={styles.info}>
-        <h2 className={styles.songTitle}>{stream.song.title}</h2>
-        <span className={styles.songArtist}>
-          {stream.song.artist} / {format(new Date(stream.published_at), 'yyyy-MM-dd')} 配信
-        </span>
-      </div>
+      <Link href={`/singing-streams/watch?v=${stream.id}`}>
+        <a className={styles.info}>
+          <h2 className={styles.songTitle}>{stream.song.title}</h2>
+          <span className={styles.songArtist}>
+            {stream.song.artist} / {format(new Date(stream.published_at), 'yyyy-MM-dd')} 配信
+          </span>
+        </a>
+      </Link>
       <KebabMenu buttonClassName={styles.menu} size="small" placement="bottom-end">
         <ExternalLink className={styles.originalLink} href={`${stream.video.url}&t=${stream.start}`}>
           YouTubeで見る

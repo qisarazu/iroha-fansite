@@ -11,7 +11,7 @@ $mobile-playlist-draggable-height: 48px;
   overflow: hidden;
 
   @include responsive(sm) {
-    height: calc(100vh - $header-height - $mobile-player-controller-height);
+    height: auto;
   }
 }
 

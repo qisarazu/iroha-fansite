@@ -164,6 +164,7 @@ function SingingStreamsWatchPage() {
 
   useEffect(() => {
     if (stream && player) {
+      setMobilePlaylistVisible(false);
       player.loadVideoById({ videoId: stream.video_id, startSeconds: stream.start, endSeconds: stream.end });
     }
   }, [player, stream]);
