@@ -8,13 +8,13 @@ type Props = {
   className?: string;
   title: string;
   description?: string;
-  padding?: boolean;
+  padding?: 'all' | 'vertical' | 'horizontal' | 'none';
   children: ReactNode;
 };
 
 const DEFAULT_DESCRIPTION = 'gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの非公式ファンサイトです。';
 
-export const Layout = memo(function Layout({ className, title, description, padding = true, children }: Props) {
+export const Layout = memo(function Layout({ className, title, description, padding = 'all', children }: Props) {
   return (
     <>
       <Head>
@@ -23,7 +23,7 @@ export const Layout = memo(function Layout({ className, title, description, padd
       </Head>
       <div>
         <Header />
-        <section className={clsx(styles.root, className, { [styles['padding']]: padding })}>{children}</section>
+        <section className={clsx(styles.root, className, { [styles[padding]]: padding !== 'none' })}>{children}</section>
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import { useClickAway } from 'react-use';
 import { IconButton } from '../IconButton/IconButton';
 import styles from './KebabMenu.module.scss';
 
-type Props = ComponentPropsWithoutRef<typeof IconButton> & {
+type Props = Omit<ComponentPropsWithoutRef<typeof IconButton>, 'className'> & {
   buttonClassName?: string;
   menuClassName?: string;
   placement?: PopperJS.Placement;

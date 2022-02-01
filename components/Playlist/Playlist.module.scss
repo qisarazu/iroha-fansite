@@ -1,20 +1,18 @@
+@import 'variable.scss';
+@import 'mixin.scss';
+
 .root {
   overflow-y: auto;
 }
 
-.item {
-  display: flex;
-  align-items: center;
-
-  & + & {
-    margin-top: 1rem;
-  }
+.root::-webkit-scrollbar {
+  overflow: hidden;
+  width: 0.5rem;
+  background: $base-white;
+  border-radius: 4px;
 }
 
-.info {
-  margin-left: 0.5rem;
-}
-
-.songTitle {
-  font-weight: bold;
+.root::-webkit-scrollbar-thumb {
+  background: $primary;
+  border-radius: 2px;
 }

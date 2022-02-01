@@ -3,15 +3,16 @@
 .main {
   display: flex;
   justify-content: space-between;
-  height: calc(100vh - $header-height - $pc-player-controller-height - 64px);
+  height: calc(100vh - $header-height - $pc-player-controller-height);
+  padding: 56px 0 24px;
   overflow: hidden;
 }
 
 .player {
+  flex: 1 1;
   position: relative;
   background-color: lighten($base-black, 10);
   width: 100%;
-  max-width: 1080px;
 
   &::before {
     content: '';
@@ -26,6 +27,12 @@
     width: 100%;
     height: 100%;
   }
+}
+
+.playlist {
+  max-width: 800px;
+  flex: 1 1;
+  margin-left: 2rem;
 }
 
 .controller {

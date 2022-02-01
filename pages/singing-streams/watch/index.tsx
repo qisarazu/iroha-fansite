@@ -147,6 +147,11 @@ function SingingStreamsWatchPage() {
 
   useEffect(() => {
     if (!player) return;
+    isMute ? player.mute() : player.unMute();
+  }, [isMute, player]);
+
+  useEffect(() => {
+    if (!player) return;
     player.setVolume(volume);
   }, [player, volume]);
 
@@ -165,12 +170,12 @@ function SingingStreamsWatchPage() {
   }, [player, stream]);
 
   return (
-    <Layout className={styles.root} title={stream?.song.title || ''} padding={false}>
+    <Layout className={styles.root} title={stream?.song.title || ''} padding="horizontal">
       <main className={styles.main}>
         <div className={styles.player}>
           <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
         </div>
-        {streams ? <Playlist streams={streams} onItemClick={onPlaylistItemClick} /> : null}
+        {streams ? <Playlist className={styles.playlist} streams={streams} /> : null}
       </main>
       {stream && player ? (
         <motion.div
