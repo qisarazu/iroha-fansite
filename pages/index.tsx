@@ -20,6 +20,13 @@ function IndexPage() {
       <p>
         gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの<b>非公式</b>ファンサイトです。
       </p>
+      <p>
+        詳しくは{' '}
+        <Link href="/about">
+          <a className={styles.link}>当サイトについて</a>
+        </Link>{' '}
+        をご覧ください。
+      </p>
       <div className={styles.socialLinks}>
         <div>
           <IconLink
