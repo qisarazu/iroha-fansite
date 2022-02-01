@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 0.875rem;
-  background-color: lighten($base-black, 10);
+  background-color: $gray-900;
   line-height: 1.2;
   height: $pc-player-controller-height;
 }

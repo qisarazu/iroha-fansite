@@ -10,17 +10,13 @@
     border-top: 1px solid darken($base-white, 60);
     padding-top: 0.25rem;
   }
-
-  &:last-child {
-    margin-bottom: 1rem;
-  }
 }
 
 .thumbnail {
   position: relative;
   width: 64px;
   height: 36px;
-  flex: 0 0 auto;
+  flex: 0 0 64px;
 }
 
 .hovering,
@@ -59,6 +55,7 @@
 }
 
 .menu {
+  flex-shrink: 0;
   margin: 0 1rem;
   margin-left: auto;
 }

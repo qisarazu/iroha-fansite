@@ -1,4 +1,7 @@
 @import 'variable.scss';
+@import 'mixin.scss';
+
+$mobile-playlist-draggable-height: 36px;
 
 .main {
   display: flex;
@@ -6,12 +9,16 @@
   height: calc(100vh - $header-height - $pc-player-controller-height);
   padding: 56px 0 24px;
   overflow: hidden;
+
+  @include responsive(sm) {
+    height: calc(100vh - $header-height - $mobile-player-controller-height);
+  }
 }
 
 .player {
   flex: 1 1;
   position: relative;
-  background-color: lighten($base-black, 10);
+  background-color: $gray-900;
   width: 100%;
 
   &::before {
@@ -29,10 +36,15 @@
   }
 }
 
-.playlist {
+.playlist,
+.playlistSkeleton {
   max-width: 800px;
   flex: 1 1;
   margin-left: 2rem;
+}
+
+.playlistSkeleton {
+  background-color: $gray-900;
 }
 
 .controller {
@@ -40,4 +52,36 @@
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.mobilePlaylistWrapper {
+  position: fixed;
+  top: $header-height;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 1rem 1rem;
+  z-index: 1;
+  overflow: hidden;
+  background-color: $primary-900;
+  border-radius: 4px 4px 0 0;
+}
+
+.draggable {
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+  height: $mobile-playlist-draggable-height;
+  &::before {
+    content: '';
+    display: block;
+    width: 4rem;
+    height: 4px;
+    border-radius: 4px;
+    background-color: $base-white;
+  }
+}
+
+.mobilePlaylist {
+  height: calc(100% - $mobile-playlist-draggable-height);
 }

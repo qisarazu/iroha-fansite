@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { useWindowSize } from 'react-use';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
@@ -10,7 +11,6 @@ import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../h
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import type { SingingStreamForSearch } from '../../../types';
 import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
@@ -29,6 +29,7 @@ function SingingStreamsWatchPage() {
   const isMobile = useIsMobile();
   const { stream } = useSingingStreamForWatch(id);
   const { streams } = useSingingStreamsForSearch();
+  const [isMobilePlayerVisible, setMobilePlaylistVisible] = useState(false);
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
@@ -89,13 +90,6 @@ function SingingStreamsWatchPage() {
     [stream],
   );
 
-  const onPlaylistItemClick = useCallback(
-    (stream: SingingStreamForSearch) => {
-      router.push(`/singing-streams/watch?v=${stream.id}`, undefined, { shallow: true });
-    },
-    [router],
-  );
-
   const onStateChange = useCallback(
     (event: { target: YT.Player; data: number }) => {
       // ended
@@ -118,6 +112,16 @@ function SingingStreamsWatchPage() {
     },
     [seekToStartAt],
   );
+
+  const onMobilePlayerVisibleChange = useCallback((e, pointInfo) => {
+    if ((e.target as Element).classList.contains(styles.draggable)) {
+      if (pointInfo.delta.y < 0) {
+        setMobilePlaylistVisible(true);
+      } else {
+        setMobilePlaylistVisible(false);
+      }
+    }
+  }, []);
 
   // Initialize watch page
   useEffect(() => {
@@ -170,12 +174,18 @@ function SingingStreamsWatchPage() {
   }, [player, stream]);
 
   return (
-    <Layout className={styles.root} title={stream?.song.title || ''} padding="horizontal">
+    <Layout className={styles.root} title={stream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
       <main className={styles.main}>
         <div className={styles.player}>
           <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
         </div>
-        {streams ? <Playlist className={styles.playlist} streams={streams} /> : null}
+        {!isMobile ? (
+          streams ? (
+            <Playlist className={styles.playlist} streams={streams} />
+          ) : (
+            <div className={styles.playlistSkeleton} />
+          )
+        ) : null}
       </main>
       {stream && player ? (
         <motion.div
@@ -219,6 +229,22 @@ function SingingStreamsWatchPage() {
               onVolumeChange={onVolumeChange}
             />
           )}
+        </motion.div>
+      ) : null}
+      {isMobile && streams ? (
+        <motion.div
+          className={styles.mobilePlaylistWrapper}
+          onPan={onMobilePlayerVisibleChange}
+          animate={isMobilePlayerVisible ? 'visible' : 'hidden'}
+          initial="hidden"
+          transition={{ ease: 'circOut' }}
+          variants={{
+            visible: { y: 0 },
+            hidden: { y: 'calc(100% - 36px)' },
+          }}
+        >
+          <div className={styles.draggable} />
+          <Playlist className={styles.mobilePlaylist} streams={streams} />
         </motion.div>
       ) : null}
     </Layout>

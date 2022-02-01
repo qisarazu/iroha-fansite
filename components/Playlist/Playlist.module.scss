@@ -3,6 +3,7 @@
 
 .root {
   overflow-y: auto;
+  padding: 1rem 0;
 }
 
 .root::-webkit-scrollbar {
@@ -13,6 +14,6 @@
 }
 
 .root::-webkit-scrollbar-thumb {
-  background: $primary;
+  background: $primary-dark;
   border-radius: 2px;
 }
