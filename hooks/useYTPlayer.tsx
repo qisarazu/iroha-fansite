@@ -1,36 +1,32 @@
-import { ComponentPropsWithoutRef, useContext, useEffect } from 'react';
+import { ComponentPropsWithoutRef, useContext, useEffect, useMemo } from 'react';
 import type { YTPlayer } from '../components/YTPlayer/YTPlayer';
 import { YTPlayerContext } from '../contexts/ytplayer';
 
 type Args = {
   mountId: string;
-  videoId: string;
-  options?: {
-    width?: string | number;
-    height?: string | number;
-    start?: number;
-    end?: number;
-    autoplay?: boolean;
-    controls?: boolean;
-  };
+  width?: string | number;
+  height?: string | number;
+  start?: number;
+  end?: number;
+  autoplay?: boolean;
+  controls?: boolean;
 };
 
-export function useYTPlayer({ mountId, videoId, options }: Args): ComponentPropsWithoutRef<typeof YTPlayer> & {
+export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args): ComponentPropsWithoutRef<
+  typeof YTPlayer
+> & {
   player: YT.Player | null;
 } {
   const { player, setYTPlayer, scriptLoaded, apiReady, unmountYTPlayer } = useContext(YTPlayerContext);
 
   useEffect(() => {
-    if (!scriptLoaded || !apiReady || !videoId) return;
+    if (!scriptLoaded || !apiReady) return;
     setYTPlayer(mountId, {
-      videoId,
-      width: options?.width,
-      height: options?.height,
+      width: width,
+      height: height,
       playerVars: {
-        start: options?.start,
-        end: options?.end,
-        controls: options?.controls ? 1 : 0,
-        autoplay: options?.autoplay ? 1 : 0,
+        controls: controls ? 1 : 0,
+        autoplay: autoplay ? 1 : 0,
         origin: location.origin,
         widget_referrer: location.origin,
       },
@@ -38,23 +34,13 @@ export function useYTPlayer({ mountId, videoId, options }: Args): ComponentProps
     return () => {
       unmountYTPlayer();
     };
-  }, [
-    apiReady,
-    mountId,
-    options?.autoplay,
-    options?.controls,
-    options?.end,
-    options?.height,
-    options?.start,
-    options?.width,
-    scriptLoaded,
-    setYTPlayer,
-    unmountYTPlayer,
-    videoId,
-  ]);
+  }, [apiReady, autoplay, controls, height, mountId, scriptLoaded, setYTPlayer, unmountYTPlayer, width]);
 
-  return {
-    player,
-    id: mountId,
-  };
+  return useMemo(
+    () => ({
+      player,
+      id: mountId,
+    }),
+    [player, mountId],
+  );
 }

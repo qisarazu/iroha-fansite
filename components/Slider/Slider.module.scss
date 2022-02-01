@@ -70,7 +70,7 @@
 
 .label {
   display: inline-block;
-  background-color: lighten($base-black, 20);
+  background-color: $gray-800;
   padding: 0.125em 0.5em;
   font-size: 0.875rem;
 }

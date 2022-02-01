@@ -2,9 +2,10 @@
 @import 'mixin.scss';
 
 .root {
-  background-color: lighten($base-black, 10);
-  padding: 16px 32px 32px;
+  background-color: $gray-900;
+  padding: 16px 32px 40px;
   line-height: 1.2;
+  height: $mobile-player-controller-height;
 }
 
 .streamInfo {
@@ -39,6 +40,7 @@
 .lengths {
   display: flex;
   justify-content: space-between;
+  line-height: 1;
 }
 
 .controls {

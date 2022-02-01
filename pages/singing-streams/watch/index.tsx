@@ -1,23 +1,27 @@
 import { motion } from 'framer-motion';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { IconButton } from '../../../components/IconButton/IconButton';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
-import { Spinner } from '../../../components/Spinner/Spinner';
+import { Playlist } from '../../../components/Playlist/Playlist';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
-import { useSingingStreamForWatch } from '../../../hooks/singing-stream';
+import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import styles from './[id].module.scss';
+import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
 let isRepeatVariable = false;
+let startSeconds = 0;
+let endSeconds = 0;
 
 function SingingStreamsWatchPage() {
   const router = useRouter();
-  const id = router.query.id as string | undefined;
+  const id = router.query.v as string | undefined;
   const [isPlaying, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMute, setMute] = useLocalStorage('isMute', false);
@@ -25,18 +29,15 @@ function SingingStreamsWatchPage() {
   const [volume, setVolume] = useLocalStorage('volume', 80);
   const isMobile = useIsMobile();
   const { stream } = useSingingStreamForWatch(id);
+  const { streams } = useSingingStreamsForSearch();
+  const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
-    videoId: stream?.video_id || '',
-    options: {
-      start: stream?.start,
-      end: stream?.end,
-      controls: false,
-      autoplay: true,
-      width: '100%',
-      height: '100%',
-    },
+    controls: false,
+    autoplay: true,
+    width: '100%',
+    height: '100%',
   });
 
   const onPlay = useCallback(() => {
@@ -102,7 +103,7 @@ function SingingStreamsWatchPage() {
       // playing
       if (event.data === 1) {
         const currentTime = event.target.getCurrentTime();
-        if (stream && (stream.end < currentTime || currentTime < stream.start)) {
+        if (endSeconds < currentTime || currentTime < startSeconds) {
           seekToStartAt(event.target);
         }
         setPlaying(true);
@@ -110,32 +111,43 @@ function SingingStreamsWatchPage() {
         setPlaying(false);
       }
     },
-    [seekToStartAt, stream],
+    [seekToStartAt],
   );
+
+  const onMobilePlayerVisibleChange = useCallback(() => {
+    setMobilePlaylistVisible((visible) => !visible);
+  }, []);
 
   // Initialize watch page
   useEffect(() => {
     isRepeatVariable = isRepeat;
   }, [isRepeat]);
+  useEffect(() => {
+    startSeconds = stream?.start ?? 0;
+    endSeconds = stream?.end ?? 0;
+  }, [stream?.start, stream?.end]);
 
   // Update current time
   useEffect(() => {
-    if (!stream || !isPlaying || !player) return;
-
     let id: number;
     const step = () => {
-      if (!player) return;
+      if (!player || !stream) return;
       const currentTime = player.getCurrentTime();
       setCurrentTime(Math.max(0, currentTime - stream.start));
       if (isPlaying) {
-        requestAnimationFrame(step);
+        id = requestAnimationFrame(step);
       }
     };
     id = requestAnimationFrame(step);
     return () => {
-      id && cancelAnimationFrame(id);
+      cancelAnimationFrame(id);
     };
   }, [isPlaying, player, stream]);
+
+  useEffect(() => {
+    if (!player) return;
+    isMute ? player.mute() : player.unMute();
+  }, [isMute, player]);
 
   useEffect(() => {
     if (!player) return;
@@ -150,17 +162,26 @@ function SingingStreamsWatchPage() {
     };
   }, [onStateChange, player]);
 
+  useEffect(() => {
+    if (stream && player) {
+      setMobilePlaylistVisible(false);
+      player.loadVideoById({ videoId: stream.video_id, startSeconds: stream.start, endSeconds: stream.end });
+    }
+  }, [player, stream]);
+
   return (
-    <Layout title={stream?.song.title || ''}>
+    <Layout className={styles.root} title={stream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
       <main className={styles.main}>
         <div className={styles.player}>
-          {!stream || !player ? (
-            <div className={styles.playerSpinner}>
-              <Spinner />
-            </div>
-          ) : null}
           <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
         </div>
+        {!isMobile ? (
+          streams ? (
+            <Playlist className={styles.playlist} streams={streams} />
+          ) : (
+            <div className={styles.playlistSkeleton} />
+          )
+        ) : null}
       </main>
       {stream && player ? (
         <motion.div
@@ -204,6 +225,23 @@ function SingingStreamsWatchPage() {
               onVolumeChange={onVolumeChange}
             />
           )}
+        </motion.div>
+      ) : null}
+      {isMobile && streams ? (
+        <motion.div
+          className={styles.mobilePlaylistWrapper}
+          animate={isMobilePlaylistVisible ? 'visible' : 'hidden'}
+          initial="hidden"
+          transition={{ ease: 'circOut' }}
+          variants={{
+            visible: { y: 0 },
+            hidden: { y: 'calc(100% - 48px)' },
+          }}
+        >
+          <IconButton className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
+            {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />}
+          </IconButton>
+          <Playlist className={styles.mobilePlaylist} streams={streams} />
         </motion.div>
       ) : null}
     </Layout>
