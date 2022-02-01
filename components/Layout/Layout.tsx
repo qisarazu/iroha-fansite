@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import Head from 'next/head';
 import { memo, ReactNode } from 'react';
 import { Header } from '../Header/Header';
@@ -7,13 +8,13 @@ type Props = {
   className?: string;
   title: string;
   description?: string;
+  padding?: boolean;
   children: ReactNode;
 };
 
-const DEFAULT_DESCRIPTION =
-  'gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの非公式ファンサイトです。';
+const DEFAULT_DESCRIPTION = 'gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの非公式ファンサイトです。';
 
-export const Layout = memo(function Layout({ className, title, description, children }: Props) {
+export const Layout = memo(function Layout({ className, title, description, padding = true, children }: Props) {
   return (
     <>
       <Head>
@@ -22,7 +23,7 @@ export const Layout = memo(function Layout({ className, title, description, chil
       </Head>
       <div>
         <Header />
-        <section className={`${styles.root} ${className}`}>{children}</section>
+        <section className={clsx(styles.root, className, { [styles['padding']]: padding })}>{children}</section>
       </div>
     </>
   );

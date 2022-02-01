@@ -1,6 +1,6 @@
 @import 'mixin.scss';
 
-.root {
+.padding {
   padding: 32px 56px;
 
   @include responsive(sm) {

@@ -165,7 +165,7 @@ function SingingStreamsWatchPage() {
   }, [player, stream]);
 
   return (
-    <Layout className={styles.root} title={stream?.song.title || ''}>
+    <Layout className={styles.root} title={stream?.song.title || ''} padding={false}>
       <main className={styles.main}>
         <div className={styles.player}>
           <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
