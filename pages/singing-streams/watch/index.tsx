@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { IconButton } from '../../../components/IconButton/IconButton';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Playlist } from '../../../components/Playlist/Playlist';
+import { Switch } from '../../../components/Switch/Switch';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
@@ -20,17 +21,30 @@ let startSeconds = 0;
 let endSeconds = 0;
 
 function SingingStreamsWatchPage() {
+  const reqIdRef = useRef<number>();
   const router = useRouter();
-  const id = router.query.v as string | undefined;
+  const streamId = useMemo(() => {
+    if (router.query.v && typeof router.query.v === 'string') {
+      return router.query.v;
+    }
+    return;
+  }, [router]);
+
+  const { stream } = useSingingStreamForWatch(streamId);
+  const { streams } = useSingingStreamsForSearch();
+
   const [isPlaying, setPlaying] = useState(false);
+  const [isEnded, setEnded] = useState(false);
+  const [isPlayedOnce, setPlayedOnce] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
+
+  const [isAutoPlay, setAutoPlay] = useLocalStorage('isAutoPlay', false);
   const [isMute, setMute] = useLocalStorage('isMute', false);
   const [isRepeat, setRepeat] = useLocalStorage('isRepeat', false);
   const [volume, setVolume] = useLocalStorage('volume', 80);
+
   const isMobile = useIsMobile();
-  const { stream } = useSingingStreamForWatch(id);
-  const { streams } = useSingingStreamsForSearch();
-  const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
@@ -83,45 +97,53 @@ function SingingStreamsWatchPage() {
     [setRepeat],
   );
 
-  const seekToStartAt = useCallback(
-    (player: YT.Player) => {
-      if (!stream) return;
-      player.seekTo(stream.start);
+  const toggleAutoPlay = useCallback(
+    (isAutoPlay) => {
+      setAutoPlay(isAutoPlay);
     },
-    [stream],
+    [setAutoPlay],
   );
 
-  const onStateChange = useCallback(
-    (event: { target: YT.Player; data: number }) => {
-      // ended
-      if (event.data === 0) {
-        if (isRepeatVariable) {
-          seekToStartAt(event.target);
-        }
-      }
+  const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
+    console.log('event.data', event.data);
+    // unplayed
+    if (event.data === -1) {
+      setPlayedOnce(false);
+    }
 
-      // playing
-      if (event.data === 1) {
-        const currentTime = event.target.getCurrentTime();
-        if (endSeconds < currentTime || currentTime < startSeconds) {
-          seekToStartAt(event.target);
-        }
-        setPlaying(true);
-      } else {
-        setPlaying(false);
+    // ended
+    if (event.data === 0) {
+      if (isRepeatVariable) {
+        event.target.seekTo(startSeconds);
       }
-    },
-    [seekToStartAt],
-  );
+      setEnded(true);
+    } else {
+      setEnded(false);
+    }
+
+    // playing
+    if (event.data === 1) {
+      const currentTime = event.target.getCurrentTime();
+      if (endSeconds < currentTime || currentTime < startSeconds) {
+        event.target.seekTo(startSeconds);
+      }
+      setPlaying(true);
+      setPlayedOnce(true);
+    } else {
+      setPlaying(false);
+    }
+  }, []);
 
   const onMobilePlayerVisibleChange = useCallback(() => {
     setMobilePlaylistVisible((visible) => !visible);
   }, []);
 
-  // Initialize watch page
+  // When isRepeat is changed, the local variable is also changed.
   useEffect(() => {
     isRepeatVariable = isRepeat;
   }, [isRepeat]);
+
+  // When the start and end of the stream are changed, the local variables are also changed.
   useEffect(() => {
     startSeconds = stream?.start ?? 0;
     endSeconds = stream?.end ?? 0;
@@ -129,31 +151,31 @@ function SingingStreamsWatchPage() {
 
   // Update current time
   useEffect(() => {
-    let id: number;
+    if (!player || !stream || !isPlaying) return;
     const step = () => {
-      if (!player || !stream) return;
       const currentTime = player.getCurrentTime();
       setCurrentTime(Math.max(0, currentTime - stream.start));
-      if (isPlaying) {
-        id = requestAnimationFrame(step);
-      }
+      reqIdRef.current = requestAnimationFrame(step);
     };
-    id = requestAnimationFrame(step);
+    reqIdRef.current = requestAnimationFrame(step);
     return () => {
-      cancelAnimationFrame(id);
+      reqIdRef.current && cancelAnimationFrame(reqIdRef.current);
     };
   }, [isPlaying, player, stream]);
 
+  // Change mute status.
   useEffect(() => {
     if (!player) return;
     isMute ? player.mute() : player.unMute();
   }, [isMute, player]);
 
+  // Update volume.
   useEffect(() => {
     if (!player) return;
     player.setVolume(volume);
   }, [player, volume]);
 
+  // Add onStateChange event listener.
   useEffect(() => {
     if (!player) return;
     player.addEventListener('onStateChange', onStateChange);
@@ -162,12 +184,24 @@ function SingingStreamsWatchPage() {
     };
   }, [onStateChange, player]);
 
+  // when stream changes, load the video.
   useEffect(() => {
     if (stream && player) {
+      setPlayedOnce(false);
       setMobilePlaylistVisible(false);
       player.loadVideoById({ videoId: stream.video_id, startSeconds: stream.start, endSeconds: stream.end });
     }
   }, [player, stream]);
+
+  // When the video ends, if AutoPlay is true, streams will be played in order.
+  useEffect(() => {
+    if (!isAutoPlay || !streams || !isEnded || !isPlayedOnce || !streamId || !router.isReady) return;
+    const playingStreamIndex = streams.findIndex((stream) => stream.id === streamId);
+    const nextStreamId = streams[playingStreamIndex + 1]?.id ?? streams[0]?.id;
+    if (nextStreamId) {
+      router.push(`/singing-streams/watch?v=${nextStreamId}`);
+    }
+  }, [isAutoPlay, isEnded, isPlayedOnce, router, streamId, streams]);
 
   return (
     <Layout className={styles.root} title={stream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
@@ -176,10 +210,15 @@ function SingingStreamsWatchPage() {
           <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
         </div>
         {!isMobile ? (
-          streams ? (
-            <Playlist className={styles.playlist} streams={streams} />
+          !streams ? (
+            <div className={styles.sidePanelSkeleton} />
           ) : (
-            <div className={styles.playlistSkeleton} />
+            <div className={styles.sidePanel}>
+              <div className={styles.autoPlay}>
+                <Switch label="自動再生" checked={isAutoPlay} onChange={toggleAutoPlay} />
+              </div>
+              <Playlist className={styles.playlist} streams={streams} />
+            </div>
           )
         ) : null}
       </main>
@@ -211,7 +250,7 @@ function SingingStreamsWatchPage() {
               isRepeat={isRepeat}
               isMute={isMute}
               length={stream.end - stream.start}
-              volume={player.getVolume()}
+              volume={volume}
               videoId={stream.video_id}
               songTitle={stream.song.title}
               songArtist={stream.song.artist}
