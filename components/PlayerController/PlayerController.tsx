@@ -1,7 +1,17 @@
+import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { MdPause, MdPlayArrow, MdRepeatOne, MdSkipNext, MdSkipPrevious, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
+import {
+  MdPause,
+  MdPlayArrow,
+  MdRepeatOne,
+  MdShuffle,
+  MdSkipNext,
+  MdSkipPrevious,
+  MdVolumeOff,
+  MdVolumeUp
+} from 'react-icons/md';
 import { useHoverDirty } from 'react-use';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
@@ -12,6 +22,7 @@ type Props = {
   isPlaying: boolean;
   isMute: boolean;
   isRepeat: boolean;
+  isShuffled: boolean;
   isSkipPrevDisabled: boolean;
   isSkipNextDisabled: boolean;
   volume: number;
@@ -26,6 +37,7 @@ type Props = {
   onSeek: (time: number) => void;
   onMute: (mute: boolean) => void;
   onRepeat: (isRepeat: boolean) => void;
+  onShuffle: () => void;
   onVolumeChange: (volume: number) => void;
   onSkipPrev: () => void;
   onSkipNext: () => void;
@@ -35,6 +47,7 @@ export const PlayerController = memo(function PlayerController({
   isPlaying,
   isMute,
   isRepeat,
+  isShuffled,
   isSkipPrevDisabled,
   isSkipNextDisabled,
   volume,
@@ -49,6 +62,7 @@ export const PlayerController = memo(function PlayerController({
   onSeek,
   onMute,
   onRepeat,
+  onShuffle,
   onVolumeChange,
   onSkipPrev,
   onSkipNext,
@@ -139,11 +153,14 @@ export const PlayerController = memo(function PlayerController({
           </IconButton>
         </div>
         <IconButton
-          className={styles.repeat}
+          className={clsx(styles.repeat, { [styles['repeating']]: isRepeat })}
           aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'}
           onClick={onRepeatClick}
         >
           <MdRepeatOne color={isRepeat ? '#ffffff' : '#757575'} />
+        </IconButton>
+        <IconButton className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })} onClick={onShuffle}>
+          <MdShuffle />
         </IconButton>
       </div>
     </div>

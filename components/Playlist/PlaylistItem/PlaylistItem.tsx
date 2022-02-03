@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { format } from 'date-fns';
+import { Reorder } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useRef } from 'react';
@@ -21,7 +22,7 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
   const isHovering = useHovering(ref);
 
   return (
-    <div className={clsx(styles.item, className)} key={stream.id} ref={ref}>
+    <Reorder.Item className={clsx(styles.item, className)} value={stream} dragListener={false} ref={ref}>
       <Link href={`/singing-streams/watch?v=${stream.id}`}>
         <a className={styles.thumbnail}>
           <Image
@@ -55,6 +56,6 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
           YouTubeで見る
         </ExternalLink>
       </KebabMenu>
-    </div>
+    </Reorder.Item>
   );
 });

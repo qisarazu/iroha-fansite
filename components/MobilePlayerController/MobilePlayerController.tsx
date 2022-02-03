@@ -1,7 +1,8 @@
+import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo, useCallback } from 'react';
-import { MdPause, MdPlayArrow, MdRepeatOne, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
+import { MdPause, MdPlayArrow, MdRepeatOne, MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
 import { Slider } from '../Slider/Slider';
@@ -10,6 +11,7 @@ import styles from './MobilePlayerController.module.scss';
 type Props = {
   isPlaying: boolean;
   isRepeat: boolean;
+  isShuffled: boolean;
   isSkipPrevDisabled: boolean;
   isSkipNextDisabled: boolean;
   currentTime: number;
@@ -22,6 +24,7 @@ type Props = {
   onPause: () => void;
   onSeek: (time: number) => void;
   onRepeat: (isRepeat: boolean) => void;
+  onShuffle: () => void;
   onSkipPrev: () => void;
   onSkipNext: () => void;
 };
@@ -29,6 +32,7 @@ type Props = {
 export const MobilePlayerController = memo(function MobilePlayerController({
   isPlaying,
   isRepeat,
+  isShuffled,
   isSkipPrevDisabled,
   isSkipNextDisabled,
   currentTime,
@@ -41,6 +45,7 @@ export const MobilePlayerController = memo(function MobilePlayerController({
   onPause,
   onSeek,
   onRepeat,
+  onShuffle,
   onSkipPrev,
   onSkipNext,
 }: Props) {
@@ -72,7 +77,11 @@ export const MobilePlayerController = memo(function MobilePlayerController({
         </div>
       </div>
       <div className={styles.controls}>
-        <div />
+        <div className={styles.leftControls}>
+          <IconButton className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })} onClick={onShuffle}>
+            <MdShuffle />
+          </IconButton>
+        </div>
         <div className={styles.middleControls}>
           <IconButton aria-label="前の曲" onClick={onSkipPrev} disabled={isSkipPrevDisabled}>
             <MdSkipPrevious />
@@ -92,9 +101,13 @@ export const MobilePlayerController = memo(function MobilePlayerController({
             <MdSkipNext />
           </IconButton>
         </div>
-        <div className={styles.repeat}>
-          <IconButton aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'} onClick={onRepeatClick}>
-            <MdRepeatOne color={isRepeat ? '#ffffff' : '#757575'} />
+        <div className={styles.rightControls}>
+          <IconButton
+            className={clsx(styles.repeat, { [styles['repeating']]: isRepeat })}
+            aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'}
+            onClick={onRepeatClick}
+          >
+            <MdRepeatOne />
           </IconButton>
         </div>
       </div>
