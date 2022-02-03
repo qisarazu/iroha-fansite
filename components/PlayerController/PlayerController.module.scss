@@ -40,6 +40,7 @@
 
 .rightControls {
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .volume {
@@ -52,14 +53,24 @@
   margin-right: 1.5rem;
 }
 
-.repeat {
-  margin-left: 1rem;
-}
-
 .slider {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   transform: translateY(-50%);
+}
+
+.repeat {
+  color: $gray-700;
+  &.repeating {
+    color: $base-white;
+  }
+}
+
+.shuffle {
+  color: $gray-700;
+  &.shuffled {
+    color: $base-white;
+  }
 }

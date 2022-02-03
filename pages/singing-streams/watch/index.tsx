@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { shuffle, without } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -11,6 +12,7 @@ import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../h
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
+import type { SingingStreamForSearch } from '../../../types';
 import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
@@ -29,21 +31,23 @@ function SingingStreamsWatchPage() {
   }, [router]);
 
   const { stream: currentStream } = useSingingStreamForWatch(streamId);
-  const { streams } = useSingingStreamsForSearch();
+  const { streams: rawStreams } = useSingingStreamsForSearch();
   const isFirstStream = useMemo(
-    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
-    [streams, streamId],
+    () => (rawStreams ? rawStreams.findIndex((stream) => stream.id === streamId) === 0 : false),
+    [rawStreams, streamId],
   );
   const isLastStream = useMemo(
-    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === streams.length - 1 : false),
-    [streams, streamId],
+    () => (rawStreams ? rawStreams.findIndex((stream) => stream.id === streamId) === rawStreams.length - 1 : false),
+    [rawStreams, streamId],
   );
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
   const [isPlayedOnce, setPlayedOnce] = useState(false);
+  const [isShuffledOnce, setShuffledOnce] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
+  const [streams, setStreams] = useState<SingingStreamForSearch[]>([]);
 
   const [isMute, setMute] = useLocalStorage('isMute', false);
   const [isRepeat, setRepeat] = useLocalStorage('isRepeat', false);
@@ -156,6 +160,20 @@ function SingingStreamsWatchPage() {
     setMobilePlaylistVisible((visible) => !visible);
   }, []);
 
+  const onShuffle = useCallback(() => {
+    if (!rawStreams || !streamId) return;
+    const currentStream = rawStreams.find((stream) => stream.id === streamId);
+    if (!currentStream) return;
+    setStreams([currentStream].concat(shuffle(without(streams, currentStream))));
+    setShuffledOnce(true);
+  }, [rawStreams, streamId, streams]);
+
+  useEffect(() => {
+    if (rawStreams) {
+      setStreams(rawStreams);
+    }
+  }, [rawStreams]);
+
   // When isRepeat is changed, the local variable is also changed.
   useEffect(() => {
     isRepeatVariable = isRepeat;
@@ -245,7 +263,7 @@ function SingingStreamsWatchPage() {
           <YTPlayer {...ytPlayerProps} hidden={!currentStream || !player} />
         </div>
         {!isMobile ? (
-          !streams ? (
+          !rawStreams ? (
             <div className={styles.sidePanelSkeleton} />
           ) : (
             <div className={styles.sidePanel}>
@@ -267,6 +285,7 @@ function SingingStreamsWatchPage() {
               isRepeat={isRepeat}
               isSkipPrevDisabled={isFirstStream}
               isSkipNextDisabled={isLastStream}
+              isShuffled={isShuffledOnce}
               length={currentStream.end - currentStream.start}
               videoId={currentStream.video_id}
               publishedAt={currentStream.published_at}
@@ -276,6 +295,7 @@ function SingingStreamsWatchPage() {
               onPlay={onPlay}
               onPause={onPause}
               onRepeat={onRepeat}
+              onShuffle={onShuffle}
               onSeek={onSeek}
               onSkipPrev={onSkipPrev}
               onSkipNext={onSkipNext}
@@ -287,6 +307,7 @@ function SingingStreamsWatchPage() {
               isMute={isMute}
               isSkipPrevDisabled={isFirstStream}
               isSkipNextDisabled={isLastStream}
+              isShuffled={isShuffledOnce}
               length={currentStream.end - currentStream.start}
               volume={volume}
               videoId={currentStream.video_id}
@@ -299,6 +320,7 @@ function SingingStreamsWatchPage() {
               onSkipPrev={onSkipPrev}
               onSkipNext={onSkipNext}
               onRepeat={onRepeat}
+              onShuffle={onShuffle}
               onSeek={onSeek}
               onMute={onMute}
               onVolumeChange={onVolumeChange}
@@ -306,7 +328,7 @@ function SingingStreamsWatchPage() {
           )}
         </motion.div>
       ) : null}
-      {isMobile && streams ? (
+      {isMobile && rawStreams ? (
         <motion.div
           className={styles.mobilePlaylistWrapper}
           animate={isMobilePlaylistVisible ? 'visible' : 'hidden'}
@@ -318,7 +340,6 @@ function SingingStreamsWatchPage() {
           }}
         >
           <button className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
-            {/* {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />} */}
             <MdQueueMusic />
           </button>
           <Playlist className={styles.mobilePlaylist} streams={streams} />

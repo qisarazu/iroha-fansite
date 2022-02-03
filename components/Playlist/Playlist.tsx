@@ -1,6 +1,7 @@
 import clsx from 'clsx';
+import { Reorder } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import type { SingingStreamForSearch } from '../../types';
 import styles from './Playlist.module.scss';
 import { PlaylistItem } from './PlaylistItem/PlaylistItem';
@@ -19,11 +20,13 @@ export const Playlist = memo(({ className, streams }: Props) => {
     return streams.find((stream) => stream.id === id)?.id || '';
   }, [router, streams]);
 
+  const onReorder = () => {};
+
   return (
-    <div className={clsx(styles.root, className)}>
+    <Reorder.Group className={clsx(styles.root, className)} axis="y" values={streams} onReorder={onReorder}>
       {streams.map((stream) => (
         <PlaylistItem stream={stream} isPlaying={stream.id === currentStreamId} key={stream.id} />
       ))}
-    </div>
+    </Reorder.Group>
   );
 });

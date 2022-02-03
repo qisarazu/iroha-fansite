@@ -21,6 +21,7 @@
 
 .songTitle {
   @include lineClamp(1);
+  font-weight: bold;
 }
 
 .songArtist {
@@ -49,6 +50,13 @@
   align-items: center;
 }
 
+.shuffle {
+  color: $gray-700;
+  &.shuffled {
+    color: $base-white;
+  }
+}
+
 .middleControls {
   display: flex;
   align-items: center;
@@ -60,6 +68,13 @@
   text-align: center;
 }
 
-.repeat {
+.rightControls {
   justify-self: end;
+}
+
+.repeat {
+  color: $gray-700;
+  &.repeating {
+    color: $base-white;
+  }
 }
