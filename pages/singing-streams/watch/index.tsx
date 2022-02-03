@@ -251,7 +251,12 @@ function SingingStreamsWatchPage() {
   useEffect(() => {
     if (!streams || !isEnded || !isPlayedOnce || !currentStream) return;
     const playingStreamIndex = streams.findIndex((s) => s.id === currentStream.id);
-    const nextStreamId = streams[playingStreamIndex + 1]?.id ?? repeatType === 'repeat' ? streams[0].id : null;
+    const nextStreamId =
+      playingStreamIndex === streams.length - 1
+        ? repeatType === 'repeat'
+          ? streams[0].id
+          : null
+        : streams[playingStreamIndex + 1]?.id;
     if (nextStreamId) {
       router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
