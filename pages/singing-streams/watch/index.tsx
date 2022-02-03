@@ -191,6 +191,7 @@ function SingingStreamsWatchPage() {
 
   useEffect(() => {
     const handleRouteChange = () => {
+      setCurrentTime(0);
       setPlayedOnce(false);
       setEnded(false);
       setMobilePlaylistVisible(false);
