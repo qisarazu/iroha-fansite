@@ -1,6 +1,6 @@
-import { forwardRef, memo } from 'react';
 import clsx from 'clsx';
 import type { ComponentPropsWithoutRef } from 'react';
+import { forwardRef, memo } from 'react';
 import styles from './IconButton.module.scss';
 
 type Props = ComponentPropsWithoutRef<'button'> & {
@@ -8,7 +8,11 @@ type Props = ComponentPropsWithoutRef<'button'> & {
 };
 
 export const IconButton = memo(
-  forwardRef<HTMLButtonElement, Props>(({ className, size = 'medium', ...props }, ref) => (
-    <button {...props} className={clsx(styles.root, styles[size], className)} ref={ref} />
+  forwardRef<HTMLButtonElement, Props>(({ className, size = 'medium', disabled, ...props }, ref) => (
+    <button
+      {...props}
+      className={clsx(styles.root, styles[size], className, { [styles['disabled']]: disabled })}
+      ref={ref}
+    />
   )),
 );

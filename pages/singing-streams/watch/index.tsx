@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
-import { IconButton } from '../../../components/IconButton/IconButton';
+import { MdQueueMusic } from 'react-icons/md';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Playlist } from '../../../components/Playlist/Playlist';
-import { Switch } from '../../../components/Switch/Switch';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
@@ -32,6 +30,14 @@ function SingingStreamsWatchPage() {
 
   const { stream: currentStream } = useSingingStreamForWatch(streamId);
   const { streams } = useSingingStreamsForSearch();
+  const isFirstStream = useMemo(
+    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
+    [streams, streamId],
+  );
+  const isLastStream = useMemo(
+    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === streams.length - 1 : false),
+    [streams, streamId],
+  );
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
@@ -62,6 +68,26 @@ function SingingStreamsWatchPage() {
     if (!player) return;
     player.pauseVideo();
   }, [player]);
+
+  const onSkipPrev = useCallback(() => {
+    if (!streams || !currentStream) return;
+    const playingStreamIndex = streams.findIndex((stream) => stream.id === currentStream.id);
+    if (playingStreamIndex === 0) return;
+    const prevStream = streams[playingStreamIndex - 1];
+    if (prevStream) {
+      router.push(`/singing-streams/watch?v=${prevStream.id}`);
+    }
+  }, [currentStream, router, streams]);
+
+  const onSkipNext = useCallback(() => {
+    if (!streams || !currentStream) return;
+    const playingStreamIndex = streams.findIndex((stream) => stream.id === currentStream.id);
+    if (playingStreamIndex === streams.length - 1) return;
+    const nextStream = streams[playingStreamIndex + 1];
+    if (nextStream) {
+      router.push(`/singing-streams/watch?v=${nextStream.id}`);
+    }
+  }, [currentStream, router, streams]);
 
   const onVolumeChange = useCallback(
     (value) => {
@@ -206,7 +232,7 @@ function SingingStreamsWatchPage() {
   useEffect(() => {
     if (!streams || !isEnded || !isPlayedOnce || !currentStream) return;
     const playingStreamIndex = streams.findIndex((s) => s.id === currentStream.id);
-    const nextStreamId = streams[playingStreamIndex + 1]?.id ?? streams[0]?.id;
+    const nextStreamId = streams[playingStreamIndex + 1]?.id;
     if (nextStreamId) {
       router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
@@ -239,6 +265,8 @@ function SingingStreamsWatchPage() {
             <MobilePlayerController
               isPlaying={isPlaying}
               isRepeat={isRepeat}
+              isSkipPrevDisabled={isFirstStream}
+              isSkipNextDisabled={isLastStream}
               length={currentStream.end - currentStream.start}
               videoId={currentStream.video_id}
               publishedAt={currentStream.published_at}
@@ -249,12 +277,16 @@ function SingingStreamsWatchPage() {
               onPause={onPause}
               onRepeat={onRepeat}
               onSeek={onSeek}
+              onSkipPrev={onSkipPrev}
+              onSkipNext={onSkipNext}
             />
           ) : (
             <PlayerController
               isPlaying={isPlaying}
               isRepeat={isRepeat}
               isMute={isMute}
+              isSkipPrevDisabled={isFirstStream}
+              isSkipNextDisabled={isLastStream}
               length={currentStream.end - currentStream.start}
               volume={volume}
               videoId={currentStream.video_id}
@@ -264,6 +296,8 @@ function SingingStreamsWatchPage() {
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
+              onSkipPrev={onSkipPrev}
+              onSkipNext={onSkipNext}
               onRepeat={onRepeat}
               onSeek={onSeek}
               onMute={onMute}
@@ -284,7 +318,8 @@ function SingingStreamsWatchPage() {
           }}
         >
           <button className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
-            {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />}
+            {/* {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />} */}
+            <MdQueueMusic />
           </button>
           <Playlist className={styles.mobilePlaylist} streams={streams} />
         </motion.div>

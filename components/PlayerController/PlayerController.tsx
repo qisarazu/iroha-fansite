@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { MdPause, MdPlayArrow, MdRepeatOne, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
+import { MdPause, MdPlayArrow, MdRepeatOne, MdSkipNext, MdSkipPrevious, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
 import { useHoverDirty } from 'react-use';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
@@ -12,6 +12,8 @@ type Props = {
   isPlaying: boolean;
   isMute: boolean;
   isRepeat: boolean;
+  isSkipPrevDisabled: boolean;
+  isSkipNextDisabled: boolean;
   volume: number;
   currentTime: number;
   length: number;
@@ -25,12 +27,16 @@ type Props = {
   onMute: (mute: boolean) => void;
   onRepeat: (isRepeat: boolean) => void;
   onVolumeChange: (volume: number) => void;
+  onSkipPrev: () => void;
+  onSkipNext: () => void;
 };
 
 export const PlayerController = memo(function PlayerController({
   isPlaying,
   isMute,
   isRepeat,
+  isSkipPrevDisabled,
+  isSkipNextDisabled,
   volume,
   currentTime,
   length,
@@ -44,6 +50,8 @@ export const PlayerController = memo(function PlayerController({
   onMute,
   onRepeat,
   onVolumeChange,
+  onSkipPrev,
+  onSkipNext,
 }: Props) {
   const volumeRef = useRef<HTMLDivElement>(null);
   const isVolumeHovered = useHoverDirty(volumeRef);
@@ -85,6 +93,9 @@ export const PlayerController = memo(function PlayerController({
         labelDisplay
       />
       <div className={styles.leftControls}>
+        <IconButton aria-label="前の曲" onClick={onSkipPrev} disabled={isSkipPrevDisabled}>
+          <MdSkipPrevious />
+        </IconButton>
         {isPlaying ? (
           <IconButton size="large" aria-label="停止" onClick={onPause}>
             <MdPause />
@@ -94,6 +105,9 @@ export const PlayerController = memo(function PlayerController({
             <MdPlayArrow />
           </IconButton>
         )}
+        <IconButton aria-label="次の曲" onClick={onSkipNext} disabled={isSkipNextDisabled}>
+          <MdSkipNext />
+        </IconButton>
         <span className={styles.time}>{`${formatVideoLength(currentTime)} / ${formatVideoLength(length)}`}</span>
       </div>
       <div className={styles.middleControls}>
