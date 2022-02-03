@@ -30,7 +30,7 @@ function SingingStreamsWatchPage() {
     return;
   }, [router]);
 
-  const { stream } = useSingingStreamForWatch(streamId);
+  const { stream: currentStream } = useSingingStreamForWatch(streamId);
   const { streams } = useSingingStreamsForSearch();
 
   const [isPlaying, setPlaying] = useState(false);
@@ -83,10 +83,10 @@ function SingingStreamsWatchPage() {
 
   const onSeek = useCallback(
     (time: number) => {
-      if (!player || !stream) return;
-      player.seekTo(stream.start + time);
+      if (!player || !currentStream) return;
+      player.seekTo(currentStream.start + time);
     },
-    [player, stream],
+    [player, currentStream],
   );
 
   const onRepeat = useCallback(
@@ -105,7 +105,6 @@ function SingingStreamsWatchPage() {
   );
 
   const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
-    console.log('event.data', event.data);
     // unplayed
     if (event.data === -1) {
       setPlayedOnce(false);
@@ -115,8 +114,9 @@ function SingingStreamsWatchPage() {
     if (event.data === 0) {
       if (isRepeatVariable) {
         event.target.seekTo(startSeconds);
+      } else {
+        setEnded(true);
       }
-      setEnded(true);
     } else {
       setEnded(false);
     }
@@ -145,23 +145,25 @@ function SingingStreamsWatchPage() {
 
   // When the start and end of the stream are changed, the local variables are also changed.
   useEffect(() => {
-    startSeconds = stream?.start ?? 0;
-    endSeconds = stream?.end ?? 0;
-  }, [stream?.start, stream?.end]);
+    startSeconds = currentStream?.start ?? 0;
+    endSeconds = currentStream?.end ?? 0;
+  }, [currentStream?.start, currentStream?.end]);
 
   // Update current time
   useEffect(() => {
-    if (!player || !stream || !isPlaying) return;
     const step = () => {
-      const currentTime = player.getCurrentTime();
-      setCurrentTime(Math.max(0, currentTime - stream.start));
-      reqIdRef.current = requestAnimationFrame(step);
+      if (!player || !currentStream) return;
+      const currentTime = player.getCurrentTime() - currentStream.start;
+      setCurrentTime(isNaN(currentTime) ? 0 : Math.max(0, currentTime));
+      if (isPlaying) {
+        reqIdRef.current = requestAnimationFrame(step);
+      }
     };
     reqIdRef.current = requestAnimationFrame(step);
     return () => {
       reqIdRef.current && cancelAnimationFrame(reqIdRef.current);
     };
-  }, [isPlaying, player, stream]);
+  }, [isPlaying, player, currentStream]);
 
   // Change mute status.
   useEffect(() => {
@@ -186,28 +188,42 @@ function SingingStreamsWatchPage() {
 
   // when stream changes, load the video.
   useEffect(() => {
-    if (stream && player) {
-      setPlayedOnce(false);
-      setMobilePlaylistVisible(false);
-      player.loadVideoById({ videoId: stream.video_id, startSeconds: stream.start, endSeconds: stream.end });
+    if (currentStream && player) {
+      player.loadVideoById({
+        videoId: currentStream.video_id,
+        startSeconds: currentStream.start,
+        endSeconds: currentStream.end,
+      });
     }
-  }, [player, stream]);
+  }, [player, currentStream]);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setPlayedOnce(false);
+      setEnded(false);
+      setMobilePlaylistVisible(false);
+    };
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events]);
 
   // When the video ends, if AutoPlay is true, streams will be played in order.
   useEffect(() => {
-    if (!isAutoPlay || !streams || !isEnded || !isPlayedOnce || !streamId || !router.isReady) return;
-    const playingStreamIndex = streams.findIndex((stream) => stream.id === streamId);
+    if (!isAutoPlay || !streams || !isEnded || !isPlayedOnce || !currentStream) return;
+    const playingStreamIndex = streams.findIndex((s) => s.id === currentStream.id);
     const nextStreamId = streams[playingStreamIndex + 1]?.id ?? streams[0]?.id;
     if (nextStreamId) {
       router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
-  }, [isAutoPlay, isEnded, isPlayedOnce, router, streamId, streams]);
+  }, [isAutoPlay, isEnded, isPlayedOnce, currentStream, streams, router]);
 
   return (
-    <Layout className={styles.root} title={stream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
+    <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
       <main className={styles.main}>
         <div className={styles.player}>
-          <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
+          <YTPlayer {...ytPlayerProps} hidden={!currentStream || !player} />
         </div>
         {!isMobile ? (
           !streams ? (
@@ -222,7 +238,7 @@ function SingingStreamsWatchPage() {
           )
         ) : null}
       </main>
-      {stream && player ? (
+      {currentStream && player ? (
         <motion.div
           className={styles.controller}
           initial={{ y: '100%' }}
@@ -233,11 +249,11 @@ function SingingStreamsWatchPage() {
             <MobilePlayerController
               isPlaying={isPlaying}
               isRepeat={isRepeat}
-              length={stream.end - stream.start}
-              videoId={stream.video_id}
-              publishedAt={stream.published_at}
-              songTitle={stream.song.title}
-              songArtist={stream.song.artist}
+              length={currentStream.end - currentStream.start}
+              videoId={currentStream.video_id}
+              publishedAt={currentStream.published_at}
+              songTitle={currentStream.song.title}
+              songArtist={currentStream.song.artist}
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
@@ -249,12 +265,12 @@ function SingingStreamsWatchPage() {
               isPlaying={isPlaying}
               isRepeat={isRepeat}
               isMute={isMute}
-              length={stream.end - stream.start}
+              length={currentStream.end - currentStream.start}
               volume={volume}
-              videoId={stream.video_id}
-              songTitle={stream.song.title}
-              songArtist={stream.song.artist}
-              publishedAt={stream.published_at}
+              videoId={currentStream.video_id}
+              songTitle={currentStream.song.title}
+              songArtist={currentStream.song.artist}
+              publishedAt={currentStream.published_at}
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}

@@ -32,7 +32,7 @@ async function getForWatch(key: string) {
   const id = match[1];
   const { data, error } = await supabase
     .from<SingingStreamForWatch>('singing_stream')
-    .select('start, end, video_id, published_at, song(title, artist), video!video_id(title, url)')
+    .select('id, start, end, video_id, published_at, song(title, artist), video!video_id(title, url)')
     .eq('id', id)
     .single();
 
