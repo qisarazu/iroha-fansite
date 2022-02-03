@@ -2,29 +2,21 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import {
-  MdPause,
-  MdPlayArrow,
-  MdRepeatOne,
-  MdShuffle,
-  MdSkipNext,
-  MdSkipPrevious,
-  MdVolumeOff,
-  MdVolumeUp
-} from 'react-icons/md';
+import { MdPause, MdPlayArrow, MdShuffle, MdSkipNext, MdSkipPrevious, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
 import { useHoverDirty } from 'react-use';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
+import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './PlayerController.module.scss';
 
 type Props = {
   isPlaying: boolean;
   isMute: boolean;
-  isRepeat: boolean;
   isShuffled: boolean;
   isSkipPrevDisabled: boolean;
   isSkipNextDisabled: boolean;
+  repeatType: RepeatType;
   volume: number;
   currentTime: number;
   length: number;
@@ -36,7 +28,7 @@ type Props = {
   onPause: () => void;
   onSeek: (time: number) => void;
   onMute: (mute: boolean) => void;
-  onRepeat: (isRepeat: boolean) => void;
+  onRepeat: (type: RepeatType) => void;
   onShuffle: () => void;
   onVolumeChange: (volume: number) => void;
   onSkipPrev: () => void;
@@ -46,10 +38,10 @@ type Props = {
 export const PlayerController = memo(function PlayerController({
   isPlaying,
   isMute,
-  isRepeat,
   isShuffled,
   isSkipPrevDisabled,
   isSkipNextDisabled,
+  repeatType,
   volume,
   currentTime,
   length,
@@ -91,10 +83,6 @@ export const PlayerController = memo(function PlayerController({
   const onMuteClick = useCallback(() => {
     onMute(!isMute);
   }, [isMute, onMute]);
-
-  const onRepeatClick = useCallback(() => {
-    onRepeat(!isRepeat);
-  }, [isRepeat, onRepeat]);
 
   return (
     <div className={styles.root} onMouseEnter={onControllerMouseEnter} onMouseLeave={onControllerMouseLeave}>
@@ -152,13 +140,7 @@ export const PlayerController = memo(function PlayerController({
             {isMute || volume === 0 ? <MdVolumeOff /> : <MdVolumeUp />}
           </IconButton>
         </div>
-        <IconButton
-          className={clsx(styles.repeat, { [styles['repeating']]: isRepeat })}
-          aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'}
-          onClick={onRepeatClick}
-        >
-          <MdRepeatOne color={isRepeat ? '#ffffff' : '#757575'} />
-        </IconButton>
+        <RepeatButton type={repeatType} onClick={onRepeat} />
         <IconButton className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })} onClick={onShuffle}>
           <MdShuffle />
         </IconButton>

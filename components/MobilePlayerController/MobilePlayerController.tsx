@@ -1,19 +1,20 @@
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { memo, useCallback } from 'react';
-import { MdPause, MdPlayArrow, MdRepeatOne, MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
+import { memo } from 'react';
+import { MdPause, MdPlayArrow, MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
+import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './MobilePlayerController.module.scss';
 
 type Props = {
   isPlaying: boolean;
-  isRepeat: boolean;
   isShuffled: boolean;
   isSkipPrevDisabled: boolean;
   isSkipNextDisabled: boolean;
+  repeatType: RepeatType;
   currentTime: number;
   length: number;
   videoId: string;
@@ -23,7 +24,7 @@ type Props = {
   onPlay: () => void;
   onPause: () => void;
   onSeek: (time: number) => void;
-  onRepeat: (isRepeat: boolean) => void;
+  onRepeat: (type: RepeatType) => void;
   onShuffle: () => void;
   onSkipPrev: () => void;
   onSkipNext: () => void;
@@ -31,10 +32,10 @@ type Props = {
 
 export const MobilePlayerController = memo(function MobilePlayerController({
   isPlaying,
-  isRepeat,
   isShuffled,
   isSkipPrevDisabled,
   isSkipNextDisabled,
+  repeatType,
   currentTime,
   length,
   videoId,
@@ -49,10 +50,6 @@ export const MobilePlayerController = memo(function MobilePlayerController({
   onSkipPrev,
   onSkipNext,
 }: Props) {
-  const onRepeatClick = useCallback(() => {
-    onRepeat(!isRepeat);
-  }, [isRepeat, onRepeat]);
-
   return (
     <div className={styles.root}>
       <div className={styles.streamInfo}>
@@ -102,13 +99,7 @@ export const MobilePlayerController = memo(function MobilePlayerController({
           </IconButton>
         </div>
         <div className={styles.rightControls}>
-          <IconButton
-            className={clsx(styles.repeat, { [styles['repeating']]: isRepeat })}
-            aria-label={isRepeat ? 'リピートをやめる' : 'リピートする'}
-            onClick={onRepeatClick}
-          >
-            <MdRepeatOne />
-          </IconButton>
+          <RepeatButton type={repeatType} onClick={onRepeat} />
         </div>
       </div>
     </div>

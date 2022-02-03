@@ -1,0 +1,10 @@
+@import 'variable.scss';
+
+.root {
+  color: $gray-700;
+
+  &.repeat,
+  &.repeatOne {
+    color: $base-white;
+  }
+}
