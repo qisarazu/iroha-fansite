@@ -39,7 +39,6 @@ function SingingStreamsWatchPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
 
-  const [isAutoPlay, setAutoPlay] = useLocalStorage('isAutoPlay', false);
   const [isMute, setMute] = useLocalStorage('isMute', false);
   const [isRepeat, setRepeat] = useLocalStorage('isRepeat', false);
   const [volume, setVolume] = useLocalStorage('volume', 80);
@@ -95,13 +94,6 @@ function SingingStreamsWatchPage() {
       setRepeat(repeat);
     },
     [setRepeat],
-  );
-
-  const toggleAutoPlay = useCallback(
-    (isAutoPlay) => {
-      setAutoPlay(isAutoPlay);
-    },
-    [setAutoPlay],
   );
 
   const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
@@ -209,15 +201,15 @@ function SingingStreamsWatchPage() {
     };
   }, [router.events]);
 
-  // When the video ends, if AutoPlay is true, streams will be played in order.
+  // When the video ends, streams will be played in order.
   useEffect(() => {
-    if (!isAutoPlay || !streams || !isEnded || !isPlayedOnce || !currentStream) return;
+    if (!streams || !isEnded || !isPlayedOnce || !currentStream) return;
     const playingStreamIndex = streams.findIndex((s) => s.id === currentStream.id);
     const nextStreamId = streams[playingStreamIndex + 1]?.id ?? streams[0]?.id;
     if (nextStreamId) {
       router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
-  }, [isAutoPlay, isEnded, isPlayedOnce, currentStream, streams, router]);
+  }, [isEnded, isPlayedOnce, currentStream, streams, router]);
 
   return (
     <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
@@ -230,9 +222,6 @@ function SingingStreamsWatchPage() {
             <div className={styles.sidePanelSkeleton} />
           ) : (
             <div className={styles.sidePanel}>
-              <div className={styles.autoPlay}>
-                <Switch label="自動再生" checked={isAutoPlay} onChange={toggleAutoPlay} />
-              </div>
               <Playlist className={styles.playlist} streams={streams} />
             </div>
           )
@@ -293,9 +282,9 @@ function SingingStreamsWatchPage() {
             hidden: { y: 'calc(100% - 48px)' },
           }}
         >
-          <IconButton className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
+          <button className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
             {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />}
-          </IconButton>
+          </button>
           <Playlist className={styles.mobilePlaylist} streams={streams} />
         </motion.div>
       ) : null}
