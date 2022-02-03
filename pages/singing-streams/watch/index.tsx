@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { IconButton } from '../../../components/IconButton/IconButton';
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Playlist } from '../../../components/Playlist/Playlist';
+import { Switch } from '../../../components/Switch/Switch';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
@@ -20,17 +21,29 @@ let startSeconds = 0;
 let endSeconds = 0;
 
 function SingingStreamsWatchPage() {
+  const reqIdRef = useRef<number>();
   const router = useRouter();
-  const id = router.query.v as string | undefined;
+  const streamId = useMemo(() => {
+    if (router.query.v && typeof router.query.v === 'string') {
+      return router.query.v;
+    }
+    return;
+  }, [router]);
+
+  const { stream: currentStream } = useSingingStreamForWatch(streamId);
+  const { streams } = useSingingStreamsForSearch();
+
   const [isPlaying, setPlaying] = useState(false);
+  const [isEnded, setEnded] = useState(false);
+  const [isPlayedOnce, setPlayedOnce] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
+
   const [isMute, setMute] = useLocalStorage('isMute', false);
   const [isRepeat, setRepeat] = useLocalStorage('isRepeat', false);
   const [volume, setVolume] = useLocalStorage('volume', 80);
+
   const isMobile = useIsMobile();
-  const { stream } = useSingingStreamForWatch(id);
-  const { streams } = useSingingStreamsForSearch();
-  const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
@@ -69,10 +82,10 @@ function SingingStreamsWatchPage() {
 
   const onSeek = useCallback(
     (time: number) => {
-      if (!player || !stream) return;
-      player.seekTo(stream.start + time);
+      if (!player || !currentStream) return;
+      player.seekTo(currentStream.start + time);
     },
-    [player, stream],
+    [player, currentStream],
   );
 
   const onRepeat = useCallback(
@@ -83,77 +96,80 @@ function SingingStreamsWatchPage() {
     [setRepeat],
   );
 
-  const seekToStartAt = useCallback(
-    (player: YT.Player) => {
-      if (!stream) return;
-      player.seekTo(stream.start);
-    },
-    [stream],
-  );
+  const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
+    // unplayed
+    if (event.data === -1) {
+      setPlayedOnce(false);
+    }
 
-  const onStateChange = useCallback(
-    (event: { target: YT.Player; data: number }) => {
-      // ended
-      if (event.data === 0) {
-        if (isRepeatVariable) {
-          seekToStartAt(event.target);
-        }
-      }
-
-      // playing
-      if (event.data === 1) {
-        const currentTime = event.target.getCurrentTime();
-        if (endSeconds < currentTime || currentTime < startSeconds) {
-          seekToStartAt(event.target);
-        }
-        setPlaying(true);
+    // ended
+    if (event.data === 0) {
+      if (isRepeatVariable) {
+        event.target.seekTo(startSeconds);
       } else {
-        setPlaying(false);
+        setEnded(true);
       }
-    },
-    [seekToStartAt],
-  );
+    } else {
+      setEnded(false);
+    }
+
+    // playing
+    if (event.data === 1) {
+      const currentTime = event.target.getCurrentTime();
+      if (endSeconds < currentTime || currentTime < startSeconds) {
+        event.target.seekTo(startSeconds);
+      }
+      setPlaying(true);
+      setPlayedOnce(true);
+    } else {
+      setPlaying(false);
+    }
+  }, []);
 
   const onMobilePlayerVisibleChange = useCallback(() => {
     setMobilePlaylistVisible((visible) => !visible);
   }, []);
 
-  // Initialize watch page
+  // When isRepeat is changed, the local variable is also changed.
   useEffect(() => {
     isRepeatVariable = isRepeat;
   }, [isRepeat]);
+
+  // When the start and end of the stream are changed, the local variables are also changed.
   useEffect(() => {
-    startSeconds = stream?.start ?? 0;
-    endSeconds = stream?.end ?? 0;
-  }, [stream?.start, stream?.end]);
+    startSeconds = currentStream?.start ?? 0;
+    endSeconds = currentStream?.end ?? 0;
+  }, [currentStream?.start, currentStream?.end]);
 
   // Update current time
   useEffect(() => {
-    let id: number;
     const step = () => {
-      if (!player || !stream) return;
-      const currentTime = player.getCurrentTime();
-      setCurrentTime(Math.max(0, currentTime - stream.start));
+      if (!player || !currentStream) return;
+      const currentTime = player.getCurrentTime() - currentStream.start;
+      setCurrentTime(isNaN(currentTime) ? 0 : Math.max(0, currentTime));
       if (isPlaying) {
-        id = requestAnimationFrame(step);
+        reqIdRef.current = requestAnimationFrame(step);
       }
     };
-    id = requestAnimationFrame(step);
+    reqIdRef.current = requestAnimationFrame(step);
     return () => {
-      cancelAnimationFrame(id);
+      reqIdRef.current && cancelAnimationFrame(reqIdRef.current);
     };
-  }, [isPlaying, player, stream]);
+  }, [isPlaying, player, currentStream]);
 
+  // Change mute status.
   useEffect(() => {
     if (!player) return;
     isMute ? player.mute() : player.unMute();
   }, [isMute, player]);
 
+  // Update volume.
   useEffect(() => {
     if (!player) return;
     player.setVolume(volume);
   }, [player, volume]);
 
+  // Add onStateChange event listener.
   useEffect(() => {
     if (!player) return;
     player.addEventListener('onStateChange', onStateChange);
@@ -162,28 +178,57 @@ function SingingStreamsWatchPage() {
     };
   }, [onStateChange, player]);
 
+  // when stream changes, load the video.
   useEffect(() => {
-    if (stream && player) {
-      setMobilePlaylistVisible(false);
-      player.loadVideoById({ videoId: stream.video_id, startSeconds: stream.start, endSeconds: stream.end });
+    if (currentStream && player) {
+      player.loadVideoById({
+        videoId: currentStream.video_id,
+        startSeconds: currentStream.start,
+        endSeconds: currentStream.end,
+      });
     }
-  }, [player, stream]);
+  }, [player, currentStream]);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setCurrentTime(0);
+      setPlayedOnce(false);
+      setEnded(false);
+      setMobilePlaylistVisible(false);
+    };
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events]);
+
+  // When the video ends, streams will be played in order.
+  useEffect(() => {
+    if (!streams || !isEnded || !isPlayedOnce || !currentStream) return;
+    const playingStreamIndex = streams.findIndex((s) => s.id === currentStream.id);
+    const nextStreamId = streams[playingStreamIndex + 1]?.id ?? streams[0]?.id;
+    if (nextStreamId) {
+      router.push(`/singing-streams/watch?v=${nextStreamId}`);
+    }
+  }, [isEnded, isPlayedOnce, currentStream, streams, router]);
 
   return (
-    <Layout className={styles.root} title={stream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
+    <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
       <main className={styles.main}>
         <div className={styles.player}>
-          <YTPlayer {...ytPlayerProps} hidden={!stream || !player} />
+          <YTPlayer {...ytPlayerProps} hidden={!currentStream || !player} />
         </div>
         {!isMobile ? (
-          streams ? (
-            <Playlist className={styles.playlist} streams={streams} />
+          !streams ? (
+            <div className={styles.sidePanelSkeleton} />
           ) : (
-            <div className={styles.playlistSkeleton} />
+            <div className={styles.sidePanel}>
+              <Playlist className={styles.playlist} streams={streams} />
+            </div>
           )
         ) : null}
       </main>
-      {stream && player ? (
+      {currentStream && player ? (
         <motion.div
           className={styles.controller}
           initial={{ y: '100%' }}
@@ -194,11 +239,11 @@ function SingingStreamsWatchPage() {
             <MobilePlayerController
               isPlaying={isPlaying}
               isRepeat={isRepeat}
-              length={stream.end - stream.start}
-              videoId={stream.video_id}
-              publishedAt={stream.published_at}
-              songTitle={stream.song.title}
-              songArtist={stream.song.artist}
+              length={currentStream.end - currentStream.start}
+              videoId={currentStream.video_id}
+              publishedAt={currentStream.published_at}
+              songTitle={currentStream.song.title}
+              songArtist={currentStream.song.artist}
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
@@ -210,12 +255,12 @@ function SingingStreamsWatchPage() {
               isPlaying={isPlaying}
               isRepeat={isRepeat}
               isMute={isMute}
-              length={stream.end - stream.start}
-              volume={player.getVolume()}
-              videoId={stream.video_id}
-              songTitle={stream.song.title}
-              songArtist={stream.song.artist}
-              publishedAt={stream.published_at}
+              length={currentStream.end - currentStream.start}
+              volume={volume}
+              videoId={currentStream.video_id}
+              songTitle={currentStream.song.title}
+              songArtist={currentStream.song.artist}
+              publishedAt={currentStream.published_at}
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
@@ -238,9 +283,9 @@ function SingingStreamsWatchPage() {
             hidden: { y: 'calc(100% - 48px)' },
           }}
         >
-          <IconButton className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
+          <button className={styles.mobilePlaylistVisibilityToggle} onClick={onMobilePlayerVisibleChange}>
             {isMobilePlaylistVisible ? <MdKeyboardArrowDown /> : <MdKeyboardArrowUp />}
-          </IconButton>
+          </button>
           <Playlist className={styles.mobilePlaylist} streams={streams} />
         </motion.div>
       ) : null}
