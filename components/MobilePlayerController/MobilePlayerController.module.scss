@@ -45,12 +45,19 @@
 
 .controls {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
 }
 
+.middleControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .play {
-  justify-self: center;
+  flex: 1 0;
+  text-align: center;
 }
 
 .repeat {
