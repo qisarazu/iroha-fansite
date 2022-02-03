@@ -7,6 +7,7 @@ import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
 import { PlayerController } from '../../../components/PlayerController/PlayerController';
 import { Playlist } from '../../../components/Playlist/Playlist';
+import type { RepeatType } from '../../../components/RepeatButton/RepeatButton';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
@@ -16,7 +17,7 @@ import type { SingingStreamForSearch } from '../../../types';
 import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
-let isRepeatVariable = false;
+let repeatTypeVariable: RepeatType = 'none';
 let startSeconds = 0;
 let endSeconds = 0;
 
@@ -50,7 +51,7 @@ function SingingStreamsWatchPage() {
   const [streams, setStreams] = useState<SingingStreamForSearch[]>([]);
 
   const [isMute, setMute] = useLocalStorage('isMute', false);
-  const [isRepeat, setRepeat] = useLocalStorage('isRepeat', false);
+  const [repeatType, setRepeatType] = useLocalStorage<RepeatType>('repeatType', 'none');
   const [volume, setVolume] = useLocalStorage('volume', 80);
 
   const isMobile = useIsMobile();
@@ -119,11 +120,11 @@ function SingingStreamsWatchPage() {
   );
 
   const onRepeat = useCallback(
-    (repeat) => {
-      isRepeatVariable = repeat;
-      setRepeat(repeat);
+    (repeat: RepeatType) => {
+      repeatTypeVariable = repeat;
+      setRepeatType(repeat);
     },
-    [setRepeat],
+    [setRepeatType],
   );
 
   const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
@@ -134,7 +135,7 @@ function SingingStreamsWatchPage() {
 
     // ended
     if (event.data === 0) {
-      if (isRepeatVariable) {
+      if (repeatTypeVariable === 'repeatOne') {
         event.target.seekTo(startSeconds);
       } else {
         setEnded(true);
@@ -174,10 +175,10 @@ function SingingStreamsWatchPage() {
     }
   }, [rawStreams]);
 
-  // When isRepeat is changed, the local variable is also changed.
+  // When repeatType is changed, the local variable is also changed.
   useEffect(() => {
-    isRepeatVariable = isRepeat;
-  }, [isRepeat]);
+    repeatTypeVariable = repeatType;
+  }, [repeatType]);
 
   // When the start and end of the stream are changed, the local variables are also changed.
   useEffect(() => {
@@ -250,11 +251,11 @@ function SingingStreamsWatchPage() {
   useEffect(() => {
     if (!streams || !isEnded || !isPlayedOnce || !currentStream) return;
     const playingStreamIndex = streams.findIndex((s) => s.id === currentStream.id);
-    const nextStreamId = streams[playingStreamIndex + 1]?.id;
+    const nextStreamId = streams[playingStreamIndex + 1]?.id ?? repeatType === 'repeat' ? streams[0].id : null;
     if (nextStreamId) {
       router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
-  }, [isEnded, isPlayedOnce, currentStream, streams, router]);
+  }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType]);
 
   return (
     <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
@@ -282,7 +283,6 @@ function SingingStreamsWatchPage() {
           {isMobile ? (
             <MobilePlayerController
               isPlaying={isPlaying}
-              isRepeat={isRepeat}
               isSkipPrevDisabled={isFirstStream}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
@@ -292,6 +292,7 @@ function SingingStreamsWatchPage() {
               songTitle={currentStream.song.title}
               songArtist={currentStream.song.artist}
               currentTime={currentTime}
+              repeatType={repeatType}
               onPlay={onPlay}
               onPause={onPause}
               onRepeat={onRepeat}
@@ -303,12 +304,12 @@ function SingingStreamsWatchPage() {
           ) : (
             <PlayerController
               isPlaying={isPlaying}
-              isRepeat={isRepeat}
               isMute={isMute}
               isSkipPrevDisabled={isFirstStream}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
               length={currentStream.end - currentStream.start}
+              repeatType={repeatType}
               volume={volume}
               videoId={currentStream.video_id}
               songTitle={currentStream.song.title}
