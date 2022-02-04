@@ -33,14 +33,6 @@ function SingingStreamsWatchPage() {
 
   const { stream: currentStream } = useSingingStreamForWatch(streamId);
   const { streams: rawStreams } = useSingingStreamsForSearch();
-  const isFirstStream = useMemo(
-    () => (rawStreams ? rawStreams.findIndex((stream) => stream.id === streamId) === 0 : false),
-    [rawStreams, streamId],
-  );
-  const isLastStream = useMemo(
-    () => (rawStreams ? rawStreams.findIndex((stream) => stream.id === streamId) === rawStreams.length - 1 : false),
-    [rawStreams, streamId],
-  );
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
@@ -55,6 +47,15 @@ function SingingStreamsWatchPage() {
   const [volume, setVolume] = useLocalStorage('volume', 80);
 
   const isMobile = useIsMobile();
+
+  const isFirstStream = useMemo(
+    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
+    [streams, streamId],
+  );
+  const isLastStream = useMemo(
+    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === streams.length - 1 : false),
+    [streams, streamId],
+  );
 
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
@@ -147,11 +148,15 @@ function SingingStreamsWatchPage() {
     // playing
     if (event.data === 1) {
       const currentTime = event.target.getCurrentTime();
-      if (endSeconds < currentTime || currentTime < startSeconds) {
+      if (currentTime < startSeconds) {
         event.target.seekTo(startSeconds);
+      } else if (currentTime > endSeconds) {
+        setEnded(true);
+        setPlaying(false);
+      } else {
+        setPlaying(true);
+        setPlayedOnce(true);
       }
-      setPlaying(true);
-      setPlayedOnce(true);
     } else {
       setPlaying(false);
     }
