@@ -29,17 +29,25 @@ declare namespace YT {
       endSeconds?: number;
       suggestedQuality?: string;
     }): void;
-    public cueVideoByUrl(mediaContentUrl: string, startSeconds?: number, suggestedQuality?: string): void;
+    public cueVideoById(videoId: string, startSeconds?: number): void;
+    public cueVideoById({
+      videoId,
+      startSeconds,
+      endSeconds,
+    }: {
+      videoId: string;
+      startSeconds?: number;
+      endSeconds?: number;
+    }): void;
+    public cueVideoByUrl(mediaContentUrl: string, startSeconds?: number): void;
     public cueVideoByUrl({
       mediaContentUrl,
       startSeconds,
       endSeconds,
-      suggestedQuality,
     }: {
       mediaContentUrl: string;
       startSeconds?: number;
       endSeconds?: number;
-      suggestedQuality?: string;
     }): void;
     public playVideo(): void;
     public pauseVideo(): void;
@@ -54,6 +62,8 @@ declare namespace YT {
     public getIframe(): HTMLIFrameElement;
     public getCurrentTime(): number;
     public getIframe(): Node;
+    public getPlayerState(): number;
+    public getVideoUrl(): string;
     public destroy(): void;
     public addEventListener(event: string, listener: Function): void;
     public removeEventListener(event: string, listener: Function): Void;

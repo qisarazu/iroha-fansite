@@ -11,7 +11,8 @@ import type { RepeatType } from '../../../components/RepeatButton/RepeatButton';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import { useIsPlayedVideo } from '../../../hooks/useIsPlayedVideos';
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
 import type { SingingStreamForSearch } from '../../../types';
 import styles from './index.module.scss';
@@ -47,6 +48,7 @@ function SingingStreamsWatchPage() {
   const [volume, setVolume] = useLocalStorage('volume', 80);
 
   const isMobile = useIsMobile();
+  const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideo();
 
   const isFirstStream = useMemo(
     () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
@@ -60,7 +62,7 @@ function SingingStreamsWatchPage() {
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
     controls: false,
-    autoplay: true,
+    autoplay: false,
     width: '100%',
     height: '100%',
   });
@@ -230,14 +232,15 @@ function SingingStreamsWatchPage() {
 
   // when stream changes, load the video.
   useEffect(() => {
-    if (currentStream && player) {
-      player.loadVideoById({
+    if (currentStream && player && !isPlayedOnce) {
+      const param = {
         videoId: currentStream.video_id,
         startSeconds: currentStream.start,
         endSeconds: currentStream.end,
-      });
+      };
+      isPlayedVideo(currentStream.video_id) ? player.loadVideoById(param) : player.cueVideoById(param);
     }
-  }, [player, currentStream]);
+  }, [player, currentStream, isPlayedVideo, isPlayedOnce]);
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -266,6 +269,14 @@ function SingingStreamsWatchPage() {
       router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
   }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType]);
+
+  useEffect(() => {
+    if (!isPlayedOnce || !currentStream) return;
+
+    if (!isPlayedVideo(currentStream.video_id)) {
+      addPlayedVideo(currentStream.video_id);
+    }
+  }, [currentStream, isPlayedOnce, isPlayedVideo, addPlayedVideo]);
 
   return (
     <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
@@ -296,6 +307,7 @@ function SingingStreamsWatchPage() {
               isSkipPrevDisabled={isFirstStream}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
+              needNativePlayPush={!isPlayedVideo(currentStream.video_id)}
               length={currentStream.end - currentStream.start}
               videoId={currentStream.video_id}
               publishedAt={currentStream.published_at}
@@ -318,6 +330,7 @@ function SingingStreamsWatchPage() {
               isSkipPrevDisabled={isFirstStream}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
+              needNativePlayPush={!isPlayedVideo(currentStream.video_id)}
               length={currentStream.end - currentStream.start}
               repeatType={repeatType}
               volume={volume}

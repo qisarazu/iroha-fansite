@@ -2,10 +2,11 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { MdPause, MdPlayArrow, MdShuffle, MdSkipNext, MdSkipPrevious, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
+import { MdShuffle, MdSkipNext, MdSkipPrevious, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
 import { useHoverDirty } from 'react-use';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
+import { PlayButton } from '../PlayButton/PlayButton';
 import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './PlayerController.module.scss';
@@ -16,6 +17,7 @@ type Props = {
   isShuffled: boolean;
   isSkipPrevDisabled: boolean;
   isSkipNextDisabled: boolean;
+  needNativePlayPush: boolean;
   repeatType: RepeatType;
   volume: number;
   currentTime: number;
@@ -41,6 +43,7 @@ export const PlayerController = memo(function PlayerController({
   isShuffled,
   isSkipPrevDisabled,
   isSkipNextDisabled,
+  needNativePlayPush,
   repeatType,
   volume,
   currentTime,
@@ -98,15 +101,7 @@ export const PlayerController = memo(function PlayerController({
         <IconButton aria-label="前の曲" onClick={onSkipPrev} disabled={isSkipPrevDisabled}>
           <MdSkipPrevious />
         </IconButton>
-        {isPlaying ? (
-          <IconButton size="large" aria-label="停止" onClick={onPause}>
-            <MdPause />
-          </IconButton>
-        ) : (
-          <IconButton size="large" aria-label="再生" onClick={onPlay}>
-            <MdPlayArrow />
-          </IconButton>
-        )}
+        <PlayButton needNativePlayPush={needNativePlayPush} isPlaying={isPlaying} onPlay={onPlay} onPause={onPause} />
         <IconButton aria-label="次の曲" onClick={onSkipNext} disabled={isSkipNextDisabled}>
           <MdSkipNext />
         </IconButton>
@@ -117,7 +112,7 @@ export const PlayerController = memo(function PlayerController({
           alt={songTitle}
           width={64}
           height={36}
-          src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+          src={`https://i.ytimg.com/vi/${videoId}/default.jpg`}
           objectFit="cover"
         />
         <div className={styles.info}>
