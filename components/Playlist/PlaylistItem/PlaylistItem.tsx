@@ -28,7 +28,7 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
           <Image
             alt={stream.song.title}
             layout="fill"
-            src={`https://i.ytimg.com/vi/${stream.video_id}/hqdefault.jpg`}
+            src={`https://i.ytimg.com/vi/${stream.video_id}/default.jpg`}
             objectFit="cover"
           />
           {isHovering && !isPlaying ? (

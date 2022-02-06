@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useState, useRef, useEffect } from 'react';
 
 // based on https://github.com/streamich/react-use/blob/3685b7502a/src/useLocalStorage.ts
-const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>, () => void] => {
+export const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>, () => void] => {
   if (!key) {
     throw new Error('useLocalStorage key may not be falsy');
   }
@@ -37,5 +37,3 @@ const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetState
 
   return [state, set, remove];
 };
-
-export default useLocalStorage;

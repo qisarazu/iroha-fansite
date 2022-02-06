@@ -1,0 +1,11 @@
+@import 'variable.scss';
+
+.tips {
+  padding: 0.25rem 0.5rem;
+  background-color: $gray-800;
+  border: 1px solid $gray-700;
+}
+
+.play.disabled {
+  opacity: 0.5;
+}

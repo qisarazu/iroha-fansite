@@ -2,9 +2,10 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo } from 'react';
-import { MdPause, MdPlayArrow, MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
+import { MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
+import { PlayButton } from '../PlayButton/PlayButton';
 import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './MobilePlayerController.module.scss';
@@ -14,6 +15,7 @@ type Props = {
   isShuffled: boolean;
   isSkipPrevDisabled: boolean;
   isSkipNextDisabled: boolean;
+  needNativePlayPush: boolean;
   repeatType: RepeatType;
   currentTime: number;
   length: number;
@@ -35,6 +37,7 @@ export const MobilePlayerController = memo(function MobilePlayerController({
   isShuffled,
   isSkipPrevDisabled,
   isSkipNextDisabled,
+  needNativePlayPush,
   repeatType,
   currentTime,
   length,
@@ -84,15 +87,12 @@ export const MobilePlayerController = memo(function MobilePlayerController({
             <MdSkipPrevious />
           </IconButton>
           <div className={styles.play}>
-            {isPlaying ? (
-              <IconButton size="large" aria-label="停止" onClick={onPause}>
-                <MdPause />
-              </IconButton>
-            ) : (
-              <IconButton size="large" aria-label="再生" onClick={onPlay}>
-                <MdPlayArrow />
-              </IconButton>
-            )}
+            <PlayButton
+              needNativePlayPush={needNativePlayPush}
+              isPlaying={isPlaying}
+              onPlay={onPlay}
+              onPause={onPause}
+            />
           </div>
           <IconButton aria-label="次の曲" onClick={onSkipNext} disabled={isSkipNextDisabled}>
             <MdSkipNext />
