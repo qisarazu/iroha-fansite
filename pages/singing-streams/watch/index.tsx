@@ -78,14 +78,19 @@ function SingingStreamsWatchPage() {
   }, [player]);
 
   const onSkipPrev = useCallback(() => {
-    if (!streams || !currentStream) return;
+    if (!streams || !currentStream || !player) return;
+    if (currentTime >= 5) {
+      player.seekTo(currentStream.start);
+      setCurrentTime(0);
+      return;
+    }
     const playingStreamIndex = streams.findIndex((stream) => stream.id === currentStream.id);
     if (playingStreamIndex === 0) return;
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
       router.push(`/singing-streams/watch?v=${prevStream.id}`);
     }
-  }, [currentStream, router, streams]);
+  }, [currentStream, currentTime, player, router, streams]);
 
   const onSkipNext = useCallback(() => {
     if (!streams || !currentStream) return;
