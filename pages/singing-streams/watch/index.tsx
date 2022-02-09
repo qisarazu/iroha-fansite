@@ -11,7 +11,7 @@ import type { RepeatType } from '../../../components/RepeatButton/RepeatButton';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
 import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import { useIsPlayedVideo } from '../../../hooks/useIsPlayedVideos';
+import { useIsPlayedVideos } from '../../../hooks/useIsPlayedVideos';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
 import type { SingingStreamForSearch } from '../../../types';
@@ -48,7 +48,7 @@ function SingingStreamsWatchPage() {
   const [volume, setVolume] = useLocalStorage('volume', 80);
 
   const isMobile = useIsMobile();
-  const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideo();
+  const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideos();
 
   const isFirstStream = useMemo(
     () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),

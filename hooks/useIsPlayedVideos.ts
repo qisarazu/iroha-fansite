@@ -1,25 +1,33 @@
-import { addMilliseconds, formatISO, isAfter } from 'date-fns';
+import { addMilliseconds, getTime } from 'date-fns';
 import { omit } from 'lodash-es';
 import { useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 
 type PlayedVideos = {
-  [videoId: string]: string;
+  [videoId: string]: number;
 };
 
-// 3 days
-const EXPIRY = 1000 * 60 * 60 * 24 * 3;
+// 3　days
+export const VALID_TIME = 1000 * 60 * 60 * 24 * 3;
 
-export const useIsPlayedVideo = () => {
+export const useIsPlayedVideos = () => {
   const [playedVideos, setPlayedVideos] = useLocalStorage<PlayedVideos>('playedVideos', {});
+
+  const isPlayedVideo = useCallback(
+    (videoId: string) => {
+      if (!playedVideos[videoId]) return false;
+      return playedVideos[videoId] >= Date.now();
+    },
+    [playedVideos],
+  );
 
   const addPlayedVideo = useCallback(
     (videoId: string) => {
-      if (!playedVideos[videoId]) {
-        setPlayedVideos({ ...playedVideos, [videoId]: formatISO(addMilliseconds(new Date(), EXPIRY)) });
+      if (!isPlayedVideo(videoId)) {
+        setPlayedVideos({ ...playedVideos, [videoId]: getTime(addMilliseconds(new Date(), VALID_TIME)) });
       }
     },
-    [playedVideos, setPlayedVideos],
+    [isPlayedVideo, playedVideos, setPlayedVideos],
   );
 
   const removePlayedVideo = useCallback(
@@ -29,14 +37,6 @@ export const useIsPlayedVideo = () => {
       }
     },
     [playedVideos, setPlayedVideos],
-  );
-
-  const isPlayedVideo = useCallback(
-    (videoId: string) => {
-      if (!playedVideos[videoId]) return false;
-      return isAfter(new Date(playedVideos[videoId]), new Date());
-    },
-    [playedVideos],
   );
 
   return {
