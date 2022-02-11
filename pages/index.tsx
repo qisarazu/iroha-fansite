@@ -11,7 +11,7 @@ function IndexPage() {
       <div className={styles.message}>
         <p>TOP ページは現在製作中です。</p>
         <p>
-          <Link href="/singing-streams/search">
+          <Link href="/singing-streams">
             <a className={styles.link}>歌枠検索</a>
           </Link>{' '}
           をご利用ください !

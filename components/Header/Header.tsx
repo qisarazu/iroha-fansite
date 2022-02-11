@@ -8,7 +8,7 @@ export const Header = memo(function Header() {
       <ActiveLink href="/" className={styles.link} activeClassName={styles.activeLink}>
         ホーム
       </ActiveLink>
-      <ActiveLink href="/singing-streams/search" className={styles.link} activeClassName={styles.activeLink}>
+      <ActiveLink href="/singing-streams" className={styles.link} activeClassName={styles.activeLink}>
         歌枠検索
       </ActiveLink>
       <ActiveLink href="/about" className={styles.link} activeClassName={styles.activeLink}>

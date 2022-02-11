@@ -6,13 +6,13 @@ import { Layout } from '../../components/Layout/Layout';
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
-import styles from './search.module.scss';
+import styles from './index.module.scss';
 
 type SearchForm = {
   keyword: string;
 };
 
-function SingingStreamsSearchPage() {
+function SingingStreamsPage() {
   const router = useRouter();
   const { register, handleSubmit, resetField, watch, setValue } = useForm<SearchForm>();
   const { streams } = useSingingStreamsForSearch((router.query.keyword || '') as string);
@@ -79,4 +79,4 @@ function SingingStreamsSearchPage() {
   );
 }
 
-export default SingingStreamsSearchPage;
+export default SingingStreamsPage;
