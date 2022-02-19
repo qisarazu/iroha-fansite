@@ -4,11 +4,14 @@
 .item {
   display: flex;
   align-items: center;
+  padding: 0.25rem 0;
 
   & + & {
-    margin-top: 0.25rem;
-    border-top: 1px solid darken($base-white, 60);
-    padding-top: 0.25rem;
+    border-top: 1px solid rgba($base-white, 0.45);
+  }
+
+  &.playing {
+    background-color: rgba($base-white, 0.15);
   }
 }
 
@@ -19,8 +22,8 @@
   flex: 0 0 64px;
 }
 
-.hovering,
-.playing {
+.hoveringIcon,
+.playingIcon {
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   top: 0;
