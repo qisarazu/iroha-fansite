@@ -22,7 +22,12 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
   const isHovering = useHovering(ref);
 
   return (
-    <Reorder.Item className={clsx(styles.item, className)} value={stream} dragListener={false} ref={ref}>
+    <Reorder.Item
+      className={clsx(styles.item, className, { [styles.playing]: isPlaying })}
+      value={stream}
+      dragListener={false}
+      ref={ref}
+    >
       <Link href={`/singing-streams/watch?v=${stream.id}`}>
         <a className={styles.thumbnail}>
           <Image
@@ -32,12 +37,12 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
             objectFit="cover"
           />
           {isHovering && !isPlaying ? (
-            <div className={styles.hovering}>
+            <div className={styles.hoveringIcon}>
               <MdPlayArrow />
             </div>
           ) : null}
           {isPlaying ? (
-            <div className={styles.playing}>
+            <div className={styles.playingIcon}>
               <MdVolumeUp />
             </div>
           ) : null}
