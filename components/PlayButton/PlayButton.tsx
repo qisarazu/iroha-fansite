@@ -5,6 +5,7 @@ import { usePopper } from 'react-popper';
 import { useHovering } from '../../hooks/useHovering';
 import { IconButton } from '../IconButton/IconButton';
 import styles from './PlayButton.module.scss';
+import { UT, useT } from '@transifex/react';
 
 type Props = {
   needNativePlayPush: boolean;
@@ -38,18 +39,24 @@ export const PlayButton = memo(({ needNativePlayPush, isPlaying, onPlay, onPause
       setShowPopper(false);
     }
   }, [isHovering, needNativePlayPush]);
+  const t = useT();
 
   return (
     <>
       {isPlaying ? (
-        <IconButton size="large" aria-label="停止" onClick={onPause} ref={buttonRef}>
+        <IconButton
+          size="large"
+          aria-label={t('停止', { _context: 'The aria-label applied to the stop button' })}
+          onClick={onPause}
+          ref={buttonRef}
+        >
           <MdPause />
         </IconButton>
       ) : (
         <IconButton
           className={clsx(styles.play, { [styles['disabled']]: needNativePlayPush })}
           size="large"
-          aria-label="再生"
+          aria-label={t('再生', { _context: 'The aria-label applied to the start button' })}
           onClick={onPlayClick}
           ref={buttonRef}
         >
@@ -58,8 +65,11 @@ export const PlayButton = memo(({ needNativePlayPush, isPlaying, onPlay, onPause
       )}
       {showPopper ? (
         <div {...attributes.popper} style={popperStyles.popper} className={styles.tips} ref={setPopperElement}>
-          <p>YouTubeプレイヤーをクリックして</p>
-          <p>再生してください</p>
+          <UT
+            _str="<p>YouTubeプレイヤーをクリックして</p><p>再生してください</p>"
+            _comment="Please wrap text with <p> in a length appropriate for tooltips."
+            _inline
+          />
         </div>
       ) : null}
     </>

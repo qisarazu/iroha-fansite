@@ -10,6 +10,7 @@ import { PlayButton } from '../PlayButton/PlayButton';
 import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './PlayerController.module.scss';
+import { T, useT } from '@transifex/react';
 
 type Props = {
   isPlaying: boolean;
@@ -87,6 +88,8 @@ export const PlayerController = memo(function PlayerController({
     onMute(!isMute);
   }, [isMute, onMute]);
 
+  const t = useT();
+
   return (
     <div className={styles.root} onMouseEnter={onControllerMouseEnter} onMouseLeave={onControllerMouseLeave}>
       <Slider
@@ -98,11 +101,24 @@ export const PlayerController = memo(function PlayerController({
         labelDisplay
       />
       <div className={styles.leftControls}>
-        <IconButton aria-label="前の曲" onClick={onSkipPrev} disabled={isSkipPrevDisabled}>
+        <IconButton
+          aria-label={t('前の曲', {
+            _context:
+              'The aria-label applied to the previous button both in the desktop player and in the mobile player',
+          })}
+          onClick={onSkipPrev}
+          disabled={isSkipPrevDisabled}
+        >
           <MdSkipPrevious />
         </IconButton>
         <PlayButton needNativePlayPush={needNativePlayPush} isPlaying={isPlaying} onPlay={onPlay} onPause={onPause} />
-        <IconButton aria-label="次の曲" onClick={onSkipNext} disabled={isSkipNextDisabled}>
+        <IconButton
+          aria-label={t('次の曲', {
+            _context: 'The aria-label applied to the next button both in the desktop player and in the mobile player',
+          })}
+          onClick={onSkipNext}
+          disabled={isSkipNextDisabled}
+        >
           <MdSkipNext />
         </IconButton>
         <span className={styles.time}>{`${formatVideoLength(currentTime)} / ${formatVideoLength(length)}`}</span>
@@ -120,7 +136,14 @@ export const PlayerController = memo(function PlayerController({
           <div>
             <span>{songArtist}</span>
             <span> / </span>
-            <span>{format(new Date(publishedAt), 'yyyy-MM-dd')} 配信</span>
+            <span>
+              <T
+                _str="{date} 配信"
+                _context="The label in the desktop player that indicates when the video is streamed"
+                _comment={`date: yyyy-MM-dd (e.g. "2022-02-18")`}
+                date={format(new Date(publishedAt), 'yyyy-MM-dd')}
+              />
+            </span>
           </div>
         </div>
       </div>
@@ -131,7 +154,14 @@ export const PlayerController = memo(function PlayerController({
               <Slider value={volume} onScrub={onVolumeChange} label={(value) => Math.floor(value)} labelDisplay />
             </div>
           ) : null}
-          <IconButton aria-label={isMute ? 'ミュートをやめる' : 'ミュートする'} onClick={onMuteClick}>
+          <IconButton
+            aria-label={
+              isMute
+                ? t('ミュートをやめる', { _context: 'The aria-label applied to the unmute button' })
+                : t('ミュートする', { _context: 'The aria-label applied to the mute button' })
+            }
+            onClick={onMuteClick}
+          >
             {isMute || volume === 0 ? <MdVolumeOff /> : <MdVolumeUp />}
           </IconButton>
         </div>

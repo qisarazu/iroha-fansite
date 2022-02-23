@@ -9,6 +9,7 @@ import { PlayButton } from '../PlayButton/PlayButton';
 import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './MobilePlayerController.module.scss';
+import { T, useT } from '@transifex/react';
 
 type Props = {
   isPlaying: boolean;
@@ -53,6 +54,7 @@ export const MobilePlayerController = memo(function MobilePlayerController({
   onSkipPrev,
   onSkipNext,
 }: Props) {
+  const t = useT();
   return (
     <div className={styles.root}>
       <div className={styles.streamInfo}>
@@ -66,7 +68,14 @@ export const MobilePlayerController = memo(function MobilePlayerController({
         <div className={styles.meta}>
           <div className={styles.songTitle}>{songTitle}</div>
           <div className={styles.songArtist}>{songArtist}</div>
-          <div className={styles.publishedAt}>{format(new Date(publishedAt), 'yyyy/MM/dd')} 配信</div>
+          <div className={styles.publishedAt}>
+            <T
+              _str="{date} 配信"
+              _context="The label in the mobile player that indicates when the video is streamed"
+              _comment={`date: yyyy/MM/dd (e.g. "2022/02/18")`}
+              date={format(new Date(publishedAt), 'yyyy/MM/dd')}
+            />
+          </div>
         </div>
       </div>
       <div className={styles.slider}>
@@ -83,7 +92,14 @@ export const MobilePlayerController = memo(function MobilePlayerController({
           </IconButton>
         </div>
         <div className={styles.middleControls}>
-          <IconButton aria-label="前の曲" onClick={onSkipPrev} disabled={isSkipPrevDisabled}>
+          <IconButton
+            aria-label={t('前の曲', {
+              _context:
+                'The aria-label applied to the previous button both in the desktop player and in the mobile player',
+            })}
+            onClick={onSkipPrev}
+            disabled={isSkipPrevDisabled}
+          >
             <MdSkipPrevious />
           </IconButton>
           <div className={styles.play}>
@@ -94,7 +110,13 @@ export const MobilePlayerController = memo(function MobilePlayerController({
               onPause={onPause}
             />
           </div>
-          <IconButton aria-label="次の曲" onClick={onSkipNext} disabled={isSkipNextDisabled}>
+          <IconButton
+            aria-label={t('次の曲', {
+              _context: 'The aria-label applied to the next button both in the desktop player and in the mobile player',
+            })}
+            onClick={onSkipNext}
+            disabled={isSkipNextDisabled}
+          >
             <MdSkipNext />
           </IconButton>
         </div>
