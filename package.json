@@ -11,7 +11,8 @@
     "deploy": "npx vercel --prod",
     "test": "jest",
     "storybook": "start-storybook -p 6006 -s ./public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "update-tx": "txjs-cli push \"{components,contexts,hooks,pages,utils}/**/*.{js,jsx,ts,tsx}\" --key-generator=hash"
   },
   "license": "MIT",
   "dependencies": {
