@@ -45,9 +45,10 @@ function SingingStreamsPage() {
 
   return (
     <Layout
-      title={t('歌枠検索', { _context: 'The page title of the search page' })}
+      title={t('歌枠検索', { _context: 'meta', _comment: 'The page title of the search page' })}
       description={t('風真いろはさんが歌枠等の放送内で歌った曲を検索することが出来ます', {
-        _context: 'The meta description of the search page',
+        _context: 'meta',
+        _comment: 'The meta description of the search page',
       })}
       className={styles.root}
     >
@@ -55,7 +56,7 @@ function SingingStreamsPage() {
         <div className={styles.searchForm}>
           <input
             className={styles.input}
-            placeholder={t('曲名', { _context: 'The placeholder applied to the seach box' })}
+            placeholder={t('曲名', { _context: 'placeholder', _comment: 'The placeholder applied to the seach box' })}
             {...register('keyword')}
           />
           {watch().keyword ? (
@@ -63,7 +64,8 @@ function SingingStreamsPage() {
               className={styles.reset}
               type="reset"
               aria-label={t('フォームリセット', {
-                _context: 'The aria-label applied to the reset button for the stream search form',
+                _context: 'aria-label',
+                _comment: 'The aria-label applied to the reset button for the stream search form',
               })}
               onClick={onReset}
             >
@@ -74,7 +76,7 @@ function SingingStreamsPage() {
         <button
           className={styles.submit}
           type="submit"
-          aria-label={t('検索', { _context: 'The aria-label applied to the search button' })}
+          aria-label={t('検索', { _context: 'aria-label', _comment: 'The aria-label applied to the search button' })}
         >
           <MdSearch />
         </button>

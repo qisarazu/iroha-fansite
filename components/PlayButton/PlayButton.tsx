@@ -46,7 +46,7 @@ export const PlayButton = memo(({ needNativePlayPush, isPlaying, onPlay, onPause
       {isPlaying ? (
         <IconButton
           size="large"
-          aria-label={t('停止', { _context: 'The aria-label applied to the stop button' })}
+          aria-label={t('停止', { _context: 'aria-label', _comment: 'The aria-label applied to the stop button' })}
           onClick={onPause}
           ref={buttonRef}
         >
@@ -56,7 +56,7 @@ export const PlayButton = memo(({ needNativePlayPush, isPlaying, onPlay, onPause
         <IconButton
           className={clsx(styles.play, { [styles['disabled']]: needNativePlayPush })}
           size="large"
-          aria-label={t('再生', { _context: 'The aria-label applied to the start button' })}
+          aria-label={t('再生', { _context: 'aria-label', _comment: 'The aria-label applied to the start button' })}
           onClick={onPlayClick}
           ref={buttonRef}
         >

@@ -8,7 +8,10 @@ import { T, useT } from '@transifex/react';
 function IndexPage() {
   const t = useT();
   return (
-    <Layout className={styles.root} title={t('ホーム', { _context: 'The page title of the index page' })}>
+    <Layout
+      className={styles.root}
+      title={t('ホーム', { _context: 'meta', _comment: 'The page title of the index page' })}
+    >
       <h1 className={styles.title}>gozaru.fans</h1>
       <div className={styles.message}>
         <p>

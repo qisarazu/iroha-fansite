@@ -9,7 +9,10 @@ import { T, useT } from '@transifex/react';
 function AboutPage() {
   const t = useT();
   return (
-    <Layout className={styles.root} title={t('当サイトについて', { _context: 'The page title of the about page' })}>
+    <Layout
+      className={styles.root}
+      title={t('当サイトについて', { _context: 'meta', _comment: 'The page title of the about page' })}
+    >
       <h1 className={styles.title}>
         <T _str="当サイトについて" />
       </h1>

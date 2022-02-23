@@ -17,7 +17,7 @@ export const Layout = memo(function Layout({ className, title, description, padd
   const t = useT();
   const DEFAULT_DESCRIPTION = t(
     'gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの非公式ファンサイトです。',
-    { _context: 'The default meta description' },
+    { _context: 'meta', _comment: 'The default meta description' },
   );
   return (
     <>

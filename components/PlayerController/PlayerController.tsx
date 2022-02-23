@@ -103,7 +103,8 @@ export const PlayerController = memo(function PlayerController({
       <div className={styles.leftControls}>
         <IconButton
           aria-label={t('前の曲', {
-            _context:
+            _context: 'aria-label',
+            _comment:
               'The aria-label applied to the previous button both in the desktop player and in the mobile player',
           })}
           onClick={onSkipPrev}
@@ -114,7 +115,8 @@ export const PlayerController = memo(function PlayerController({
         <PlayButton needNativePlayPush={needNativePlayPush} isPlaying={isPlaying} onPlay={onPlay} onPause={onPause} />
         <IconButton
           aria-label={t('次の曲', {
-            _context: 'The aria-label applied to the next button both in the desktop player and in the mobile player',
+            _context: 'aria-label',
+            _comment: 'The aria-label applied to the next button both in the desktop player and in the mobile player',
           })}
           onClick={onSkipNext}
           disabled={isSkipNextDisabled}
@@ -139,8 +141,9 @@ export const PlayerController = memo(function PlayerController({
             <span>
               <T
                 _str="{date} 配信"
-                _context="The label in the desktop player that indicates when the video is streamed"
-                _comment={`date: yyyy-MM-dd (e.g. "2022-02-18")`}
+                _comment={
+                  'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy-MM-dd (e.g. "2022-02-18")'
+                }
                 date={format(new Date(publishedAt), 'yyyy-MM-dd')}
               />
             </span>
@@ -157,8 +160,11 @@ export const PlayerController = memo(function PlayerController({
           <IconButton
             aria-label={
               isMute
-                ? t('ミュートをやめる', { _context: 'The aria-label applied to the unmute button' })
-                : t('ミュートする', { _context: 'The aria-label applied to the mute button' })
+                ? t('ミュートをやめる', {
+                    _context: 'aria-label',
+                    _comment: 'The aria-label applied to the unmute button',
+                  })
+                : t('ミュートする', { _context: 'aria-label', _comment: 'The aria-label applied to the mute button' })
             }
             onClick={onMuteClick}
           >
