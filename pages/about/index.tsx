@@ -18,8 +18,7 @@ function AboutPage() {
       </h1>
       <p>
         <T
-          _str="gozaru.fans (以下、当サイト) はホロライブ6期生 (holoX) の用心棒、風真いろはさんの{unofficial}
-        ファンサイトです。"
+          _str="gozaru.fans (以下、当サイト) はホロライブ6期生 (holoX) の用心棒、風真いろはさんの{unofficial} ファンサイトです。"
           _comment="unofficial: 非公式"
           unofficial={
             <b>
