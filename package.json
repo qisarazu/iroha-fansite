@@ -11,12 +11,16 @@
     "deploy": "npx vercel --prod",
     "test": "jest",
     "storybook": "start-storybook -p 6006 -s ./public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "update-tx": "txjs-cli push \"{components,contexts,hooks,pages,utils}/**/*.{js,jsx,ts,tsx}\" --key-generator=hash"
   },
   "license": "MIT",
   "dependencies": {
     "@popperjs/core": "^2.11.2",
     "@supabase/supabase-js": "^1.30.3",
+    "@transifex/cli": "^2.3.2",
+    "@transifex/native": "^2.3.2",
+    "@transifex/react": "^2.3.2",
     "clsx": "^1.1.1",
     "date-fns": "^2.28.0",
     "framer-motion": "^6.2.6",

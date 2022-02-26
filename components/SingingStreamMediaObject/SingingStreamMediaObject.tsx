@@ -7,6 +7,7 @@ import styles from './SingingStreamMediaObject.module.scss';
 import { memo } from 'react';
 import { ExternalLink } from '../ExternalLink/ExternalLink';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { T, useT } from '@transifex/react';
 
 type Props = {
   singingStream: SingingStreamForSearch;
@@ -14,6 +15,7 @@ type Props = {
 
 export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({ singingStream }: Props) {
   const isMobile = useIsMobile();
+  const t = useT();
   return (
     <article className={styles.root}>
       <Link href={`/singing-streams/watch?v=${singingStream.id}`}>
@@ -36,16 +38,27 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
             <span className={styles.videoTitle}>{singingStream.video.title}</span>
           </a>
         </Link>
-        <span className={styles.publishedAt}>{format(new Date(singingStream.published_at), 'yyyy/MM/dd')} 配信</span>
+        <span className={styles.publishedAt}>
+          <T
+            _str="{date} 配信"
+            _comment={
+              'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy/MM/dd (e.g. "2022/02/18")'
+            }
+            date={format(new Date(singingStream.published_at), 'yyyy/MM/dd')}
+          />
+        </span>
       </div>
       <KebabMenu
         buttonClassName={styles.menu}
         placement="bottom-end"
-        aria-label="動画メニュー"
+        aria-label={t('動画メニュー', {
+          _context: 'aria-label',
+          _comment: 'The aria-label applied to the button to kebab menu',
+        })}
         size={isMobile ? 'small' : 'medium'}
       >
         <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
-          YouTubeで見る
+          <T _str="YouTubeで見る" />
         </ExternalLink>
       </KebabMenu>
     </article>

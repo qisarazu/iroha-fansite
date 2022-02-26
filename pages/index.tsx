@@ -3,29 +3,57 @@ import { FaTwitter, FaYoutube } from 'react-icons/fa';
 import { IconLink } from '../components/IconLink/IconLink';
 import { Layout } from '../components/Layout/Layout';
 import styles from './index.module.scss';
+import { T, useT } from '@transifex/react';
 
 function IndexPage() {
+  const t = useT();
   return (
-    <Layout className={styles.root} title="ホーム">
+    <Layout
+      className={styles.root}
+      title={t('ホーム', { _context: 'meta', _comment: 'The page title of the index page' })}
+    >
       <h1 className={styles.title}>gozaru.fans</h1>
       <div className={styles.message}>
-        <p>TOP ページは現在製作中です。</p>
         <p>
-          <Link href="/singing-streams">
-            <a className={styles.link}>歌枠検索</a>
-          </Link>{' '}
-          をご利用ください !
+          <T _str="TOP ページは現在製作中です。" />
+        </p>
+        <p>
+          <T
+            _str="{search} をご利用ください !"
+            _comment="search: 歌枠検索"
+            search={
+              <Link href="/singing-streams">
+                <a className={styles.link}>
+                  <T _str="歌枠検索" />
+                </a>
+              </Link>
+            }
+          />
         </p>
       </div>
       <p>
-        gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの<b>非公式</b>ファンサイトです。
+        <T
+          _str="gozaru.fans はホロライブ6期生 (holoX) の用心棒、風真いろはさんの{unofficial}ファンサイトです。"
+          _comment="unofficial: 非公式"
+          unofficial={
+            <b>
+              <T _str="非公式" />
+            </b>
+          }
+        />
       </p>
       <p>
-        詳しくは{' '}
-        <Link href="/about">
-          <a className={styles.link}>当サイトについて</a>
-        </Link>{' '}
-        をご覧ください。
+        <T
+          _str="詳しくは {aboutUs} をご覧ください。"
+          _comment="aboutUs: 当サイトについて"
+          aboutUs={
+            <Link href="/about">
+              <a className={styles.link}>
+                <T _str="当サイトについて" />
+              </a>
+            </Link>
+          }
+        />
       </p>
       <div className={styles.socialLinks}>
         <div>

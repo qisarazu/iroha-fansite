@@ -5,6 +5,11 @@ import { useEffect } from 'react';
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
 import '../styles/global.scss';
 import { GA_TRACKING_ID, pageview } from '../utils/gtag';
+import { tx } from '@transifex/native';
+
+tx.init({
+  token: '1/44aa0ebac5107d9a2a5c8e8555121c52dd9de8cd',
+});
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();

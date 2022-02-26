@@ -10,6 +10,7 @@ import type { SingingStreamForSearch } from '../../../types';
 import { ExternalLink } from '../../ExternalLink/ExternalLink';
 import { KebabMenu } from '../../KebabMenu/KebabMenu';
 import styles from './PlaylistItem.module.scss';
+import { T } from '@transifex/react';
 
 type Props = {
   className?: string;
@@ -52,13 +53,20 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
         <a className={styles.info}>
           <h2 className={styles.songTitle}>{stream.song.title}</h2>
           <span className={styles.songArtist}>
-            {stream.song.artist} / {format(new Date(stream.published_at), 'yyyy-MM-dd')} 配信
+            {stream.song.artist} /{' '}
+            <T
+              _str="{date} 配信"
+              _comment={
+                'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy-MM-dd (e.g. "2022-02-18")'
+              }
+              date={format(new Date(stream.published_at), 'yyyy-MM-dd')}
+            />
           </span>
         </a>
       </Link>
       <KebabMenu buttonClassName={styles.menu} size="small" placement="bottom-end">
         <ExternalLink className={styles.originalLink} href={`${stream.video.url}&t=${stream.start}`}>
-          YouTubeで見る
+          <T _str="YouTubeで見る" />
         </ExternalLink>
       </KebabMenu>
     </Reorder.Item>
