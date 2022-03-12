@@ -6,14 +6,12 @@ import { MdSearch } from 'react-icons/md';
 
 export default {
   title: 'components/IconButton',
-  component: IconButton
+  component: IconButton,
 } as ComponentMeta<typeof IconButton>;
 
-const Template: ComponentStory<typeof IconButton> = (args) => (
-  <IconButton {...args} />
-);
+const Template: ComponentStory<typeof IconButton> = (args) => <IconButton {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  children: <MdSearch />
+  children: <MdSearch />,
 };
