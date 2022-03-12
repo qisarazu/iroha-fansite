@@ -5,12 +5,10 @@ import { KebabMenu } from './KebabMenu';
 
 export default {
   title: 'components/KebabMenu',
-  component: KebabMenu
+  component: KebabMenu,
 } as ComponentMeta<typeof KebabMenu>;
 
-const Template: ComponentStory<typeof KebabMenu> = (args) => (
-  <KebabMenu {...args} />
-);
+const Template: ComponentStory<typeof KebabMenu> = (args) => <KebabMenu {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
@@ -19,5 +17,5 @@ Default.args = {
       <a href="">LINK</a>
       <a href="">LINK</a>
     </>
-  )
+  ),
 };
