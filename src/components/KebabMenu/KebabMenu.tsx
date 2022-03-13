@@ -1,8 +1,9 @@
 import type PopperJS from '@popperjs/core';
-import { memo, useCallback, useState, ComponentPropsWithoutRef } from 'react';
+import { ComponentPropsWithoutRef, memo, useCallback, useState } from 'react';
 import { MdMoreVert } from 'react-icons/md';
 import { usePopper } from 'react-popper';
 import { useClickAway } from 'react-use';
+
 import { IconButton } from '../IconButton/IconButton';
 import styles from './KebabMenu.module.scss';
 

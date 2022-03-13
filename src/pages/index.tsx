@@ -1,9 +1,10 @@
+import { T, useT } from '@transifex/react';
 import Link from 'next/link';
 import { FaTwitter, FaYoutube } from 'react-icons/fa';
+
 import { IconLink } from '../components/IconLink/IconLink';
 import { Layout } from '../components/Layout/Layout';
 import styles from './index.module.scss';
-import { T, useT } from '@transifex/react';
 
 function IndexPage() {
   const t = useT();

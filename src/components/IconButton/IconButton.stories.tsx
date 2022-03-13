@@ -1,8 +1,8 @@
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import type { ComponentStory, ComponentMeta } from '@storybook/react';
+import { MdSearch } from 'react-icons/md';
 
 import { IconButton } from './IconButton';
-import { MdSearch } from 'react-icons/md';
 
 export default {
   title: 'components/IconButton',

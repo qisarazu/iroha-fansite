@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMountedState } from 'react-use';
 
 export type State = {

@@ -1,3 +1,4 @@
+import { T } from '@transifex/react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { Reorder } from 'framer-motion';
@@ -5,12 +6,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useRef } from 'react';
 import { MdPlayArrow, MdVolumeUp } from 'react-icons/md';
+
 import { useHovering } from '../../../hooks/useHovering';
 import type { SingingStreamForSearch } from '../../../types';
 import { ExternalLink } from '../../ExternalLink/ExternalLink';
 import { KebabMenu } from '../../KebabMenu/KebabMenu';
 import styles from './PlaylistItem.module.scss';
-import { T } from '@transifex/react';
 
 type Props = {
   className?: string;

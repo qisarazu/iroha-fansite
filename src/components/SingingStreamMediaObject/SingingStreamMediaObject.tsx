@@ -1,13 +1,14 @@
+import { T, useT } from '@transifex/react';
+import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { SingingStreamForSearch } from '../../types';
-import { KebabMenu } from '../KebabMenu/KebabMenu';
-import { format } from 'date-fns';
-import styles from './SingingStreamMediaObject.module.scss';
 import { memo } from 'react';
-import { ExternalLink } from '../ExternalLink/ExternalLink';
+
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { T, useT } from '@transifex/react';
+import type { SingingStreamForSearch } from '../../types';
+import { ExternalLink } from '../ExternalLink/ExternalLink';
+import { KebabMenu } from '../KebabMenu/KebabMenu';
+import styles from './SingingStreamMediaObject.module.scss';
 
 type Props = {
   singingStream: SingingStreamForSearch;

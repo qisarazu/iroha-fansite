@@ -1,16 +1,17 @@
+import { T, useT } from '@transifex/react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MdShuffle, MdSkipNext, MdSkipPrevious, MdVolumeOff, MdVolumeUp } from 'react-icons/md';
 import { useHoverDirty } from 'react-use';
+
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
 import { PlayButton } from '../PlayButton/PlayButton';
 import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './PlayerController.module.scss';
-import { T, useT } from '@transifex/react';
 
 type Props = {
   isPlaying: boolean;

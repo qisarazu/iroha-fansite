@@ -2,9 +2,9 @@ import clsx from 'clsx';
 import { memo, useEffect, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { useMouseHovered } from 'react-use';
-import { useSlider } from './useSlider';
 
 import styles from './Slider.module.scss';
+import { useSlider } from './useSlider';
 
 type Props = {
   className?: string;

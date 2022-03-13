@@ -1,11 +1,12 @@
+import { useT, UT } from '@transifex/react';
 import clsx from 'clsx';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MdPause, MdPlayArrow } from 'react-icons/md';
 import { usePopper } from 'react-popper';
+
 import { useHovering } from '../../hooks/useHovering';
 import { IconButton } from '../IconButton/IconButton';
 import styles from './PlayButton.module.scss';
-import { UT, useT } from '@transifex/react';
 
 type Props = {
   needNativePlayPush: boolean;

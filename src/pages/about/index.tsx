@@ -1,10 +1,11 @@
+import { T, useT } from '@transifex/react';
 import type { ReactNode } from 'react';
-import { FaTwitter, FaGithub } from 'react-icons/fa';
+import { FaGithub, FaTwitter } from 'react-icons/fa';
+
 import { ExternalLink } from '../../components/ExternalLink/ExternalLink';
 import { IconLink } from '../../components/IconLink/IconLink';
 import { Layout } from '../../components/Layout/Layout';
 import styles from './index.module.scss';
-import { T, useT } from '@transifex/react';
 
 function AboutPage() {
   const t = useT();

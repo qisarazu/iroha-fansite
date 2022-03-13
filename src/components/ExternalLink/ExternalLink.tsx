@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { ComponentPropsWithoutRef, memo } from 'react';
 import { MdLaunch } from 'react-icons/md';
+
 import styles from './ExternalLink.module.scss';
 
 type Props = Omit<ComponentPropsWithoutRef<'a'>, 'target' | 'rel' | 'href'> & {

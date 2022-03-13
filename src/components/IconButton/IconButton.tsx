@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import type { ComponentPropsWithoutRef } from 'react';
 import { forwardRef, memo } from 'react';
+
 import styles from './IconButton.module.scss';
 
 type Props = ComponentPropsWithoutRef<'button'> & {

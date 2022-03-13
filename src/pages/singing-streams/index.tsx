@@ -1,13 +1,14 @@
+import { T, useT } from '@transifex/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { MdClear, MdSearch } from 'react-icons/md';
+
 import { Layout } from '../../components/Layout/Layout';
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
 import styles from './index.module.scss';
-import { T, useT } from '@transifex/react';
 
 type SearchForm = {
   keyword: string;

@@ -1,9 +1,10 @@
+import { useT } from '@transifex/react';
 import clsx from 'clsx';
 import { memo } from 'react';
 import { MdRepeat, MdRepeatOne } from 'react-icons/md';
+
 import { IconButton } from '../IconButton/IconButton';
 import styles from './RepeatButton.module.scss';
-import { useT } from '@transifex/react';
 
 export type RepeatType = 'repeat' | 'repeatOne' | 'none';
 

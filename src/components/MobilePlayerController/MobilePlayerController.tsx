@@ -1,15 +1,16 @@
+import { T, useT } from '@transifex/react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { memo } from 'react';
 import { MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
+
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
 import { PlayButton } from '../PlayButton/PlayButton';
 import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './MobilePlayerController.module.scss';
-import { T, useT } from '@transifex/react';
 
 type Props = {
   isPlaying: boolean;

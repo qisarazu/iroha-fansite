@@ -1,7 +1,8 @@
+import { T } from '@transifex/react';
 import { memo } from 'react';
+
 import { ActiveLink } from '../ActiveLink/ActiveLink';
 import styles from './Header.module.scss';
-import { T } from '@transifex/react';
 
 export const Header = memo(function Header() {
   return (
