@@ -8,7 +8,7 @@ module.exports = {
     domains: ['i.ytimg.com']
   },
   sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')]
+    includePaths: [path.join(__dirname, 'src/styles')]
   },
   async redirects() {
     return [

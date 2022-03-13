@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "prettier --write \"{components,contexts,hooks,pages,public,scripts,styles,types,utils}/**/*.{js,jsx,ts,tsx}\"",
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "test": "jest",
     "type-check": "tsc",
     "check": "npm run prettier && npm run lint && npm run test",
@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s ./public",
     "build-storybook": "build-storybook -s public",
-    "update-tx": "txjs-cli push \"{components,contexts,hooks,pages,utils}/**/*.{js,jsx,ts,tsx}\" --key-generator=hash"
+    "update-tx": "txjs-cli push \"src/**/*.{js,jsx,ts,tsx}\" --key-generator=hash"
   },
   "license": "MIT",
   "dependencies": {
