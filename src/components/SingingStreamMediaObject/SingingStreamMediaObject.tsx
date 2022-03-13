@@ -1,13 +1,13 @@
+import { Menu } from '@mantine/core';
 import { T, useT } from '@transifex/react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 import { memo } from 'react';
+import { FaYoutube } from 'react-icons/fa';
 
-import { useIsMobile } from '../../hooks/useIsMobile';
 import type { SingingStreamForSearch } from '../../types';
 import { ExternalLink } from '../ExternalLink/ExternalLink';
-import { KebabMenu } from '../KebabMenu/KebabMenu';
 import styles from './SingingStreamMediaObject.module.scss';
 
 type Props = {
@@ -15,7 +15,6 @@ type Props = {
 };
 
 export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({ singingStream }: Props) {
-  const isMobile = useIsMobile();
   const t = useT();
   return (
     <article className={styles.root}>
@@ -49,19 +48,19 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
           />
         </span>
       </div>
-      <KebabMenu
-        buttonClassName={styles.menu}
-        placement="bottom-end"
+      <Menu
+        placement="end"
         aria-label={t('動画メニュー', {
           _context: 'aria-label',
-          _comment: 'The aria-label applied to the button to kebab menu',
+          _comment: 'The aria-label applied to the button to menu',
         })}
-        size={isMobile ? 'small' : 'medium'}
       >
-        <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
-          <T _str="YouTubeで見る" />
-        </ExternalLink>
-      </KebabMenu>
+        <Menu.Item icon={<FaYoutube />}>
+          <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
+            <T _str="YouTubeで見る" />
+          </ExternalLink>
+        </Menu.Item>
+      </Menu>
     </article>
   );
 });

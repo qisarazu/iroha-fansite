@@ -1,3 +1,4 @@
+import { ActionIcon, Center, createStyles, Input, Loader } from '@mantine/core';
 import { T, useT } from '@transifex/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
@@ -6,7 +7,6 @@ import { MdClear, MdSearch } from 'react-icons/md';
 
 import { Layout } from '../../components/Layout/Layout';
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
-import { Spinner } from '../../components/Spinner/Spinner';
 import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
 import styles from './index.module.scss';
 
@@ -14,7 +14,17 @@ type SearchForm = {
   keyword: string;
 };
 
+const useStyles = createStyles((theme) => ({
+  searchInput: {
+    flexGrow: 1,
+  },
+  searchButton: {
+    marginLeft: theme.spacing.xs,
+  },
+}));
+
 function SingingStreamsPage() {
+  const { classes } = useStyles();
   const router = useRouter();
   const { register, handleSubmit, resetField, watch, setValue } = useForm<SearchForm>();
   const { streams } = useSingingStreamsForSearch((router.query.keyword || '') as string);
@@ -54,37 +64,42 @@ function SingingStreamsPage() {
       className={styles.root}
     >
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <div className={styles.searchForm}>
-          <input
-            className={styles.input}
-            placeholder={t('曲名', { _context: 'placeholder', _comment: 'The placeholder applied to the seach box' })}
-            {...register('keyword')}
-          />
-          {watch().keyword ? (
-            <button
-              className={styles.reset}
-              type="reset"
-              aria-label={t('フォームリセット', {
-                _context: 'aria-label',
-                _comment: 'The aria-label applied to the reset button for the stream search form',
-              })}
-              onClick={onReset}
-            >
-              <MdClear color="#ffffff" />
-            </button>
-          ) : null}
-        </div>
-        <button
-          className={styles.submit}
+        <Input
+          {...register('keyword')}
+          className={classes.searchInput}
+          placeholder={t('曲名', { _context: 'placeholder', _comment: 'The placeholder applied to the seach box' })}
+          rightSection={
+            watch().keyword ? (
+              <ActionIcon
+                // className={styles.reset}
+                type="reset"
+                aria-label={t('フォームリセット', {
+                  _context: 'aria-label',
+                  _comment: 'The aria-label applied to the reset button for the stream search form',
+                })}
+                onClick={onReset}
+                color="gray"
+              >
+                <MdClear />
+              </ActionIcon>
+            ) : null
+          }
+        />
+        <ActionIcon
+          className={classes.searchButton}
+          variant="filled"
           type="submit"
+          size={36}
           aria-label={t('検索', { _context: 'aria-label', _comment: 'The aria-label applied to the search button' })}
         >
           <MdSearch />
-        </button>
+        </ActionIcon>
       </form>
       <div className={styles.result}>
         {!streams ? (
-          <Spinner className={styles.spinner} />
+          <Center>
+            <Loader />
+          </Center>
         ) : !streams.length ? (
           <T _str="検索結果はありません" />
         ) : (

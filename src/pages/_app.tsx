@@ -1,12 +1,13 @@
-import '../styles/global.scss';
-
+import { MantineProvider } from '@mantine/core';
 import { tx } from '@transifex/native';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 import { useEffect } from 'react';
 
+import { GlobalStyles } from '../components/GlobalStyles/GlobalStyles';
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
+import { theme } from '../styles/theme';
 import { GA_TRACKING_ID, pageview } from '../utils/gtag';
 
 tx.init({
@@ -26,13 +27,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   return (
-    <YTPlayerContextProvider>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
+    <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+      <YTPlayerContextProvider>
+        <GlobalStyles />
+        <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -40,9 +43,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             page_path: window.location.pathname,
           });
         `,
-        }}
-      />
-      <Component {...pageProps} />
-    </YTPlayerContextProvider>
+          }}
+        />
+        <Component {...pageProps} />
+      </YTPlayerContextProvider>
+    </MantineProvider>
   );
 }
