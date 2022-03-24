@@ -23,6 +23,8 @@ let repeatTypeVariable: RepeatType = 'none';
 let startSeconds = 0;
 let endSeconds = 0;
 
+const SKIP_PREV_TIME = 5;
+
 function SingingStreamsWatchPage() {
   const reqIdRef = useRef<number>();
   const router = useRouter();
@@ -80,7 +82,7 @@ function SingingStreamsWatchPage() {
 
   const onSkipPrev = useCallback(() => {
     if (!streams || !currentStream || !player) return;
-    if (currentTime >= 5) {
+    if (currentTime >= SKIP_PREV_TIME) {
       player.seekTo(currentStream.start);
       setCurrentTime(0);
       return;
@@ -310,7 +312,7 @@ function SingingStreamsWatchPage() {
           {isMobile ? (
             <MobilePlayerController
               isPlaying={isPlaying}
-              isSkipPrevDisabled={isFirstStream}
+              isSkipPrevDisabled={isFirstStream && currentTime < SKIP_PREV_TIME}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
               needNativePlayPush={!isPlayedVideo(currentStream.video_id)}
@@ -333,7 +335,7 @@ function SingingStreamsWatchPage() {
             <PlayerController
               isPlaying={isPlaying}
               isMute={isMute}
-              isSkipPrevDisabled={isFirstStream}
+              isSkipPrevDisabled={isFirstStream && currentTime < SKIP_PREV_TIME}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
               needNativePlayPush={!isPlayedVideo(currentStream.video_id)}
