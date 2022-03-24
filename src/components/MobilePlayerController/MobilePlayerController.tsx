@@ -89,19 +89,24 @@ export const MobilePlayerController = memo(function MobilePlayerController({
       </div>
       <div className={styles.controls}>
         <div className={styles.leftControls}>
-          <IconButton className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })} onClick={onShuffle}>
+          <IconButton
+            className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })}
+            size="lg"
+            onClick={onShuffle}
+          >
             <MdShuffle />
           </IconButton>
         </div>
         <div className={styles.middleControls}>
           <IconButton
+            size="lg"
+            disabled={isSkipPrevDisabled}
             aria-label={t('前の曲', {
               _context: 'aria-label',
               _comment:
                 'The aria-label applied to the previous button both in the desktop player and in the mobile player',
             })}
             onClick={onSkipPrev}
-            disabled={isSkipPrevDisabled}
           >
             <MdSkipPrevious />
           </IconButton>
@@ -114,12 +119,13 @@ export const MobilePlayerController = memo(function MobilePlayerController({
             />
           </div>
           <IconButton
+            size="lg"
+            disabled={isSkipNextDisabled}
             aria-label={t('次の曲', {
               _context: 'aria-label',
               _comment: 'The aria-label applied to the next button both in the desktop player and in the mobile player',
             })}
             onClick={onSkipNext}
-            disabled={isSkipNextDisabled}
           >
             <MdSkipNext />
           </IconButton>

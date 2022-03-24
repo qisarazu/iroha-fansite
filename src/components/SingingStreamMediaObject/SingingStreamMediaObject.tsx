@@ -56,7 +56,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         })}
       >
         <Menu.Item icon={<FaYoutube />}>
-          <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
+          <ExternalLink href={`${singingStream.video.url}&t=${singingStream.start}`}>
             <T _str="YouTubeで見る" />
           </ExternalLink>
         </Menu.Item>

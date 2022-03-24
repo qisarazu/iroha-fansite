@@ -1,3 +1,4 @@
+import { createStyles, Menu } from '@mantine/core';
 import { T } from '@transifex/react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
@@ -5,12 +6,12 @@ import { Reorder } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useRef } from 'react';
+import { FaYoutube } from 'react-icons/fa';
 import { MdPlayArrow, MdVolumeUp } from 'react-icons/md';
 
 import { useHovering } from '../../../hooks/useHovering';
 import type { SingingStreamForSearch } from '../../../types';
 import { ExternalLink } from '../../ExternalLink/ExternalLink';
-import { KebabMenu } from '../../KebabMenu/KebabMenu';
 import styles from './PlaylistItem.module.scss';
 
 type Props = {
@@ -19,7 +20,15 @@ type Props = {
   isPlaying: boolean;
 };
 
+const useStyles = createStyles((theme) => ({
+  menu: {
+    marginRight: theme.spacing.sm,
+    marginLeft: 'auto',
+  },
+}));
+
 export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
+  const { classes } = useStyles();
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
 
@@ -65,11 +74,13 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
           </span>
         </a>
       </Link>
-      <KebabMenu buttonClassName={styles.menu} size="small" placement="bottom-end">
-        <ExternalLink className={styles.originalLink} href={`${stream.video.url}&t=${stream.start}`}>
-          <T _str="YouTubeで見る" />
-        </ExternalLink>
-      </KebabMenu>
+      <Menu className={classes.menu} placement="end">
+        <Menu.Item icon={<FaYoutube />}>
+          <ExternalLink className={styles.originalLink} href={`${stream.video.url}&t=${stream.start}`}>
+            <T _str="YouTubeで見る" />
+          </ExternalLink>
+        </Menu.Item>
+      </Menu>
     </Reorder.Item>
   );
 });

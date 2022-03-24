@@ -85,13 +85,3 @@
     font-size: 0.5em;
   }
 }
-
-.menu {
-  align-self: flex-start;
-}
-
-.originalLink {
-  @include responsive(sm) {
-    font-size: 0.7em;
-  }
-}

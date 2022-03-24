@@ -103,6 +103,7 @@ export const PlayerController = memo(function PlayerController({
       />
       <div className={styles.leftControls}>
         <IconButton
+          size="lg"
           aria-label={t('前の曲', {
             _context: 'aria-label',
             _comment:
@@ -115,6 +116,7 @@ export const PlayerController = memo(function PlayerController({
         </IconButton>
         <PlayButton needNativePlayPush={needNativePlayPush} isPlaying={isPlaying} onPlay={onPlay} onPause={onPause} />
         <IconButton
+          size="lg"
           aria-label={t('次の曲', {
             _context: 'aria-label',
             _comment: 'The aria-label applied to the next button both in the desktop player and in the mobile player',
@@ -159,6 +161,7 @@ export const PlayerController = memo(function PlayerController({
             </div>
           ) : null}
           <IconButton
+            size="lg"
             aria-label={
               isMute
                 ? t('ミュートをやめる', {
@@ -173,7 +176,11 @@ export const PlayerController = memo(function PlayerController({
           </IconButton>
         </div>
         <RepeatButton type={repeatType} onClick={onRepeat} />
-        <IconButton className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })} onClick={onShuffle}>
+        <IconButton
+          className={clsx(styles.shuffle, { [styles['shuffled']]: isShuffled })}
+          size="lg"
+          onClick={onShuffle}
+        >
           <MdShuffle />
         </IconButton>
       </div>

@@ -32,6 +32,7 @@ export const RepeatButton = memo(({ type, onClick }: Props) => {
   return (
     <IconButton
       className={clsx(styles.root, { [styles[type]]: true })}
+      size="lg"
       aria-label={
         type === 'repeat'
           ? t('プレイリストをリピート', {
