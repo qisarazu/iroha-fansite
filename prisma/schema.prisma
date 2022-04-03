@@ -11,14 +11,17 @@ datasource db {
 }
 
 model Video {
-  id            String          @id @default(uuid())
-  videoId       String
-  title         String
-  duration      Int
-  publishedAt   DateTime
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  SingingStream SingingStream[]
+  id                  String          @id @default(uuid())
+  videoId             String
+  title               String
+  duration            Int
+  thumbnailDefaultUrl String
+  thumbnailMediumUrl  String
+  thumbnailHighUrl    String
+  publishedAt         DateTime
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  SingingStream       SingingStream[]
 }
 
 model Song {

@@ -3,12 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../utils/prismaClient';
 
-export type GetVideosRequest = {
+export type GetVideosApiRequest = {
   orderBy?: keyof Video;
   orderDirection?: 'asc' | 'desc';
 };
-async function get(req: NextApiRequest, res: NextApiResponse<Video[]>) {
-  const { orderBy, orderDirection } = req.query as GetVideosRequest;
+async function getVideos(req: NextApiRequest, res: NextApiResponse<Video[]>) {
+  const { orderBy, orderDirection } = req.query as GetVideosApiRequest;
 
   const videos = await prisma.video.findMany({
     orderBy: {
@@ -19,14 +19,9 @@ async function get(req: NextApiRequest, res: NextApiResponse<Video[]>) {
   res.status(200).json(videos);
 }
 
-export type PostVideosApiRequest = {
-  videoId: string;
-  title: string;
-  duration: number;
-  publishedAt: Date;
-};
-async function post(req: NextApiRequest, res: NextApiResponse<Video>) {
-  const body: PostVideosApiRequest = req.body;
+export type PostVideoApiRequest = Omit<Video, 'id' | 'createdAt' | 'updatedAt'>;
+async function postVideo(req: NextApiRequest, res: NextApiResponse<Video>) {
+  const body: PostVideoApiRequest = req.body;
 
   const video = await prisma.video.create({
     data: body,
@@ -38,11 +33,11 @@ async function post(req: NextApiRequest, res: NextApiResponse<Video>) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
-      await get(req, res);
+      await getVideos(req, res);
       return;
     }
     case 'POST': {
-      await post(req, res);
+      await postVideo(req, res);
       return;
     }
   }

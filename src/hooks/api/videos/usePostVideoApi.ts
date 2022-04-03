@@ -1,12 +1,12 @@
 import type { Video } from '@prisma/client';
 import { useCallback, useState } from 'react';
 
-import type { PostVideosApiRequest } from '../../../pages/api/videos';
+import type { PostVideoApiRequest } from '../../../pages/api/videos';
 
 export function usePostVideoApi() {
   const [isLoading, setLoading] = useState(false);
 
-  const api = useCallback(async (request: PostVideosApiRequest): Promise<Video> => {
+  const api = useCallback(async (request: PostVideoApiRequest): Promise<Video> => {
     setLoading(true);
 
     const data = await fetch('/api/videos', {
