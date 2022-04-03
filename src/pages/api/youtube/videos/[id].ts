@@ -3,7 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { parseDuration } from '../../../../utils/parseDuration';
 
-type GetVideoResponse = {
+const youtube = google.youtube({
+  version: 'v3',
+  auth: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
+});
+
+export type GetYouTubeVideoResponse = {
   id: string;
   title: string;
   publishedAt: string;
@@ -14,12 +19,6 @@ type GetVideoResponse = {
   };
   duration: number;
 };
-
-const youtube = google.youtube({
-  version: 'v3',
-  auth: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
-});
-
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   const videoId: string = (Array.isArray(req.query.id) ? req.query.id[0] : req.query.id).replace(/['"]+/g, '');
 
@@ -30,39 +29,32 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
       'items(id,snippet(title,publishedAt,thumbnails(default(url),medium(url),high(url))),contentDetails(duration))',
   });
 
+  const video = data.items?.[0];
+
   if (
-    !data.items?.length ||
-    !data.items[0] ||
-    !data.items[0].id ||
-    !data.items[0].snippet ||
-    !data.items[0].snippet.title ||
-    !data.items[0].snippet.publishedAt ||
-    !data.items[0].snippet.thumbnails ||
-    !data.items[0].snippet.thumbnails.default ||
-    !data.items[0].snippet.thumbnails.default.url ||
-    !data.items[0].snippet.thumbnails.medium ||
-    !data.items[0].snippet.thumbnails.medium.url ||
-    !data.items[0].snippet.thumbnails.high ||
-    !data.items[0].snippet.thumbnails.high.url ||
-    !data.items[0].contentDetails ||
-    !data.items[0].contentDetails.duration
+    !video ||
+    !video.id ||
+    !video.snippet?.title ||
+    !video.snippet?.publishedAt ||
+    !video.snippet?.thumbnails?.default?.url ||
+    !video.snippet?.thumbnails?.medium?.url ||
+    !video.snippet?.thumbnails?.high?.url ||
+    !video.contentDetails?.duration
   ) {
     res.status(404).json({ error: `${videoId} is not found.` });
     return;
   }
 
-  const duration = parseDuration(data.items[0].contentDetails.duration);
-
-  const response: GetVideoResponse = {
-    id: data.items[0].id,
-    title: data.items[0].snippet.title,
-    publishedAt: data.items[0].snippet.publishedAt,
+  const response: GetYouTubeVideoResponse = {
+    id: video.id,
+    title: video.snippet.title,
+    publishedAt: video.snippet.publishedAt,
     thumbnails: {
-      default: data.items[0].snippet.thumbnails.default.url,
-      medium: data.items[0].snippet.thumbnails.medium.url,
-      high: data.items[0].snippet.thumbnails.high.url,
+      default: video.snippet.thumbnails.default.url,
+      medium: video.snippet.thumbnails.medium.url,
+      high: video.snippet.thumbnails.high.url,
     },
-    duration: duration,
+    duration: parseDuration(video.contentDetails.duration),
   };
   res.status(200).json(response);
 };
