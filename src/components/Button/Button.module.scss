@@ -1,0 +1,25 @@
+@import 'variable.scss';
+
+.root {
+  display: inline-block;
+  color: $base-white;
+  background-color: $primary-400;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  padding: 0.5rem 0.75rem;
+  font-weight: bold;
+
+  &:hover {
+    background-color: $primary-200;
+  }
+}
+
+.secondary {
+  background-color: $secondary-400;
+  color: $base-white;
+
+  &:hover {
+    background-color: $secondary-200;
+  }
+}

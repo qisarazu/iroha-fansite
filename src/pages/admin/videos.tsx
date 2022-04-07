@@ -1,7 +1,9 @@
 import type { Video } from '@prisma/client';
+import { withAuthRequired } from '@supabase/supabase-auth-helpers/nextjs';
 import { format } from 'date-fns';
 import Image from 'next/image';
 
+import { Button } from '../../components/Button/Button';
 import { Layout } from '../../components/Layout/Layout';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { EditableCell } from '../../components/Table/EditableCell/EditableCell';
@@ -11,6 +13,8 @@ import { useGetVideosApi } from '../../hooks/api/videos/useGetVideosApi';
 import { usePostVideoApi } from '../../hooks/api/videos/usePostVideoApi';
 import { usePutVideoApi } from '../../hooks/api/videos/usePutVideoApi';
 import { useYouTubeVideoApiFetcher } from '../../hooks/api/youtube/useGetYouTubeVideoApi';
+
+export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
 const AdminVideosPage = () => {
   const { data: videos, get, mutate } = useGetVideosApi({ orderBy: 'publishedAt', orderDirection: 'desc' });
@@ -68,7 +72,7 @@ const AdminVideosPage = () => {
   return (
     <Layout title="videos">
       <h1>videos</h1>
-      <button onClick={onAddRow}>Add Row</button>
+      <Button onClick={onAddRow}>Add Row</Button>
       {!videos ? (
         <Spinner />
       ) : (
@@ -90,7 +94,9 @@ const AdminVideosPage = () => {
               <td>{video.duration}</td>
               <td>{format(new Date(video.publishedAt), 'yyyy/MM/dd HH:mm')}</td>
               <td>
-                <button onClick={onDelete(video)}>DELETE</button>
+                <Button variant="secondary" onClick={onDelete(video)}>
+                  DELETE
+                </Button>
               </td>
             </tr>
           )}
