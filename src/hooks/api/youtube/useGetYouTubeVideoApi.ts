@@ -16,7 +16,6 @@ export function useYouTubeVideoApiFetcher() {
 
   return useCallback(
     async (id: string) => {
-      console.log('id', id);
       const data = await fetcher<GetYouTubeVideoResponse>(`${BASE_KEY}${id}`);
       await mutate<GetYouTubeVideoResponse>(`${BASE_KEY}${id}`, data);
       return data;
