@@ -2,6 +2,7 @@ import type { Video } from '@prisma/client';
 import { withAuthRequired } from '@supabase/supabase-auth-helpers/nextjs';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import { useCallback } from 'react';
 
 import { Button } from '../../components/Button/Button';
 import { Layout } from '../../components/Layout/Layout';
@@ -23,12 +24,15 @@ const AdminVideosPage = () => {
   const { delete: deleteVideo } = useDeleteVideoApi();
   const getYouTubeVideo = useYouTubeVideoApiFetcher();
 
-  const onSortChange = async (orderBy: string, direction: 'asc' | 'desc') => {
-    const data = await get({ orderBy: orderBy as keyof Video, orderDirection: direction });
-    await mutate(data, false);
-  };
+  const onSortChange = useCallback(
+    async (orderBy: string, direction: 'asc' | 'desc') => {
+      const data = await get({ orderBy: orderBy as keyof Video, orderDirection: direction });
+      await mutate(data, false);
+    },
+    [get, mutate],
+  );
 
-  const onAddRow = async () => {
+  const onAddRow = useCallback(async () => {
     const newVideo = await postVideo({
       videoId: '',
       title: '',
@@ -39,35 +43,43 @@ const AdminVideosPage = () => {
       publishedAt: new Date(),
     });
     await mutate((state) => (state ? [...state, newVideo] : [newVideo]));
-  };
+  }, [mutate, postVideo]);
 
-  const onDelete = (video: Video) => async () => {
-    const deletedVideo = await deleteVideo({ id: video.id });
-    await mutate((state) => (state ? state.filter((video) => video.id !== deletedVideo.id) : []));
-  };
+  const onDelete = useCallback(
+    (video: Video) => async () => {
+      if (confirm(`[${video.videoId}]\n${video.title}\nこの動画を削除しますか?`)) {
+        const deletedVideo = await deleteVideo({ id: video.id });
+        await mutate((state) => (state ? state.filter((video) => video.id !== deletedVideo.id) : []));
+      }
+    },
+    [deleteVideo, mutate],
+  );
 
-  const onVideoIdChange = async (rowIndex: number, columnId: string, value: string | number) => {
-    if (!value) return;
-    const videoId = typeof value === 'number' ? value.toString() : value;
-    const video = await getYouTubeVideo(videoId);
+  const onVideoIdChange = useCallback(
+    async (rowIndex: number, columnId: string, value: string | number) => {
+      if (!value) return;
+      const videoId = typeof value === 'number' ? value.toString() : value;
+      const video = await getYouTubeVideo(videoId);
 
-    await mutate(async (state) => {
-      if (!state) return state;
+      await mutate(async (state) => {
+        if (!state) return state;
 
-      const newVideo = await putVideo({
-        ...state[rowIndex],
-        videoId: video.id,
-        title: video.title,
-        duration: video.duration,
-        thumbnailDefaultUrl: video.thumbnails.default,
-        thumbnailMediumUrl: video.thumbnails.medium,
-        thumbnailHighUrl: video.thumbnails.high,
-        publishedAt: new Date(video.publishedAt),
+        const newVideo = await putVideo({
+          ...state[rowIndex],
+          videoId: video.id,
+          title: video.title,
+          duration: video.duration,
+          thumbnailDefaultUrl: video.thumbnails.default,
+          thumbnailMediumUrl: video.thumbnails.medium,
+          thumbnailHighUrl: video.thumbnails.high,
+          publishedAt: new Date(video.publishedAt),
+        });
+        state[rowIndex] = newVideo;
+        return state;
       });
-      state[rowIndex] = newVideo;
-      return state;
-    });
-  };
+    },
+    [getYouTubeVideo, mutate, putVideo],
+  );
 
   return (
     <Layout title="videos">

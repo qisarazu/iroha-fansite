@@ -1,12 +1,12 @@
 @import 'variable.scss';
 
 .root {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   color: $base-white;
   background-color: $primary-400;
   border: none;
   border-radius: 4px;
-  text-transform: uppercase;
   padding: 0.5rem 0.75rem;
   font-weight: bold;
 
@@ -22,4 +22,11 @@
   &:hover {
     background-color: $secondary-200;
   }
+}
+
+.leftIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
 }
