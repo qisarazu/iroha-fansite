@@ -9,8 +9,8 @@ type Props<T extends unknown> = {
     key: string;
     direction: 'asc' | 'desc';
   };
-  onSortChange: (key: string, direction: 'asc' | 'desc') => void;
   children: (data: T, index: number) => ReactNode;
+  onSortChange: (key: string, direction: 'asc' | 'desc') => void;
 };
 
 export const Table = <T extends unknown>({ headers, data, defaultSort, onSortChange, children }: Props<T>) => {

@@ -53,6 +53,11 @@ const AdminIndexPage = () => {
               videos
             </Link>
           </li>
+          <li>
+            <Link href="/admin/songs" underline>
+              songs
+            </Link>
+          </li>
         </ul>
       </div>
       <div>Login as: {user.email}</div>
