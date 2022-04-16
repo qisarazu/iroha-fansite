@@ -1,5 +1,5 @@
 import type { Video } from '@prisma/client';
-import { withAuthRequired } from '@supabase/supabase-auth-helpers/nextjs';
+import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useCallback } from 'react';

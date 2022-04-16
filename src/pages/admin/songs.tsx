@@ -1,5 +1,5 @@
 import type { Song } from '@prisma/client';
-import { withAuthRequired } from '@supabase/supabase-auth-helpers/nextjs';
+import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
