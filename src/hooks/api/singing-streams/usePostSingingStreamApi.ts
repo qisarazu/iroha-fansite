@@ -1,11 +1,11 @@
-import type { SingingStream } from '@prisma/client';
 import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
+import type { SingingStreamWithVideoAndSong } from '../../../model';
 import type { PostSingingStreamRequest } from '../../../pages/api/singing-streams';
 
 type Props = {
-  mutate: KeyedMutator<SingingStream[]>;
+  mutate: KeyedMutator<SingingStreamWithVideoAndSong[]>;
 };
 
 export function usePostSingingStreamApi({ mutate }: Props) {

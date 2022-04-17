@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 
 import { Button } from '../../components/Button/Button';
+import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { ButtonCell } from '../../components/Table/ButtonCell/ButtonCell';
@@ -83,6 +84,7 @@ const AdminVideosPage = () => {
   return (
     <Layout title="songs">
       <h1>songs</h1>
+      <LinkList />
       {!songs ? (
         <Spinner />
       ) : (

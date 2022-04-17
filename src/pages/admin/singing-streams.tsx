@@ -1,12 +1,13 @@
-import type { SingingStream } from '@prisma/client';
+import { Button, CircularProgress } from '@mui/material';
+import type { SingingStream, Song, Video } from '@prisma/client';
 import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Button } from '../../components/Button/Button';
+import { EditSingingStreamModal } from '../../components/features/admin/EditSingingStreamModal/EditSingingStreamModal';
+import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
-import { Spinner } from '../../components/Spinner/Spinner';
 import { ButtonCell } from '../../components/Table/ButtonCell/ButtonCell';
 import { EditableCell } from '../../components/Table/EditableCell/EditableCell';
 import { Table } from '../../components/Table/Table';
@@ -19,6 +20,8 @@ export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
 const AdminVideosPage = () => {
   const router = useRouter();
+
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const orderBy = useMemo(() => {
     const { orderBy } = router.query;
@@ -35,14 +38,17 @@ const AdminVideosPage = () => {
   const { api: putApi } = usePutSingingStreamApi({ mutate });
   const { api: deleteApi } = useDeleteSingingStreamApi({ mutate });
 
-  const onAdd = useCallback(() => {
-    postApi({
-      start: 0,
-      end: 0,
-      videoId: '',
-      songId: '',
-    });
-  }, [postApi]);
+  const onSave = useCallback(
+    ({ video, song }: { video: Video; song: Song }) => {
+      postApi({
+        start: 0,
+        end: 0,
+        videoId: video.id,
+        songId: song.id,
+      });
+    },
+    [postApi],
+  );
 
   const onSortChange = useCallback(
     (key: string, direction: 'asc' | 'desc') => {
@@ -82,22 +88,35 @@ const AdminVideosPage = () => {
     [deleteApi, singingStreams],
   );
 
+  const onModalOpen = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const onModalClose = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
   return (
     <Layout title="singingStreams">
       <h1>singing streams</h1>
+      <LinkList />
       {!singingStreams ? (
-        <Spinner />
+        <CircularProgress />
       ) : (
         <div>
-          <Button onClick={onAdd}>Add Row</Button>
+          <Button variant="contained" sx={{ my: 1 }} onClick={onModalOpen}>
+            Add
+          </Button>
           <Table
             data={singingStreams}
-            headers={['start', 'end', 'createdAt', 'delete']}
+            headers={['video', 'song', 'start', 'end', 'createdAt', 'delete']}
             defaultSort={{ key: orderBy, direction: orderDirection }}
             onSortChange={onSortChange}
           >
             {(singingStream, i) => (
               <tr key={singingStream.id}>
+                <td>{singingStream.video.title}</td>
+                <td>{singingStream.song.title}</td>
                 <EditableCell columnId="start" rowIndex={i} value={singingStream.start} onChange={onChange} />
                 <EditableCell columnId="end" rowIndex={i} value={singingStream.end} onChange={onChange} />
                 <td>{format(new Date(singingStream.createdAt), 'yyyy/MM/dd HH:mm')}</td>
@@ -107,6 +126,7 @@ const AdminVideosPage = () => {
           </Table>
         </div>
       )}
+      <EditSingingStreamModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
     </Layout>
   );
 };

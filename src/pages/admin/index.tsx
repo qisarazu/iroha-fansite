@@ -1,10 +1,10 @@
+import { Button, Typography } from '@mui/material';
 import { useUser } from '@supabase/supabase-auth-helpers/react';
 import { useCallback, useMemo } from 'react';
 import { FaGoogle } from 'react-icons/fa';
 
-import { Button } from '../../components/Button/Button';
+import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
-import { Link } from '../../components/Link/Link';
 import { supabase } from '../../utils/supabaseClient';
 import styles from './index.module.scss';
 
@@ -36,7 +36,7 @@ const AdminIndexPage = () => {
   if (!user) {
     return (
       <Layout title="admin">
-        <Button leftIcon={<FaGoogle />} onClick={onLogin}>
+        <Button startIcon={<FaGoogle />} onClick={onLogin}>
           Login with Google
         </Button>
       </Layout>
@@ -46,22 +46,13 @@ const AdminIndexPage = () => {
   return (
     <Layout title="admin">
       <div className={styles.links}>
-        <h2>links</h2>
-        <ul>
-          <li>
-            <Link href="/admin/videos" underline>
-              videos
-            </Link>
-          </li>
-          <li>
-            <Link href="/admin/songs" underline>
-              songs
-            </Link>
-          </li>
-        </ul>
+        <Typography variant="subtitle1">links</Typography>
+        <LinkList />
       </div>
-      <div>Login as: {user.email}</div>
-      <Button onClick={onLogout}>Logout</Button>
+      <Typography sx={{ my: 1 }}>Login as: {user.email}</Typography>
+      <Button variant="outlined" startIcon={<FaGoogle />} onClick={onLogout}>
+        Logout
+      </Button>
     </Layout>
   );
 };

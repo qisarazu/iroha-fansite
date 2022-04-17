@@ -1,8 +1,8 @@
-import type { SingingStream } from '@prisma/client';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import urlcat from 'urlcat';
 
+import type { SingingStreamWithVideoAndSong } from '../../../model';
 import type { GetSingingStreamsRequest } from '../../../pages/api/singing-streams';
 import { fetcher } from '../../../utils/fetcher';
 
@@ -15,12 +15,12 @@ export function useGetSingingStreamsApi({ request }: Props = {}) {
 
   const url = useMemo(() => urlcat('/api/singing-streams', request ?? {}), [request]);
 
-  const { data, mutate } = useSWR<SingingStream[]>(url, fetcher);
+  const { data, mutate } = useSWR<SingingStreamWithVideoAndSong[]>(url, fetcher);
 
   const refetch = useCallback(async () => {
     setLoading(true);
 
-    const newData = await fetcher<SingingStream[]>(url);
+    const newData = await fetcher<SingingStreamWithVideoAndSong[]>(url);
     mutate(newData);
 
     setLoading(false);

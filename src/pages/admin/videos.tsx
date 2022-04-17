@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useCallback } from 'react';
 
 import { Button } from '../../components/Button/Button';
+import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { EditableCell } from '../../components/Table/EditableCell/EditableCell';
@@ -84,6 +85,7 @@ const AdminVideosPage = () => {
   return (
     <Layout title="videos">
       <h1>videos</h1>
+      <LinkList />
       <Button onClick={onAddRow}>Add Row</Button>
       {!videos ? (
         <Spinner />
