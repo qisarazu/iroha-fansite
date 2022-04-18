@@ -26,5 +26,5 @@ export function useGetSongsApi({ request }: Props = {}) {
     setLoading(false);
   }, [mutate, url]);
 
-  return { data, isLoading, refetch, mutate };
+  return { data: data ?? [], isLoading: isLoading || !data, refetch, mutate };
 }
