@@ -1,25 +1,34 @@
 import type { Video } from '@prisma/client';
 import { useCallback, useState } from 'react';
+import type { KeyedMutator } from 'swr';
 
 import type { PostVideoApiRequest } from '../../../pages/api/videos';
 
-export function usePostVideoApi() {
+type Props = {
+  mutate: KeyedMutator<Video[]>;
+};
+
+export function usePostVideoApi({ mutate }: Props) {
   const [isLoading, setLoading] = useState(false);
 
-  const api = useCallback(async (request: PostVideoApiRequest): Promise<Video> => {
-    setLoading(true);
+  const api = useCallback(
+    async (request: PostVideoApiRequest): Promise<void> => {
+      setLoading(true);
 
-    const data = await fetch('/api/videos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request),
-    }).then((res) => res.json());
+      const newData = await fetch('/api/videos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      }).then((res) => res.json());
 
-    setLoading(false);
-    return data;
-  }, []);
+      mutate((data) => (data ? [...data, newData] : [newData]));
 
-  return { post: api, isLoading };
+      setLoading(false);
+    },
+    [mutate],
+  );
+
+  return { api, isLoading };
 }

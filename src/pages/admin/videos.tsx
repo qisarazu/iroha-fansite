@@ -1,40 +1,40 @@
+import { Box, Button } from '@mui/material';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridCellEditCommitParams,
+  GridColDef,
+  GridRenderCellParams,
+  GridRowParams,
+  GridRowsProp,
+} from '@mui/x-data-grid';
 import type { Video } from '@prisma/client';
 import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { MdDelete } from 'react-icons/md';
 
-import { Button } from '../../components/Button/Button';
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
-import { Spinner } from '../../components/Spinner/Spinner';
-import { EditableCell } from '../../components/Table/EditableCell/EditableCell';
-import { Table } from '../../components/Table/Table';
 import { useDeleteVideoApi } from '../../hooks/api/videos/useDeleteVideoApi';
 import { useGetVideosApi } from '../../hooks/api/videos/useGetVideosApi';
 import { usePostVideoApi } from '../../hooks/api/videos/usePostVideoApi';
 import { usePutVideoApi } from '../../hooks/api/videos/usePutVideoApi';
 import { useYouTubeVideoApiFetcher } from '../../hooks/api/youtube/useGetYouTubeVideoApi';
+import { theme } from '../../styles/theme';
 
 export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
 const AdminVideosPage = () => {
-  const { data: videos, get, mutate } = useGetVideosApi({ orderBy: 'publishedAt', orderDirection: 'desc' });
-  const { post: postVideo } = usePostVideoApi();
-  const { put: putVideo } = usePutVideoApi();
-  const { delete: deleteVideo } = useDeleteVideoApi();
+  const { data: videos, isLoading, mutate } = useGetVideosApi();
+  const { api: postVideo } = usePostVideoApi({ mutate });
+  const { api: putVideo } = usePutVideoApi({ mutate });
+  const { api: deleteVideo } = useDeleteVideoApi({ mutate });
   const getYouTubeVideo = useYouTubeVideoApiFetcher();
 
-  const onSortChange = useCallback(
-    async (orderBy: string, direction: 'asc' | 'desc') => {
-      const data = await get({ orderBy: orderBy as keyof Video, orderDirection: direction });
-      await mutate(data, false);
-    },
-    [get, mutate],
-  );
-
   const onAddRow = useCallback(async () => {
-    const newVideo = await postVideo({
+    await postVideo({
       videoId: '',
       title: '',
       duration: 0,
@@ -43,79 +43,96 @@ const AdminVideosPage = () => {
       thumbnailHighUrl: '',
       publishedAt: new Date(),
     });
-    await mutate((state) => (state ? [...state, newVideo] : [newVideo]));
-  }, [mutate, postVideo]);
+  }, [postVideo]);
 
   const onDelete = useCallback(
-    (video: Video) => async () => {
+    (video: Video) => () => {
       if (confirm(`[${video.videoId}]\n${video.title}\nこの動画を削除しますか?`)) {
-        const deletedVideo = await deleteVideo({ id: video.id });
-        await mutate((state) => (state ? state.filter((video) => video.id !== deletedVideo.id) : []));
+        deleteVideo({ id: video.id });
       }
     },
-    [deleteVideo, mutate],
+    [deleteVideo],
   );
 
   const onVideoIdChange = useCallback(
-    async (rowIndex: number, columnId: string, value: string | number) => {
-      if (!value) return;
+    async ({ id, value }: GridCellEditCommitParams) => {
+      if (!value || !id || typeof id !== 'string') return;
       const videoId = typeof value === 'number' ? value.toString() : value;
       const video = await getYouTubeVideo(videoId);
 
-      await mutate(async (state) => {
-        if (!state) return state;
-
-        const newVideo = await putVideo({
-          ...state[rowIndex],
-          videoId: video.id,
-          title: video.title,
-          duration: video.duration,
-          thumbnailDefaultUrl: video.thumbnails.default,
-          thumbnailMediumUrl: video.thumbnails.medium,
-          thumbnailHighUrl: video.thumbnails.high,
-          publishedAt: new Date(video.publishedAt),
-        });
-        state[rowIndex] = newVideo;
-        return state;
+      await putVideo({
+        id,
+        videoId: video.id,
+        title: video.title,
+        duration: video.duration,
+        thumbnailDefaultUrl: video.thumbnails.default,
+        thumbnailMediumUrl: video.thumbnails.medium,
+        thumbnailHighUrl: video.thumbnails.high,
+        publishedAt: new Date(video.publishedAt),
       });
     },
-    [getYouTubeVideo, mutate, putVideo],
+    [getYouTubeVideo, putVideo],
+  );
+
+  const rows = useMemo<GridRowsProp>(() => {
+    return videos.map((video) => ({
+      id: video.id,
+      videoId: video.videoId,
+      title: video.title,
+      duration: video.duration,
+      thumbnail: video.thumbnailDefaultUrl,
+      publishedAt: format(new Date(video.publishedAt), 'yyyy/MM/dd HH:mm:ss'),
+      createdAt: format(new Date(video.createdAt), 'yyyy/MM/dd HH:mm:ss'),
+      updatedAt: format(new Date(video.updatedAt), 'yyyy/MM/dd HH:mm:ss'),
+    }));
+  }, [videos]);
+
+  const columns = useMemo<GridColDef[]>(
+    () => [
+      {
+        field: 'videoId',
+        headerName: '動画ID',
+        editable: true,
+        width: 120,
+      },
+      {
+        field: 'thumbnail',
+        headerName: 'サムネイル',
+        width: 80,
+        renderCell: ({ value }: GridRenderCellParams) =>
+          value ? <Image src={value} width={64} height={36} alt="value" objectFit="cover" /> : null,
+      },
+      {
+        field: 'title',
+        headerName: 'タイトル',
+        flex: 1,
+      },
+      { field: 'duration', headerName: '動画長' },
+      { field: 'publishedAt', headerName: '公開日', width: 160 },
+      { field: 'createdAt', headerName: '作成日', width: 160 },
+      { field: 'updatedAt', headerName: '更新日', width: 160 },
+      {
+        field: 'actions',
+        type: 'actions',
+        headerName: '削除',
+        getActions: ({ row }: GridRowParams) => [
+          <GridActionsCellItem key="delete" icon={<MdDelete />} label="削除" onClick={onDelete(row)} />,
+        ],
+      },
+    ],
+    [onDelete],
   );
 
   return (
     <Layout title="videos">
       <h1>videos</h1>
       <LinkList />
-      <Button onClick={onAddRow}>Add Row</Button>
-      {!videos ? (
-        <Spinner />
-      ) : (
-        <Table
-          data={videos}
-          headers={['videoId', 'thumbnail', 'title', 'duration', 'publishedAt', 'delete']}
-          defaultSort={{ key: 'publishedAt', direction: 'desc' }}
-          onSortChange={onSortChange}
-        >
-          {(video, index) => (
-            <tr key={video.id}>
-              <EditableCell value={video.videoId} rowIndex={index} columnId="videoId" onChange={onVideoIdChange} />
-              <td>
-                {video.thumbnailDefaultUrl ? (
-                  <Image src={video.thumbnailDefaultUrl} width={96} height={54} objectFit="cover" alt={video.title} />
-                ) : null}
-              </td>
-              <td>{video.title}</td>
-              <td>{video.duration}</td>
-              <td>{format(new Date(video.publishedAt), 'yyyy/MM/dd HH:mm')}</td>
-              <td>
-                <Button variant="secondary" onClick={onDelete(video)}>
-                  DELETE
-                </Button>
-              </td>
-            </tr>
-          )}
-        </Table>
-      )}
+      <Button variant="contained" onClick={onAddRow}>
+        Add Row
+      </Button>
+      <Box sx={{ my: theme.spacing(1), height: theme.spacing(100) }}>
+        <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onVideoIdChange} />
+      </Box>
     </Layout>
   );
 };
