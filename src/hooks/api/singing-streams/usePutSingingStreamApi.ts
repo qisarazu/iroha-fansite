@@ -15,7 +15,7 @@ export function usePutSingingStreamApi({ mutate }: Props) {
     async (request: PutSingingStreamRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetch(`/api/singing-steams/${request.id}`, {
+      const newData = await fetch(`/api/singing-streams/${request.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

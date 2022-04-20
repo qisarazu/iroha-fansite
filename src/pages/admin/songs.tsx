@@ -82,7 +82,7 @@ const AdminVideosPage = () => {
 
   const columns = useMemo<GridColDef[]>(() => {
     return [
-      { field: 'title', headerName: 'タイトル', flex: 2, editable: true },
+      { field: 'title', headerName: '曲名', flex: 2, editable: true },
       { field: 'artist', headerName: 'アーティスト', flex: 1, editable: true },
       { field: 'createdAt', headerName: '作成日', width: 160 },
       { field: 'updatedAt', headerName: '更新日', width: 160 },

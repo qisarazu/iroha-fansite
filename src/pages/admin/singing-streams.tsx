@@ -1,20 +1,27 @@
-import { Button, CircularProgress } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridCellEditCommitParams,
+  GridColDef,
+  GridRowParams,
+  GridRowsProp,
+} from '@mui/x-data-grid';
 import type { SingingStream, Song, Video } from '@prisma/client';
 import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
+import { MdDelete } from 'react-icons/md';
 
 import { EditSingingStreamModal } from '../../components/features/admin/EditSingingStreamModal/EditSingingStreamModal';
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
-import { ButtonCell } from '../../components/Table/ButtonCell/ButtonCell';
-import { EditableCell } from '../../components/Table/EditableCell/EditableCell';
-import { Table } from '../../components/Table/Table';
 import { useDeleteSingingStreamApi } from '../../hooks/api/singing-streams/useDeleteSingingStreamApi';
 import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import { usePostSingingStreamApi } from '../../hooks/api/singing-streams/usePostSingingStreamApi';
 import { usePutSingingStreamApi } from '../../hooks/api/singing-streams/usePutSingingStreamApi';
+import { theme } from '../../styles/theme';
 
 export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
@@ -39,10 +46,10 @@ const AdminVideosPage = () => {
   const { api: deleteApi } = useDeleteSingingStreamApi({ mutate });
 
   const onSave = useCallback(
-    ({ video, song }: { video: Video; song: Song }) => {
+    ({ video, song, startSec, endSec }: { video: Video; song: Song; startSec: number; endSec: number }) => {
       postApi({
-        start: 0,
-        end: 0,
+        start: startSec,
+        end: endSec,
         videoId: video.id,
         songId: song.id,
       });
@@ -50,42 +57,25 @@ const AdminVideosPage = () => {
     [postApi],
   );
 
-  const onSortChange = useCallback(
-    (key: string, direction: 'asc' | 'desc') => {
-      if (key === 'delete') return;
-      router.replace({
-        query: {
-          orderBy: key,
-          orderDirection: direction,
-        },
-      });
-    },
-    [router],
-  );
-
   const onChange = useCallback(
-    (rowIndex: number, columnId: string, value: string | number) => {
-      const singingStream = singingStreams?.[rowIndex];
-      if (!singingStream) return;
+    ({ id, field, value }: GridCellEditCommitParams) => {
+      if (!id || typeof id !== 'string') return;
 
       putApi({
-        id: singingStream.id,
-        [columnId]: value,
+        id,
+        [field]: parseInt(value, 10),
       });
     },
-    [putApi, singingStreams],
+    [putApi],
   );
 
   const onDelete = useCallback(
-    (rowIndex: number) => {
-      const singingStream = singingStreams?.[rowIndex];
-      if (!singingStream) return;
-
+    (singingStream: SingingStream) => () => {
       if (confirm(`[${singingStream.id}]\n削除しますか?`)) {
         deleteApi({ id: singingStream.id });
       }
     },
-    [deleteApi, singingStreams],
+    [deleteApi],
   );
 
   const onModalOpen = useCallback(() => {
@@ -96,36 +86,50 @@ const AdminVideosPage = () => {
     setModalOpen(false);
   }, []);
 
+  const rows = useMemo<GridRowsProp>(
+    () =>
+      singingStreams.map((stream) => ({
+        id: stream.id,
+        song: `${stream.song.title} / ${stream.song.artist}`,
+        video: stream.video.title,
+        start: stream.start,
+        end: stream.end,
+        createdAt: format(new Date(stream.createdAt), 'yyyy/MM/dd HH:mm:ss'),
+        updatedAt: format(new Date(stream.updatedAt), 'yyyy/MM/dd HH:mm:ss'),
+      })),
+    [singingStreams],
+  );
+
+  const columns = useMemo<GridColDef[]>(
+    () => [
+      { field: 'song', headerName: '曲', flex: 1 },
+      { field: 'video', headerName: '動画', flex: 2 },
+      { field: 'start', headerName: '開始時間', editable: true, type: 'number' },
+      { field: 'end', headerName: '終了時間', editable: true, type: 'number' },
+      { field: 'createdAt', headerName: '作成日時', width: 160 },
+      { field: 'updatedAt', headerName: '更新日時', width: 160 },
+      {
+        field: 'actions',
+        type: 'actions',
+        headerName: '削除',
+        getActions: ({ row }: GridRowParams) => {
+          return [<GridActionsCellItem key="delete" icon={<MdDelete />} label="削除" onClick={onDelete(row)} />];
+        },
+      },
+    ],
+    [onDelete],
+  );
+
   return (
     <Layout title="singingStreams">
       <h1>singing streams</h1>
       <LinkList />
-      {!singingStreams ? (
-        <CircularProgress />
-      ) : (
-        <div>
-          <Button variant="contained" sx={{ my: 1 }} onClick={onModalOpen}>
-            Add
-          </Button>
-          <Table
-            data={singingStreams}
-            headers={['video', 'song', 'start', 'end', 'createdAt', 'delete']}
-            defaultSort={{ key: orderBy, direction: orderDirection }}
-            onSortChange={onSortChange}
-          >
-            {(singingStream, i) => (
-              <tr key={singingStream.id}>
-                <td>{singingStream.video.title}</td>
-                <td>{singingStream.song.title}</td>
-                <EditableCell columnId="start" rowIndex={i} value={singingStream.start} onChange={onChange} />
-                <EditableCell columnId="end" rowIndex={i} value={singingStream.end} onChange={onChange} />
-                <td>{format(new Date(singingStream.createdAt), 'yyyy/MM/dd HH:mm')}</td>
-                <ButtonCell columnId="delete" rowIndex={i} variant="secondary" label="delete" onClick={onDelete} />
-              </tr>
-            )}
-          </Table>
-        </div>
-      )}
+      <Button variant="contained" sx={{ my: 1 }} onClick={onModalOpen}>
+        Add
+      </Button>
+      <Box sx={{ my: 1, height: theme.spacing(100) }}>
+        <DataGrid rows={rows} columns={columns} onCellEditCommit={onChange} />
+      </Box>
       <EditSingingStreamModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
     </Layout>
   );

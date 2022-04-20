@@ -7,21 +7,23 @@ import {
   CSSObject,
   Modal,
   Paper,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
 import type { Song, Video } from '@prisma/client';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, memo, useCallback, useMemo, useState } from 'react';
 
 import { useGetSongsApi } from '../../../../hooks/api/songs/useGetSongsApi';
 import { useGetVideosApi } from '../../../../hooks/api/videos/useGetVideosApi';
 import { theme } from '../../../../styles/theme';
+import { formatToSec } from '../../../../utils/formatToSec';
 
 type Option<T> = { label: string; value: T };
 
 type Props = {
   open: boolean;
-  onSave: (value: { video: Video; song: Song }) => void;
+  onSave: (value: { video: Video; song: Song; startSec: number; endSec: number }) => void;
   onClose: () => void;
 };
 
@@ -40,6 +42,9 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
 
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+
+  const [startSec, setStartSec] = useState(0);
+  const [endSec, setEndSec] = useState(0);
 
   const videoOptions: Option<Video>[] = useMemo(() => {
     return (
@@ -72,14 +77,28 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
     [],
   );
 
+  const onStartChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setStartSec(formatToSec(event.target.value));
+  }, []);
+
+  const onEndChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setEndSec(formatToSec(event.target.value));
+  }, []);
+
+  const handleClose = useCallback(() => {
+    onClose();
+    setStartSec(0);
+    setEndSec(0);
+  }, [onClose]);
+
   const handleSave = useCallback(() => {
     if (!selectedVideo || !selectedSong) return;
-    onClose();
-    onSave({ video: selectedVideo, song: selectedSong });
-  }, [onClose, onSave, selectedSong, selectedVideo]);
+    handleClose();
+    onSave({ video: selectedVideo, song: selectedSong, startSec, endSec });
+  }, [endSec, handleClose, onSave, selectedSong, selectedVideo, startSec]);
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <Paper sx={modalStyle}>
         <Autocomplete
           sx={{ my: 1 }}
@@ -88,8 +107,21 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
           onChange={onVideoChange}
         />
         <Autocomplete sx={{ my: 1 }} options={songOptions} renderInput={renderInput('song')} onChange={onSongChange} />
+
+        <Stack sx={{ my: 1 }} direction="row" alignItems="center" justifyContent="space-between">
+          <TextField label="開始時間" onChange={onStartChange} />
+          <Typography>→</Typography>
+          <Typography>{startSec}</Typography>
+        </Stack>
+
+        <Stack sx={{ my: 1 }} direction="row" alignItems="center" justifyContent="space-between">
+          <TextField label="終了時間" onChange={onEndChange} />
+          <Typography>→</Typography>
+          <Typography>{endSec}</Typography>
+        </Stack>
+
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: theme.spacing(1) }}>
-          <Button onClick={onClose}>キャンセル</Button>
+          <Button onClick={handleClose}>キャンセル</Button>
           <Button onClick={handleSave}>保存</Button>
         </Box>
       </Paper>
