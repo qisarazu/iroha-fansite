@@ -1,5 +1,8 @@
-import { Button, Typography } from '@mui/material';
-import { useUser } from '@supabase/supabase-auth-helpers/react';
+import { Alert, Button, Typography } from '@mui/material';
+import getUser from '@supabase/supabase-auth-helpers/nextjs/utils/getUser';
+import type { User } from '@supabase/supabase-js';
+import type { GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import { FaGoogle } from 'react-icons/fa';
 
@@ -8,8 +11,18 @@ import { Layout } from '../../components/Layout/Layout';
 import { supabase } from '../../utils/supabaseClient';
 import styles from './index.module.scss';
 
-const AdminIndexPage = () => {
-  const { user } = useUser();
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const { user } = await getUser(ctx);
+  return {
+    props: {
+      user,
+      isAdmin: user?.id === process.env.ADMIN_UUID,
+    },
+  };
+}
+
+const AdminIndexPage = ({ user, isAdmin }: { user: User; isAdmin: boolean }) => {
+  const router = useRouter();
 
   const redirectUrl = useMemo(() => {
     if (typeof window !== 'undefined') {
@@ -29,13 +42,15 @@ const AdminIndexPage = () => {
     );
   }, [redirectUrl]);
 
-  const onLogout = useCallback(() => {
-    supabase.auth.signOut();
-  }, []);
+  const onLogout = useCallback(async () => {
+    await supabase.auth.signOut();
+    router.reload();
+  }, [router]);
 
-  if (!user) {
+  if (!isAdmin || !user) {
     return (
       <Layout title="admin">
+        <Alert severity="warning">このページは管理者専用ページです。管理者アカウントでログインが必要となります。</Alert>
         <Button startIcon={<FaGoogle />} onClick={onLogin}>
           Login with Google
         </Button>
