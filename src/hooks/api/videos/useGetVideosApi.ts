@@ -1,41 +1,30 @@
 import type { Video } from '@prisma/client';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
+import urlcat from 'urlcat';
 
 import type { GetVideosApiRequest } from '../../../pages/api/videos';
 import { fetcher } from '../../../utils/fetcher';
 
-export function useGetVideosApi(props: GetVideosApiRequest = {}) {
+type Props = {
+  request?: GetVideosApiRequest;
+};
+
+export function useGetVideosApi({ request }: Props = {}) {
   const [isLoading, setLoading] = useState(false);
 
-  const createQuery = useCallback((props: GetVideosApiRequest) => {
-    const searchParams = new URLSearchParams();
-    props.orderBy && searchParams.append('orderBy', props.orderBy);
-    props.orderDirection && searchParams.append('orderDirection', props.orderDirection);
-    return searchParams.toString();
-  }, []);
+  const url = useMemo(() => urlcat('/api/videos', request ?? {}), [request]);
 
-  const { data, mutate } = useSWRImmutable<Video[]>(
-    `/api/videos${createQuery(props) ? '?' + createQuery(props) : ''}`,
-    fetcher,
-  );
+  const { data, mutate } = useSWRImmutable<Video[]>(url, fetcher);
 
-  const api = useCallback(
-    async (request: GetVideosApiRequest = {}): Promise<Video[]> => {
-      setLoading(true);
+  const refetch = useCallback(async () => {
+    setLoading(true);
 
-      const data = await fetch(`/api/videos${createQuery(request) ? '?' + createQuery(request) : ''}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((res) => res.json());
+    const newData = await fetcher<Video[]>(url);
+    mutate(newData);
 
-      setLoading(false);
-      return data;
-    },
-    [createQuery],
-  );
+    setLoading(false);
+  }, [mutate, url]);
 
-  return { data, isLoading, mutate, get: api };
+  return { data: data ?? [], isLoading: isLoading || !data, mutate, refetch };
 }

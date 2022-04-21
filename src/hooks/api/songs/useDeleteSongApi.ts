@@ -1,28 +1,28 @@
-import type { Video } from '@prisma/client';
+import type { Song } from '@prisma/client';
 import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
-import type { DeleteVideoApiRequest } from '../../../pages/api/videos/[id]';
+import type { DeleteSongApiRequest } from '../../../pages/api/songs/[id]';
 
 type Props = {
-  mutate: KeyedMutator<Video[]>;
+  mutate: KeyedMutator<Song[]>;
 };
 
-export function useDeleteVideoApi({ mutate }: Props) {
+export function useDeleteSongApi({ mutate }: Props) {
   const [isLoading, setLoading] = useState(false);
 
   const api = useCallback(
-    async (request: DeleteVideoApiRequest): Promise<void> => {
+    async (request: DeleteSongApiRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetch(`/api/videos/${request.id}`, {
+      await fetch(`/api/songs/${request.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       }).then((res) => res.json());
 
-      mutate((data) => (data ? data.filter((video) => video.id !== request.id) : []));
+      mutate((data) => (data ? data.filter((song) => song.id !== request.id) : []));
 
       setLoading(false);
     },

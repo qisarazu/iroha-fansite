@@ -1,21 +1,21 @@
-import type { Video } from '@prisma/client';
+import type { Song } from '@prisma/client';
 import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
-import type { PostVideoApiRequest } from '../../../pages/api/videos';
+import type { PostSongApiRequest } from '../../../pages/api/songs';
 
 type Props = {
-  mutate: KeyedMutator<Video[]>;
+  mutate: KeyedMutator<Song[]>;
 };
 
-export function usePostVideoApi({ mutate }: Props) {
+export function usePostSongApi({ mutate }: Props) {
   const [isLoading, setLoading] = useState(false);
 
   const api = useCallback(
-    async (request: PostVideoApiRequest): Promise<void> => {
+    async (request: PostSongApiRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetch('/api/videos', {
+      const newData = await fetch('/api/songs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

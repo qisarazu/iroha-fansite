@@ -1,5 +1,6 @@
 import '../styles/global.scss';
 
+import { ThemeProvider } from '@mui/material/styles';
 import { UserProvider } from '@supabase/supabase-auth-helpers/react';
 import { tx } from '@transifex/native';
 import type { AppProps } from 'next/app';
@@ -8,6 +9,7 @@ import Script from 'next/script';
 import { useEffect } from 'react';
 
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
+import { theme } from '../styles/theme';
 import { GA_TRACKING_ID, pageview } from '../utils/gtag';
 import { supabase } from '../utils/supabaseClient';
 
@@ -28,14 +30,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   return (
-    <UserProvider supabaseClient={supabase}>
-      <YTPlayerContextProvider>
-        <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
+    <ThemeProvider theme={theme}>
+      <UserProvider supabaseClient={supabase}>
+        <YTPlayerContextProvider>
+          <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+          <Script
+            id="gtag-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -43,10 +46,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             page_path: window.location.pathname,
           });
         `,
-          }}
-        />
-        <Component {...pageProps} />
-      </YTPlayerContextProvider>
-    </UserProvider>
+            }}
+          />
+          <Component {...pageProps} />
+        </YTPlayerContextProvider>
+      </UserProvider>
+    </ThemeProvider>
   );
 }

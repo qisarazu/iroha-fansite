@@ -1,3 +1,4 @@
+import { Link as MuiLink } from '@mui/material';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import { ComponentPropsWithoutRef, memo } from 'react';
@@ -10,8 +11,8 @@ type Props = ComponentPropsWithoutRef<typeof NextLink> & {
 
 export const Link = memo(({ underline, children, ...props }: Props) => {
   return (
-    <NextLink {...props}>
-      <a className={clsx({ [styles.underline]: underline })}>{children}</a>
+    <NextLink {...props} passHref>
+      <MuiLink className={clsx({ [styles.underline]: underline })}>{children}</MuiLink>
     </NextLink>
   );
 });
