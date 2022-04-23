@@ -14,7 +14,10 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 
-import { EditSingingStreamModal } from '../../components/features/admin/EditSingingStreamModal/EditSingingStreamModal';
+import {
+  EditSingingStreamModal,
+  Sing,
+} from '../../components/features/admin/EditSingingStreamModal/EditSingingStreamModal';
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
 import { useDeleteSingingStreamApi } from '../../hooks/api/singing-streams/useDeleteSingingStreamApi';
@@ -46,13 +49,18 @@ const AdminVideosPage = () => {
   const { api: deleteApi } = useDeleteSingingStreamApi({ mutate });
 
   const onSave = useCallback(
-    ({ video, song, startSec, endSec }: { video: Video; song: Song; startSec: number; endSec: number }) => {
-      postApi({
-        start: startSec,
-        end: endSec,
-        videoId: video.id,
-        songId: song.id,
-      });
+    ({ video, sings }: { video: Video; sings: Sing[] }) => {
+      Promise.all(
+        sings.map((sing) => {
+          if (!sing.song) return;
+          postApi({
+            videoId: video.id,
+            songId: sing.song.id,
+            start: sing.startSec,
+            end: sing.endSec,
+          });
+        }),
+      );
     },
     [postApi],
   );
