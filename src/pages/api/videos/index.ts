@@ -2,6 +2,7 @@ import type { Video } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../utils/prismaClient';
+import { withAdminRequired } from '../../../utils/withAdminRequired';
 
 export type GetVideosApiRequest = {
   orderBy?: keyof Video;
@@ -37,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
     case 'POST': {
-      await postVideo(req, res);
+      await withAdminRequired(postVideo, req, res);
       return;
     }
   }

@@ -2,6 +2,7 @@ import type { Song } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../utils/prismaClient';
+import { withAdminRequired } from '../../../utils/withAdminRequired';
 
 export type PutSongApiRequest = Partial<Song>;
 async function putSong(req: NextApiRequest, res: NextApiResponse<Song>) {
@@ -33,8 +34,8 @@ async function deleteSong(req: NextApiRequest, res: NextApiResponse<Song>) {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'PUT':
-      return putSong(req, res);
+      return withAdminRequired(putSong, req, res);
     case 'DELETE':
-      return deleteSong(req, res);
+      return withAdminRequired(deleteSong, req, res);
   }
 }

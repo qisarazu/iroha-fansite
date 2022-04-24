@@ -2,17 +2,29 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { SingingStream, SingingStreamWithVideoAndSong } from '../../../model';
 import { prisma } from '../../../utils/prismaClient';
+import { withAdminRequired } from '../../../utils/withAdminRequired';
 
 export type GetSingingStreamsRequest = {
+  keyword?: string;
   orderBy?: keyof SingingStream;
   orderDirection?: 'asc' | 'desc';
 };
-async function getSingingStreams(req: NextApiRequest, res: NextApiResponse<SingingStreamWithVideoAndSong[]>) {
-  const { orderBy, orderDirection } = req.query as GetSingingStreamsRequest;
+async function getSingingStreams(req: NextApiRequest, res: NextApiResponse) {
+  const { keyword } = req.query as GetSingingStreamsRequest;
 
   const singingStreams = await prisma.singingStream.findMany({
-    orderBy: {
-      [orderBy || 'title']: orderDirection || 'desc',
+    orderBy: [
+      {
+        video: { publishedAt: 'desc' },
+      },
+      { start: 'asc' },
+    ],
+    where: {
+      song: {
+        title: {
+          contains: keyword,
+        },
+      },
     },
     include: {
       video: true,
@@ -43,6 +55,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       return getSingingStreams(req, res);
     case 'POST':
-      return postSingingStream(req, res);
+      return withAdminRequired(postSingingStream, req, res);
   }
 }
