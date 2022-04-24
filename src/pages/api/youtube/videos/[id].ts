@@ -2,6 +2,7 @@ import { google } from 'googleapis';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { parseDuration } from '../../../../utils/parseDuration';
+import { withAdminRequired } from '../../../../utils/withAdminRequired';
 
 const youtube = google.youtube({
   version: 'v3',
@@ -62,7 +63,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
-      return get(req, res);
+      return withAdminRequired(get, req, res);
     }
   }
 }

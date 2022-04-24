@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import urlcat from 'urlcat';
 
 import type { SingingStreamWithVideoAndSong } from '../../../model';
@@ -15,7 +15,7 @@ export function useGetSingingStreamsApi({ request }: Props = {}) {
 
   const url = useMemo(() => urlcat('/api/singing-streams', request ?? {}), [request]);
 
-  const { data, mutate } = useSWR<SingingStreamWithVideoAndSong[]>(url, fetcher);
+  const { data, mutate } = useSWRImmutable<SingingStreamWithVideoAndSong[]>(url, fetcher);
 
   const refetch = useCallback(async () => {
     setLoading(true);

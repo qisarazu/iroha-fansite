@@ -1,6 +1,6 @@
 import type { Song } from '@prisma/client';
 import { useCallback, useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import urlcat from 'urlcat';
 
 import type { GetSongsApiRequest } from '../../../pages/api/songs';
@@ -15,7 +15,7 @@ export function useGetSongsApi({ request }: Props = {}) {
 
   const url = useMemo(() => urlcat('/api/songs', request ?? {}), [request]);
 
-  const { data, mutate } = useSWR<Song[]>(url, fetcher);
+  const { data, mutate } = useSWRImmutable<Song[]>(url, fetcher);
 
   const refetch = useCallback(async () => {
     setLoading(true);
