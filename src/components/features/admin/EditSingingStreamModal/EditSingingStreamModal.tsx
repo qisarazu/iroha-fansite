@@ -55,7 +55,7 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
   const videoOptions: Option<Video>[] = useMemo(() => {
     return (
       videos?.map((video) => ({
-        label: video.title,
+        label: `${video.videoId} / ${video.title}`,
         value: video,
       })) ?? []
     );
@@ -195,7 +195,9 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
         <Autocomplete
           sx={{ my: 1 }}
           options={videoOptions}
-          value={selectedVideo ? { label: selectedVideo.title, value: selectedVideo } : null}
+          value={
+            selectedVideo ? { label: `${selectedVideo.videoId} / ${selectedVideo.title}`, value: selectedVideo } : null
+          }
           renderInput={renderInput('video')}
           onChange={onVideoChange}
         />
@@ -228,12 +230,12 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
                 InputProps={{
                   endAdornment: [
                     <InputAdornment position="end" key="write-start-time">
-                      <IconButton onClick={onTimeWriteClick(sing.id, 'startSec')}>
+                      <IconButton tabIndex={-1} onClick={onTimeWriteClick(sing.id, 'startSec')}>
                         <MdTimer />
                       </IconButton>
                     </InputAdornment>,
                     <InputAdornment sx={{ marginLeft: 3 }} position="end" key="preview">
-                      <IconButton onClick={onSingPreview(sing.id)}>
+                      <IconButton tabIndex={-1} onClick={onSingPreview(sing.id)}>
                         <MdPlayArrow />
                       </IconButton>
                     </InputAdornment>,
@@ -250,12 +252,12 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
                 InputProps={{
                   endAdornment: [
                     <InputAdornment position="end" key="write-end-time">
-                      <IconButton onClick={onTimeWriteClick(sing.id, 'endSec')}>
+                      <IconButton tabIndex={-1} onClick={onTimeWriteClick(sing.id, 'endSec')}>
                         <MdTimer />
                       </IconButton>
                     </InputAdornment>,
                     <InputAdornment sx={{ marginLeft: 3 }} position="end" key="check-before-3s">
-                      <IconButton onClick={onPlaybackFrom3SecAgoClick(sing.id)}>
+                      <IconButton tabIndex={-1} onClick={onPlaybackFrom3SecAgoClick(sing.id)}>
                         <MdTimer3 />
                       </IconButton>
                     </InputAdornment>,
