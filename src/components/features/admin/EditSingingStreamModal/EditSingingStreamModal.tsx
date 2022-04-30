@@ -195,7 +195,9 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
         <Autocomplete
           sx={{ my: 1 }}
           options={videoOptions}
-          value={selectedVideo ? { label: selectedVideo.title, value: selectedVideo } : null}
+          value={
+            selectedVideo ? { label: `${selectedVideo.videoId} / ${selectedVideo.title}`, value: selectedVideo } : null
+          }
           renderInput={renderInput('video')}
           onChange={onVideoChange}
         />
