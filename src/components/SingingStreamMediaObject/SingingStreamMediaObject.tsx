@@ -2,27 +2,34 @@ import { T, useT } from '@transifex/react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
 import { useIsMobile } from '../../hooks/useIsMobile';
-import type { SingingStreamForSearch } from '../../types';
+import type { SingingStreamWithVideoAndSong } from '../../types/SingingStream';
 import { ExternalLink } from '../ExternalLink/ExternalLink';
 import { KebabMenu } from '../KebabMenu/KebabMenu';
 import styles from './SingingStreamMediaObject.module.scss';
 
 type Props = {
-  singingStream: SingingStreamForSearch;
+  singingStream: SingingStreamWithVideoAndSong;
 };
 
 export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({ singingStream }: Props) {
   const isMobile = useIsMobile();
   const t = useT();
+
+  const watchPath = useMemo(() => `/singing-streams/watch?v=${singingStream.id}`, [singingStream.id]);
+  const youtubeUrl = useMemo(
+    () => `https://www.youtube.com/watch?v=${singingStream.video.videoId}&t=${singingStream.start}`,
+    [singingStream.video.videoId, singingStream.start],
+  );
+
   return (
     <article className={styles.root}>
-      <Link href={`/singing-streams/watch?v=${singingStream.id}`}>
+      <Link href={watchPath}>
         <a className={styles.thumbnail}>
           <Image
-            src={`https://i.ytimg.com/vi/${singingStream.video_id}/hqdefault.jpg`}
+            src={singingStream.video.thumbnailMediumUrl}
             alt={singingStream.video.title}
             layout="fill"
             objectFit="cover"
@@ -30,7 +37,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         </a>
       </Link>
       <div className={styles.info}>
-        <Link href={`/singing-streams/watch?v=${singingStream.id}`}>
+        <Link href={watchPath}>
           <a>
             <div className={styles.song}>
               <h2 className={styles.songTitle}>{singingStream.song.title}</h2>
@@ -45,7 +52,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
             _comment={
               'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy/MM/dd (e.g. "2022/02/18")'
             }
-            date={format(new Date(singingStream.published_at), 'yyyy/MM/dd')}
+            date={format(new Date(singingStream.video.publishedAt), 'yyyy/MM/dd')}
           />
         </span>
       </div>
@@ -58,7 +65,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         })}
         size={isMobile ? 'small' : 'medium'}
       >
-        <ExternalLink className={styles.originalLink} href={`${singingStream.video.url}&t=${singingStream.start}`}>
+        <ExternalLink className={styles.originalLink} href={youtubeUrl}>
           <T _str="YouTubeで見る" />
         </ExternalLink>
       </KebabMenu>

@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
-import type { SingingStreamWithVideoAndSong } from '../../../model';
 import type { PutSingingStreamRequest } from '../../../pages/api/singing-streams/[id]';
+import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 
 type Props = {
   mutate: KeyedMutator<SingingStreamWithVideoAndSong[]>;

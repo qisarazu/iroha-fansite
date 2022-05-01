@@ -3,13 +3,13 @@ import { Reorder } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { memo, useMemo } from 'react';
 
-import type { SingingStreamForSearch } from '../../types';
+import type { SingingStreamWithVideoAndSong } from '../../types/SingingStream';
 import styles from './Playlist.module.scss';
 import { PlaylistItem } from './PlaylistItem/PlaylistItem';
 
 type Props = {
   className?: string;
-  streams: SingingStreamForSearch[];
+  streams: SingingStreamWithVideoAndSong[];
 };
 
 export const Playlist = memo(({ className, streams }: Props) => {

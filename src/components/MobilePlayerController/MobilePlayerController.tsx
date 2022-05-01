@@ -24,7 +24,7 @@ type Props = {
   videoId: string;
   songTitle: string;
   songArtist: string;
-  publishedAt: string;
+  publishedAt: Date;
   onPlay: () => void;
   onPause: () => void;
   onSeek: (time: number) => void;

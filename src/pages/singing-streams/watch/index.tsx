@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { shuffle, without } from 'lodash-es';
+import type { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -10,13 +11,22 @@ import { PlayerController } from '../../../components/PlayerController/PlayerCon
 import { Playlist } from '../../../components/Playlist/Playlist';
 import type { RepeatType } from '../../../components/RepeatButton/RepeatButton';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
-import { useSingingStreamForWatch, useSingingStreamsForSearch } from '../../../hooks/singing-stream';
+import { useGetSingingStreamsApi } from '../../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useIsPlayedVideos } from '../../../hooks/useIsPlayedVideos';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import type { SingingStreamForSearch } from '../../../types';
+import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
+import { fetcher } from '../../../utils/fetcher';
 import styles from './index.module.scss';
+
+type Query = {
+  v: string;
+};
+
+type Props = {
+  currentStream: SingingStreamWithVideoAndSong | null;
+};
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
 let repeatTypeVariable: RepeatType = 'none';
@@ -25,7 +35,18 @@ let endSeconds = 0;
 
 const SKIP_PREV_TIME = 5;
 
-function SingingStreamsWatchPage() {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const { v: streamId } = ctx.query as Query;
+  if (!streamId) return { props: {} };
+
+  const host = ctx.req.headers.host;
+  if (!host) return { props: {} };
+  const scheme = host.includes('localhost') ? 'http' : 'https';
+  const currentStream = await fetcher(`${scheme}://${host}/api/singing-streams/${streamId}`);
+  return { props: { currentStream: currentStream } };
+}
+
+export default function SingingStreamsWatchPage({ currentStream }: Props) {
   const reqIdRef = useRef<number>();
   const router = useRouter();
   const streamId = useMemo(() => {
@@ -35,8 +56,7 @@ function SingingStreamsWatchPage() {
     return;
   }, [router]);
 
-  const { stream: currentStream } = useSingingStreamForWatch(streamId);
-  const { streams: rawStreams } = useSingingStreamsForSearch();
+  const { data: rawStreams } = useGetSingingStreamsApi();
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
@@ -44,7 +64,7 @@ function SingingStreamsWatchPage() {
   const [isShuffledOnce, setShuffledOnce] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMobilePlaylistVisible, setMobilePlaylistVisible] = useState(false);
-  const [streams, setStreams] = useState<SingingStreamForSearch[]>([]);
+  const [streams, setStreams] = useState<SingingStreamWithVideoAndSong[]>([]);
 
   const [isMute, setMute] = useLocalStorage('isMute', false);
   const [repeatType, setRepeatType] = useLocalStorage<RepeatType>('repeatType', 'none');
@@ -185,7 +205,7 @@ function SingingStreamsWatchPage() {
   }, [rawStreams, streamId, streams]);
 
   useEffect(() => {
-    if (rawStreams) {
+    if (rawStreams.length) {
       setStreams(rawStreams);
     }
   }, [rawStreams]);
@@ -242,11 +262,11 @@ function SingingStreamsWatchPage() {
   useEffect(() => {
     if (currentStream && player && !isPlayedOnce) {
       const param = {
-        videoId: currentStream.video_id,
+        videoId: currentStream.video.videoId,
         startSeconds: currentStream.start,
         endSeconds: currentStream.end,
       };
-      isPlayedVideo(currentStream.video_id) ? player.loadVideoById(param) : player.cueVideoById(param);
+      isPlayedVideo(currentStream.video.videoId) ? player.loadVideoById(param) : player.cueVideoById(param);
     }
   }, [player, currentStream, isPlayedVideo, isPlayedOnce]);
 
@@ -281,11 +301,18 @@ function SingingStreamsWatchPage() {
   useEffect(() => {
     if (!isPlayedOnce || !currentStream) return;
 
-    if (!isPlayedVideo(currentStream.video_id)) {
-      addPlayedVideo(currentStream.video_id);
+    if (!isPlayedVideo(currentStream.video.videoId)) {
+      addPlayedVideo(currentStream.video.videoId);
     }
   }, [currentStream, isPlayedOnce, isPlayedVideo, addPlayedVideo]);
 
+  if (!currentStream) {
+    return (
+      <Layout title="404 not found">
+        <h1>404 not found.</h1>
+      </Layout>
+    );
+  }
   return (
     <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
       <main className={styles.main}>
@@ -315,10 +342,10 @@ function SingingStreamsWatchPage() {
               isSkipPrevDisabled={isFirstStream && currentTime < SKIP_PREV_TIME}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
-              needNativePlayPush={!isPlayedVideo(currentStream.video_id)}
+              needNativePlayPush={!isPlayedVideo(currentStream.video.videoId)}
               length={currentStream.end - currentStream.start}
-              videoId={currentStream.video_id}
-              publishedAt={currentStream.published_at}
+              videoId={currentStream.video.videoId}
+              publishedAt={currentStream.video.publishedAt}
               songTitle={currentStream.song.title}
               songArtist={currentStream.song.artist}
               currentTime={currentTime}
@@ -338,14 +365,14 @@ function SingingStreamsWatchPage() {
               isSkipPrevDisabled={isFirstStream && currentTime < SKIP_PREV_TIME}
               isSkipNextDisabled={isLastStream}
               isShuffled={isShuffledOnce}
-              needNativePlayPush={!isPlayedVideo(currentStream.video_id)}
+              needNativePlayPush={!isPlayedVideo(currentStream.video.videoId)}
               length={currentStream.end - currentStream.start}
               repeatType={repeatType}
               volume={volume}
-              videoId={currentStream.video_id}
+              videoId={currentStream.video.videoId}
               songTitle={currentStream.song.title}
               songArtist={currentStream.song.artist}
-              publishedAt={currentStream.published_at}
+              publishedAt={currentStream.video.publishedAt}
               currentTime={currentTime}
               onPlay={onPlay}
               onPause={onPause}
@@ -380,5 +407,3 @@ function SingingStreamsWatchPage() {
     </Layout>
   );
 }
-
-export default SingingStreamsWatchPage;

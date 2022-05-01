@@ -2,8 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import urlcat from 'urlcat';
 
-import type { SingingStreamWithVideoAndSong } from '../../../model';
 import type { GetSingingStreamsRequest } from '../../../pages/api/singing-streams';
+import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {

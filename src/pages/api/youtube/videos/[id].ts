@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import type { ApiResponse } from '../../../../types/api';
 import { parseDuration } from '../../../../utils/parseDuration';
 import { withAdminRequired } from '../../../../utils/withAdminRequired';
 
@@ -20,7 +21,7 @@ export type GetYouTubeVideoResponse = {
   };
   duration: number;
 };
-const get = async (req: NextApiRequest, res: NextApiResponse) => {
+const get = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<GetYouTubeVideoResponse>>) => {
   const videoId: string = (Array.isArray(req.query.id) ? req.query.id[0] : req.query.id).replace(/['"]+/g, '');
 
   const { data } = await youtube.videos.list({
@@ -57,7 +58,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     duration: parseDuration(video.contentDetails.duration),
   };
-  res.status(200).json(response);
+  res.status(200).json({ data: response });
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {

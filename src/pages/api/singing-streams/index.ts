@@ -1,15 +1,20 @@
+import type { SingingStream } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import type { SingingStream, SingingStreamWithVideoAndSong } from '../../../model';
-import { prisma } from '../../../utils/prismaClient';
+import { prisma } from '../../../lib/prisma';
+import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 import { withAdminRequired } from '../../../utils/withAdminRequired';
+import type { ApiResponse } from './../../../types/api';
 
 export type GetSingingStreamsRequest = {
   keyword?: string;
   orderBy?: keyof SingingStream;
   orderDirection?: 'asc' | 'desc';
 };
-async function getSingingStreams(req: NextApiRequest, res: NextApiResponse) {
+async function getSingingStreams(
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponse<SingingStreamWithVideoAndSong[]>>,
+) {
   const { keyword } = req.query as GetSingingStreamsRequest;
 
   const singingStreams = await prisma.singingStream.findMany({
@@ -23,6 +28,7 @@ async function getSingingStreams(req: NextApiRequest, res: NextApiResponse) {
       song: {
         title: {
           contains: keyword,
+          mode: 'insensitive',
         },
       },
     },
@@ -32,11 +38,14 @@ async function getSingingStreams(req: NextApiRequest, res: NextApiResponse) {
     },
   });
 
-  res.status(200).json(singingStreams);
+  res.status(200).json({ data: singingStreams });
 }
 
 export type PostSingingStreamRequest = Omit<SingingStream, 'id' | 'createdAt' | 'updatedAt' | 'video' | 'song'>;
-async function postSingingStream(req: NextApiRequest, res: NextApiResponse<SingingStreamWithVideoAndSong>) {
+async function postSingingStream(
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponse<SingingStreamWithVideoAndSong>>,
+) {
   const body: PostSingingStreamRequest = req.body;
 
   const singingStream = await prisma.singingStream.create({
@@ -47,7 +56,7 @@ async function postSingingStream(req: NextApiRequest, res: NextApiResponse<Singi
     },
   });
 
-  res.status(200).json(singingStream);
+  res.status(200).json({ data: singingStream });
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
