@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { shuffle, without } from 'lodash-es';
-import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -16,8 +16,8 @@ import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useIsPlayedVideos } from '../../../hooks/useIsPlayedVideos';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
+import { prisma } from '../../../lib/prisma';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
-import { fetcher } from '../../../utils/fetcher';
 import styles from './index.module.scss';
 
 type Query = {
@@ -39,18 +39,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const { v: streamId } = ctx.query as Query;
   if (!streamId) return { notFound: true };
 
-  const host = ctx.req.headers.host;
-  if (!host) return { notFound: true };
-  const scheme = host.includes('localhost') ? 'http' : 'https';
-  const currentStream = await fetcher<SingingStreamWithVideoAndSong>(
-    `${scheme}://${host}/api/singing-streams/${streamId}`,
-  );
+  const currentStream = await prisma.singingStream.findFirst({
+    where: {
+      id: streamId,
+    },
+    include: {
+      video: true,
+      song: true,
+    },
+  });
+
   if (!currentStream) {
     return {
       notFound: true,
     };
   }
-  return { props: { currentStream } };
+
+  // Date cannot be serialized in getServerSideProps.
+  return { props: { currentStream: JSON.parse(JSON.stringify(currentStream)) } };
 };
 
 export default function SingingStreamsWatchPage({ currentStream }: Props) {
