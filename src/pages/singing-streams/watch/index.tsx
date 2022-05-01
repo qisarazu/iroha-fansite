@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { shuffle, without } from 'lodash-es';
-import type { GetServerSidePropsContext } from 'next';
+import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -25,7 +25,7 @@ type Query = {
 };
 
 type Props = {
-  currentStream: SingingStreamWithVideoAndSong | null;
+  currentStream: SingingStreamWithVideoAndSong;
 };
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
@@ -35,16 +35,23 @@ let endSeconds = 0;
 
 const SKIP_PREV_TIME = 5;
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const { v: streamId } = ctx.query as Query;
-  if (!streamId) return { props: {} };
+  if (!streamId) return { notFound: true };
 
   const host = ctx.req.headers.host;
-  if (!host) return { props: {} };
+  if (!host) return { notFound: true };
   const scheme = host.includes('localhost') ? 'http' : 'https';
-  const currentStream = await fetcher(`${scheme}://${host}/api/singing-streams/${streamId}`);
-  return { props: { currentStream: currentStream } };
-}
+  const currentStream = await fetcher<SingingStreamWithVideoAndSong>(
+    `${scheme}://${host}/api/singing-streams/${streamId}`,
+  );
+  if (!currentStream) {
+    return {
+      notFound: true,
+    };
+  }
+  return { props: { currentStream } };
+};
 
 export default function SingingStreamsWatchPage({ currentStream }: Props) {
   const reqIdRef = useRef<number>();
@@ -306,13 +313,6 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
     }
   }, [currentStream, isPlayedOnce, isPlayedVideo, addPlayedVideo]);
 
-  if (!currentStream) {
-    return (
-      <Layout title="404 not found">
-        <h1>404 not found.</h1>
-      </Layout>
-    );
-  }
   return (
     <Layout className={styles.root} title={currentStream?.song.title || ''} padding={isMobile ? 'all' : 'horizontal'}>
       <main className={styles.main}>
