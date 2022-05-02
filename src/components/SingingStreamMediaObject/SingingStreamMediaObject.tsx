@@ -18,7 +18,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
   const isMobile = useIsMobile();
   const t = useT();
 
-  const watchPath = useMemo(() => `/singing-streams/watch?v=${singingStream.id}`, [singingStream.id]);
+  const watchPath = useMemo(() => `/singing-streams/watch/${singingStream.id}`, [singingStream.id]);
   const youtubeUrl = useMemo(
     () => `https://www.youtube.com/watch?v=${singingStream.video.videoId}&t=${singingStream.start}`,
     [singingStream.video.videoId, singingStream.start],

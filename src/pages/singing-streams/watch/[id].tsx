@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { shuffle, without } from 'lodash-es';
-import type { GetServerSideProps } from 'next';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -17,16 +17,9 @@ import { useIsPlayedVideos } from '../../../hooks/useIsPlayedVideos';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
 import { prisma } from '../../../lib/prisma';
+import type { SingingStreamWatchPageQuery } from '../../../types/query';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
-import styles from './index.module.scss';
-
-type Query = {
-  v: string;
-};
-
-type Props = {
-  currentStream: SingingStreamWithVideoAndSong;
-};
+import styles from './[id].module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
 let repeatTypeVariable: RepeatType = 'none';
@@ -35,11 +28,30 @@ let endSeconds = 0;
 
 const SKIP_PREV_TIME = 5;
 
-export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
-  const { v: streamId } = ctx.query as Query;
-  if (!streamId) return { notFound: true };
+type Props = {
+  currentStream: SingingStreamWithVideoAndSong;
+};
 
-  const currentStream = await prisma.singingStream.findFirst({
+export const getStaticPaths: GetStaticPaths = async () => {
+  const singingStreams = await prisma.singingStream.findMany();
+
+  return {
+    paths: singingStreams.map((singingStream) => ({
+      params: {
+        id: singingStream.id,
+      },
+    })),
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { id: streamId } = params as SingingStreamWatchPageQuery;
+  if (!streamId) {
+    return { notFound: true };
+  }
+
+  const singingStream = await prisma.singingStream.findFirst({
     where: {
       id: streamId,
     },
@@ -49,25 +61,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     },
   });
 
-  if (!currentStream) {
-    return {
-      notFound: true,
-    };
+  if (!singingStream) {
+    return { notFound: true };
   }
 
-  // Date cannot be serialized in getServerSideProps.
-  return { props: { currentStream: JSON.parse(JSON.stringify(currentStream)) } };
+  return {
+    props: {
+      currentStream: JSON.parse(JSON.stringify(singingStream)),
+    },
+  };
 };
 
 export default function SingingStreamsWatchPage({ currentStream }: Props) {
   const reqIdRef = useRef<number>();
   const router = useRouter();
-  const streamId = useMemo(() => {
-    if (router.query.v && typeof router.query.v === 'string') {
-      return router.query.v;
-    }
-    return;
-  }, [router]);
 
   const { data: rawStreams } = useGetSingingStreamsApi();
 
@@ -87,12 +94,12 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
   const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideos();
 
   const isFirstStream = useMemo(
-    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
-    [streams, streamId],
+    () => (streams ? streams.findIndex((stream) => stream.id === currentStream.id) === 0 : false),
+    [streams, currentStream.id],
   );
   const isLastStream = useMemo(
-    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === streams.length - 1 : false),
-    [streams, streamId],
+    () => (streams ? streams.findIndex((stream) => stream.id === currentStream.id) === streams.length - 1 : false),
+    [streams, currentStream.id],
   );
 
   const { player, ...ytPlayerProps } = useYTPlayer({
@@ -124,7 +131,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
     if (playingStreamIndex === 0) return;
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
-      router.push(`/singing-streams/watch?v=${prevStream.id}`);
+      router.push(`/singing-streams/watch/${prevStream.id}`);
     }
   }, [currentStream, currentTime, player, router, streams]);
 
@@ -134,7 +141,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
     if (playingStreamIndex === streams.length - 1) return;
     const nextStream = streams[playingStreamIndex + 1];
     if (nextStream) {
-      router.push(`/singing-streams/watch?v=${nextStream.id}`);
+      router.push(`/singing-streams/watch/${nextStream.id}`);
     }
   }, [currentStream, router, streams]);
 
@@ -210,12 +217,10 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
   }, []);
 
   const onShuffle = useCallback(() => {
-    if (!rawStreams || !streamId) return;
-    const currentStream = rawStreams.find((stream) => stream.id === streamId);
-    if (!currentStream) return;
+    if (!rawStreams) return;
     setStreams([currentStream].concat(shuffle(without(streams, currentStream))));
     setShuffledOnce(true);
-  }, [rawStreams, streamId, streams]);
+  }, [rawStreams, currentStream, streams]);
 
   useEffect(() => {
     if (rawStreams.length) {
@@ -307,7 +312,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
           : null
         : streams[playingStreamIndex + 1]?.id;
     if (nextStreamId) {
-      router.push(`/singing-streams/watch?v=${nextStreamId}`);
+      router.push(`/singing-streams/watch/${nextStreamId}`);
     }
   }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType]);
 
