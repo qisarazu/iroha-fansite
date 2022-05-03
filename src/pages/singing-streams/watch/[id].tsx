@@ -41,7 +41,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         id: singingStream.id,
       },
     })),
-    fallback: false,
+    fallback: true,
   };
 };
 
