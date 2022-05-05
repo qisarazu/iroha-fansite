@@ -8,7 +8,7 @@ import { FaGoogle } from 'react-icons/fa';
 
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
-import { supabase } from '../../utils/supabaseClient';
+import { supabase } from '../../lib/supabase';
 import styles from './index.module.scss';
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {

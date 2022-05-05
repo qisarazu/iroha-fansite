@@ -4,24 +4,30 @@ import { format } from 'date-fns';
 import { Reorder } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { memo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { MdPlayArrow, MdVolumeUp } from 'react-icons/md';
 
 import { useHovering } from '../../../hooks/useHovering';
-import type { SingingStreamForSearch } from '../../../types';
+import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 import { ExternalLink } from '../../ExternalLink/ExternalLink';
 import { KebabMenu } from '../../KebabMenu/KebabMenu';
 import styles from './PlaylistItem.module.scss';
 
 type Props = {
   className?: string;
-  stream: SingingStreamForSearch;
+  stream: SingingStreamWithVideoAndSong;
   isPlaying: boolean;
 };
 
 export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
+
+  const watchPath = useMemo(() => `/singing-streams/watch?v=${stream.id}`, [stream.id]);
+  const youtubeUrl = useMemo(
+    () => `https://www.youtube.com/watch?v=${stream.video.videoId}&t=${stream.start}`,
+    [stream.start, stream.video.videoId],
+  );
 
   return (
     <Reorder.Item
@@ -30,14 +36,9 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
       dragListener={false}
       ref={ref}
     >
-      <Link href={`/singing-streams/watch?v=${stream.id}`}>
+      <Link href={watchPath}>
         <a className={styles.thumbnail}>
-          <Image
-            alt={stream.song.title}
-            layout="fill"
-            src={`https://i.ytimg.com/vi/${stream.video_id}/default.jpg`}
-            objectFit="cover"
-          />
+          <Image alt={stream.song.title} layout="fill" src={stream.video.thumbnailDefaultUrl} objectFit="cover" />
           {isHovering && !isPlaying ? (
             <div className={styles.hoveringIcon}>
               <MdPlayArrow />
@@ -50,7 +51,7 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
           ) : null}
         </a>
       </Link>
-      <Link href={`/singing-streams/watch?v=${stream.id}`}>
+      <Link href={watchPath}>
         <a className={styles.info}>
           <h2 className={styles.songTitle}>{stream.song.title}</h2>
           <span className={styles.songArtist}>
@@ -60,13 +61,13 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
               _comment={
                 'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy-MM-dd (e.g. "2022-02-18")'
               }
-              date={format(new Date(stream.published_at), 'yyyy-MM-dd')}
+              date={format(new Date(stream.video.publishedAt), 'yyyy-MM-dd')}
             />
           </span>
         </a>
       </Link>
       <KebabMenu buttonClassName={styles.menu} size="small" placement="bottom-end">
-        <ExternalLink className={styles.originalLink} href={`${stream.video.url}&t=${stream.start}`}>
+        <ExternalLink className={styles.originalLink} href={youtubeUrl}>
           <T _str="YouTubeで見る" />
         </ExternalLink>
       </KebabMenu>

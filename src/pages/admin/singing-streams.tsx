@@ -7,7 +7,7 @@ import {
   GridRowParams,
   GridRowsProp,
 } from '@mui/x-data-grid';
-import type { SingingStream, Song, Video } from '@prisma/client';
+import type { SingingStream, Video } from '@prisma/client';
 import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';

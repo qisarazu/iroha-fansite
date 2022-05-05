@@ -7,8 +7,12 @@ import { MdClear, MdSearch } from 'react-icons/md';
 import { Layout } from '../../components/Layout/Layout';
 import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
 import { Spinner } from '../../components/Spinner/Spinner';
-import { useSingingStreamsForSearch } from '../../hooks/singing-stream';
+import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import styles from './index.module.scss';
+
+type Query = {
+  keyword?: string;
+};
 
 type SearchForm = {
   keyword: string;
@@ -16,8 +20,11 @@ type SearchForm = {
 
 function SingingStreamsPage() {
   const router = useRouter();
+  const { keyword } = router.query as Query;
   const { register, handleSubmit, resetField, watch, setValue } = useForm<SearchForm>();
-  const { streams } = useSingingStreamsForSearch((router.query.keyword || '') as string);
+  const { data: singingStreams, isLoading } = useGetSingingStreamsApi({
+    request: { keyword },
+  });
   const t = useT();
 
   const onSubmit = useCallback(
@@ -83,15 +90,15 @@ function SingingStreamsPage() {
         </button>
       </form>
       <div className={styles.result}>
-        {!streams ? (
+        {isLoading ? (
           <Spinner className={styles.spinner} />
-        ) : !streams.length ? (
+        ) : !singingStreams.length ? (
           <T _str="検索結果はありません" />
         ) : (
           <ul className={styles.list}>
-            {streams.map((stream) => (
-              <li className={styles.listItem} key={stream.id}>
-                <SingingStreamMediaObject singingStream={stream} />
+            {singingStreams.map((singingStream) => (
+              <li className={styles.listItem} key={singingStream.id}>
+                <SingingStreamMediaObject singingStream={singingStream} />
               </li>
             ))}
           </ul>

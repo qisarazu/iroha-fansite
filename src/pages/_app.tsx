@@ -9,9 +9,9 @@ import Script from 'next/script';
 import { useEffect } from 'react';
 
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
+import { supabase } from '../lib/supabase';
 import { theme } from '../styles/theme';
 import { GA_TRACKING_ID, pageview } from '../utils/gtag';
-import { supabase } from '../utils/supabaseClient';
 
 tx.init({
   token: '1/44aa0ebac5107d9a2a5c8e8555121c52dd9de8cd',

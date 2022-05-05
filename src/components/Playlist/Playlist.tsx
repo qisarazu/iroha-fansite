@@ -1,25 +1,21 @@
 import clsx from 'clsx';
 import { Reorder } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
-import type { SingingStreamForSearch } from '../../types';
+import type { SingingStreamWatchPageQuery } from '../../types/query';
+import type { SingingStreamWithVideoAndSong } from '../../types/SingingStream';
 import styles from './Playlist.module.scss';
 import { PlaylistItem } from './PlaylistItem/PlaylistItem';
 
 type Props = {
   className?: string;
-  streams: SingingStreamForSearch[];
+  streams: SingingStreamWithVideoAndSong[];
 };
 
 export const Playlist = memo(({ className, streams }: Props) => {
   const router = useRouter();
-
-  const currentStreamId = useMemo(() => {
-    const id = router.query.v;
-    if (typeof id !== 'string') return '';
-    return streams.find((stream) => stream.id === id)?.id || '';
-  }, [router, streams]);
+  const { v: currentStreamId } = router.query as SingingStreamWatchPageQuery;
 
   const onReorder = () => {};
 

@@ -1,11 +1,12 @@
 import type { Song } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { prisma } from '../../../utils/prismaClient';
+import { prisma } from '../../../lib/prisma';
+import type { ApiResponse } from '../../../types/api';
 import { withAdminRequired } from '../../../utils/withAdminRequired';
 
 export type PutSongApiRequest = Partial<Song>;
-async function putSong(req: NextApiRequest, res: NextApiResponse<Song>) {
+async function putSong(req: NextApiRequest, res: NextApiResponse<ApiResponse<Song>>) {
   const body: PutSongApiRequest = req.body;
 
   const song = await prisma.song.update({
@@ -15,11 +16,11 @@ async function putSong(req: NextApiRequest, res: NextApiResponse<Song>) {
     data: body,
   });
 
-  res.status(200).json(song);
+  res.status(200).json({ data: song });
 }
 
 export type DeleteSongApiRequest = Pick<Song, 'id'>;
-async function deleteSong(req: NextApiRequest, res: NextApiResponse<Song>) {
+async function deleteSong(req: NextApiRequest, res: NextApiResponse<ApiResponse<Song>>) {
   const { id } = req.query as DeleteSongApiRequest;
 
   const song = await prisma.song.delete({
@@ -28,7 +29,7 @@ async function deleteSong(req: NextApiRequest, res: NextApiResponse<Song>) {
     },
   });
 
-  res.status(200).json(song);
+  res.status(200).json({ data: song });
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
