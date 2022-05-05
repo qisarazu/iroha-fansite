@@ -1,3 +1,3 @@
 export type SingingStreamWatchPageQuery = {
-  id: string;
+  v: string;
 };

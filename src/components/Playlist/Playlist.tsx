@@ -15,7 +15,7 @@ type Props = {
 
 export const Playlist = memo(({ className, streams }: Props) => {
   const router = useRouter();
-  const { id: currentStreamId } = router.query as SingingStreamWatchPageQuery;
+  const { v: currentStreamId } = router.query as SingingStreamWatchPageQuery;
 
   const onReorder = () => {};
 

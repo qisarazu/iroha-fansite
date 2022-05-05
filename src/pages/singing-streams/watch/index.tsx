@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { shuffle, without } from 'lodash-es';
-import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -11,15 +10,15 @@ import { PlayerController } from '../../../components/PlayerController/PlayerCon
 import { Playlist } from '../../../components/Playlist/Playlist';
 import type { RepeatType } from '../../../components/RepeatButton/RepeatButton';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
+import { useGetSingingStreamApi } from '../../../hooks/api/singing-streams/useGetSingingStreamApi';
 import { useGetSingingStreamsApi } from '../../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useIsPlayedVideos } from '../../../hooks/useIsPlayedVideos';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
-import { prisma } from '../../../lib/prisma';
 import type { SingingStreamWatchPageQuery } from '../../../types/query';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
-import styles from './[id].module.scss';
+import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
 let repeatTypeVariable: RepeatType = 'none';
@@ -28,54 +27,12 @@ let endSeconds = 0;
 
 const SKIP_PREV_TIME = 5;
 
-type Props = {
-  currentStream: SingingStreamWithVideoAndSong;
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const singingStreams = await prisma.singingStream.findMany();
-
-  return {
-    paths: singingStreams.map((singingStream) => ({
-      params: {
-        id: singingStream.id,
-      },
-    })),
-    fallback: true,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { id: streamId } = params as SingingStreamWatchPageQuery;
-  if (!streamId) {
-    return { notFound: true };
-  }
-
-  const singingStream = await prisma.singingStream.findFirst({
-    where: {
-      id: streamId,
-    },
-    include: {
-      video: true,
-      song: true,
-    },
-  });
-
-  if (!singingStream) {
-    return { notFound: true };
-  }
-
-  return {
-    props: {
-      currentStream: JSON.parse(JSON.stringify(singingStream)),
-    },
-  };
-};
-
-export default function SingingStreamsWatchPage({ currentStream }: Props) {
+export default function SingingStreamsWatchPage() {
   const reqIdRef = useRef<number>();
   const router = useRouter();
+  const { v: streamId } = router.query as SingingStreamWatchPageQuery;
 
+  const { data: currentStream } = useGetSingingStreamApi(streamId);
   const { data: rawStreams } = useGetSingingStreamsApi();
 
   const [isPlaying, setPlaying] = useState(false);
@@ -94,12 +51,13 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
   const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideos();
 
   const isFirstStream = useMemo(
-    () => (streams ? streams.findIndex((stream) => stream.id === currentStream.id) === 0 : false),
-    [streams, currentStream.id],
+    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
+    [streams, streamId],
   );
+
   const isLastStream = useMemo(
-    () => (streams ? streams.findIndex((stream) => stream.id === currentStream.id) === streams.length - 1 : false),
-    [streams, currentStream.id],
+    () => (streams ? streams.findIndex((stream) => stream.id === streamId) === streams.length - 1 : false),
+    [streams, streamId],
   );
 
   const { player, ...ytPlayerProps } = useYTPlayer({
@@ -131,7 +89,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
     if (playingStreamIndex === 0) return;
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
-      router.push(`/singing-streams/watch/${prevStream.id}`);
+      router.push(`/singing-streams/watch?v=${prevStream.id}`);
     }
   }, [currentStream, currentTime, player, router, streams]);
 
@@ -141,7 +99,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
     if (playingStreamIndex === streams.length - 1) return;
     const nextStream = streams[playingStreamIndex + 1];
     if (nextStream) {
-      router.push(`/singing-streams/watch/${nextStream.id}`);
+      router.push(`/singing-streams/watch?v=${nextStream.id}`);
     }
   }, [currentStream, router, streams]);
 
@@ -217,7 +175,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
   }, []);
 
   const onShuffle = useCallback(() => {
-    if (!rawStreams) return;
+    if (!rawStreams || !currentStream) return;
     setStreams([currentStream].concat(shuffle(without(streams, currentStream))));
     setShuffledOnce(true);
   }, [rawStreams, currentStream, streams]);
@@ -312,7 +270,7 @@ export default function SingingStreamsWatchPage({ currentStream }: Props) {
           : null
         : streams[playingStreamIndex + 1]?.id;
     if (nextStreamId) {
-      router.push(`/singing-streams/watch/${nextStreamId}`);
+      router.push(`/singing-streams/watch?v=${nextStreamId}`);
     }
   }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType]);
 

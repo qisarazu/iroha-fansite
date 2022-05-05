@@ -23,7 +23,7 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
 
-  const watchPath = useMemo(() => `/singing-streams/watch/${stream.id}`, [stream.id]);
+  const watchPath = useMemo(() => `/singing-streams/watch?v=${stream.id}`, [stream.id]);
   const youtubeUrl = useMemo(
     () => `https://www.youtube.com/watch?v=${stream.video.videoId}&t=${stream.start}`,
     [stream.start, stream.video.videoId],
