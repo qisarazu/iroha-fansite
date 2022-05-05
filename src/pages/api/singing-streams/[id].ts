@@ -22,6 +22,8 @@ async function getSingingStream(
       song: true,
     },
   });
+
+  res.setHeader('Cache-Control', 'public, max-age=86400');
   res.status(200).json({ data: singingStream });
 }
 
