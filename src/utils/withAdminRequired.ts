@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 
-import { supabase } from './supabaseClient';
+import { supabase } from '../lib/supabase';
 
 export async function withAdminRequired(handler: NextApiHandler, req: NextApiRequest, res: NextApiResponse) {
   const { user } = await supabase.auth.api.getUserByCookie(req);
