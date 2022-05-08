@@ -18,6 +18,7 @@ Default.args = {
     end: 2986,
     videoId: 'c07ec00a-015b-4be3-99d6-e7b55d0d4c2b',
     songId: 'cd34565b-ba84-4965-a852-957f13dd2742',
+    playlistId: null,
     createdAt: new Date('2022-04-29T16:06:20.302Z'),
     updatedAt: new Date('2022-04-29T16:06:20.302Z'),
     video: {

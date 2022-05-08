@@ -34,13 +34,25 @@ model Song {
 }
 
 model SingingStream {
-  id        String   @id @default(uuid())
-  start     Int
-  end       Int
-  video     Video    @relation(fields: [videoId], references: [id])
-  videoId   String
-  song      Song     @relation(fields: [songId], references: [id])
-  songId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(uuid())
+  start      Int
+  end        Int
+  video      Video     @relation(fields: [videoId], references: [id])
+  videoId    String
+  song       Song      @relation(fields: [songId], references: [id])
+  songId     String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Playlist   Playlist? @relation(fields: [playlistId], references: [id])
+  playlistId String?
+}
+
+model Playlist {
+  id          String          @id @default(uuid())
+  title       String
+  description String?
+  items       SingingStream[]
+  userId      String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
