@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { DeleteVideoApiRequest } from '../../../pages/api/videos/[id]';
+import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
   mutate: KeyedMutator<Video[]>;
@@ -15,12 +16,7 @@ export function useDeleteVideoApi({ mutate }: Props) {
     async (request: DeleteVideoApiRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetch(`/api/videos/${request.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((res) => res.json());
+      await fetcher(`/api/videos/${request.id}`, 'delete');
 
       mutate((data) => (data ? data.filter((video) => video.id !== request.id) : []));
 

@@ -3,6 +3,7 @@ import type { KeyedMutator } from 'swr';
 
 import type { DeleteSingingStream } from '../../../pages/api/singing-streams/[id]';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
+import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
   mutate: KeyedMutator<SingingStreamWithVideoAndSong[]>;
@@ -15,12 +16,7 @@ export function useDeleteSingingStreamApi({ mutate }: Props) {
     async (request: DeleteSingingStream): Promise<void> => {
       setLoading(true);
 
-      await fetch(`/api/singing-streams/${request.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((res) => res.json());
+      await fetcher(`/api/singing-streams/${request.id}`, 'delete');
 
       mutate((data) => (data ? data.filter((song) => song.id !== request.id) : []));
 

@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { DeleteSongApiRequest } from '../../../pages/api/songs/[id]';
+import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
   mutate: KeyedMutator<Song[]>;
@@ -15,12 +16,7 @@ export function useDeleteSongApi({ mutate }: Props) {
     async (request: DeleteSongApiRequest): Promise<void> => {
       setLoading(true);
 
-      await fetch(`/api/songs/${request.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((res) => res.json());
+      await fetcher(`/api/songs/${request.id}`, 'delete');
 
       mutate((data) => (data ? data.filter((song) => song.id !== request.id) : []));
 

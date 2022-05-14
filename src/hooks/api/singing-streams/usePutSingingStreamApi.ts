@@ -3,6 +3,7 @@ import type { KeyedMutator } from 'swr';
 
 import type { PutSingingStreamRequest } from '../../../pages/api/singing-streams/[id]';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
+import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
   mutate: KeyedMutator<SingingStreamWithVideoAndSong[]>;
@@ -15,13 +16,11 @@ export function usePutSingingStreamApi({ mutate }: Props) {
     async (request: PutSingingStreamRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetch(`/api/singing-streams/${request.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      }).then((res) => res.json());
+      const newData = await fetcher<SingingStreamWithVideoAndSong>(
+        `/api/singing-streams/${request.id}`,
+        'put',
+        request,
+      );
 
       mutate((data) => (data ? data.map((song) => (song.id === newData.id ? newData : song)) : [newData]));
       setLoading(false);
