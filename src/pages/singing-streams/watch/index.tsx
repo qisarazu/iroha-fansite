@@ -3,6 +3,7 @@ import { shuffle, without } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
+import urlcat from 'urlcat';
 
 import { Layout } from '../../../components/Layout/Layout';
 import { MobilePlayerController } from '../../../components/MobilePlayerController/MobilePlayerController';
@@ -10,6 +11,7 @@ import { PlayerController } from '../../../components/PlayerController/PlayerCon
 import { Playlist } from '../../../components/Playlist/Playlist';
 import type { RepeatType } from '../../../components/RepeatButton/RepeatButton';
 import { YTPlayer } from '../../../components/YTPlayer/YTPlayer';
+import { useGetPlaylistApi } from '../../../hooks/api/playlists/useGetPlaylistApi';
 import { useGetSingingStreamApi } from '../../../hooks/api/singing-streams/useGetSingingStreamApi';
 import { useGetSingingStreamsApi } from '../../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import { useIsMobile } from '../../../hooks/useIsMobile';
@@ -30,10 +32,11 @@ const SKIP_PREV_TIME = 5;
 export default function SingingStreamsWatchPage() {
   const reqIdRef = useRef<number>();
   const router = useRouter();
-  const { v: streamId } = router.query as SingingStreamWatchPageQuery;
+  const { v: streamId, playlist: playlistId } = router.query as SingingStreamWatchPageQuery;
 
   const { data: currentStream } = useGetSingingStreamApi(streamId);
   const { data: rawStreams } = useGetSingingStreamsApi();
+  const { data: playlist, isLoading: isPlaylistLoading } = useGetPlaylistApi(playlistId);
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
@@ -89,9 +92,9 @@ export default function SingingStreamsWatchPage() {
     if (playingStreamIndex === 0) return;
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
-      router.push(`/singing-streams/watch?v=${prevStream.id}`);
+      router.push(urlcat('/singing-streams/watch', { v: prevStream.id, playlist: playlistId }));
     }
-  }, [currentStream, currentTime, player, router, streams]);
+  }, [currentStream, currentTime, player, playlistId, router, streams]);
 
   const onSkipNext = useCallback(() => {
     if (!streams || !currentStream) return;
@@ -99,9 +102,9 @@ export default function SingingStreamsWatchPage() {
     if (playingStreamIndex === streams.length - 1) return;
     const nextStream = streams[playingStreamIndex + 1];
     if (nextStream) {
-      router.push(`/singing-streams/watch?v=${nextStream.id}`);
+      router.push(urlcat('/singing-streams/watch', { v: nextStream.id, playlist: playlistId }));
     }
-  }, [currentStream, router, streams]);
+  }, [currentStream, playlistId, router, streams]);
 
   const onVolumeChange = useCallback(
     (value) => {
@@ -181,10 +184,14 @@ export default function SingingStreamsWatchPage() {
   }, [rawStreams, currentStream, streams]);
 
   useEffect(() => {
-    if (rawStreams.length) {
+    if (isPlaylistLoading) return;
+
+    if (playlist?.items.length) {
+      setStreams(playlist.items);
+    } else if (rawStreams.length) {
       setStreams(rawStreams);
     }
-  }, [rawStreams]);
+  }, [isPlaylistLoading, playlist?.items, rawStreams]);
 
   // When repeatType is changed, the local variable is also changed.
   useEffect(() => {
@@ -270,9 +277,9 @@ export default function SingingStreamsWatchPage() {
           : null
         : streams[playingStreamIndex + 1]?.id;
     if (nextStreamId) {
-      router.push(`/singing-streams/watch?v=${nextStreamId}`);
+      router.push(urlcat('/singing-streams/watch', { v: nextStreamId, playlist: playlistId }));
     }
-  }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType]);
+  }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType, playlistId]);
 
   useEffect(() => {
     if (!isPlayedOnce || !currentStream) return;

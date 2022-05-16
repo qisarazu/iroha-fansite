@@ -42,7 +42,7 @@ async function getSingingStreams(
   res.status(200).json({ data: singingStreams });
 }
 
-export type PostSingingStreamRequest = Omit<SingingStream, 'id' | 'createdAt' | 'updatedAt' | 'video' | 'song'>;
+export type PostSingingStreamRequest = Pick<SingingStream, 'videoId' | 'songId' | 'start' | 'end'>;
 async function postSingingStream(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse<SingingStreamWithVideoAndSong>>,
