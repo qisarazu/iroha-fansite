@@ -25,7 +25,7 @@ import { theme } from '../../styles/theme';
 
 export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
-const AdminVideosPage = () => {
+const AdminSongsPage = () => {
   const router = useRouter();
 
   const orderBy = useMemo(() => {
@@ -124,4 +124,4 @@ const AdminVideosPage = () => {
   );
 };
 
-export default AdminVideosPage;
+export default AdminSongsPage;
