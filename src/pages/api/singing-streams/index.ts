@@ -38,7 +38,6 @@ async function getSingingStreams(
     },
   });
 
-  res.setHeader('Cache-Control', 'public, max-age=86400');
   res.status(200).json({ data: singingStreams });
 }
 
