@@ -61,7 +61,7 @@ const AdminSingingStreamsPage = () => {
       await Promise.all(
         sings.map((sing) => {
           if (!sing.song) return;
-          postApi({
+          return postApi({
             videoId: video.id,
             songId: sing.song.id,
             start: sing.startSec,
