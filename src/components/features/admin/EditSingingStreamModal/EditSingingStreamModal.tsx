@@ -145,9 +145,7 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
     if (!selectedVideo || !sings.length) return;
 
     onSave({ video: selectedVideo, sings: sings });
-    onClose();
-    resetState();
-  }, [onClose, onSave, resetState, selectedVideo, sings]);
+  }, [onSave, selectedVideo, sings]);
 
   const onSingPreview = useCallback(
     (singId: string) => () => {

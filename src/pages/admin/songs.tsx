@@ -11,9 +11,10 @@ import type { Song } from '@prisma/client';
 import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 
+import { EditSongModal } from '../../components/features/admin/EditSongModal/EditSongModal';
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
 import { useDeleteSongApi } from '../../hooks/api/songs/useDeleteSongApi';
@@ -24,7 +25,7 @@ import { theme } from '../../styles/theme';
 
 export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
-const AdminVideosPage = () => {
+const AdminSongsPage = () => {
   const router = useRouter();
 
   const orderBy = useMemo(() => {
@@ -42,12 +43,15 @@ const AdminVideosPage = () => {
   const { api: putApi } = usePutSongApi({ mutate });
   const { api: deleteApi } = useDeleteSongApi({ mutate });
 
+  const [isModalOpen, setModalOpen] = useState(false);
+
   const onAdd = useCallback(() => {
-    postApi({
-      title: '',
-      artist: '',
-    });
-  }, [postApi]);
+    setModalOpen(true);
+  }, []);
+
+  const onModalClose = useCallback(() => {
+    setModalOpen(false);
+  }, []);
 
   const onChange = useCallback(
     ({ id, field, value }: GridCellEditCommitParams) => {
@@ -68,6 +72,14 @@ const AdminVideosPage = () => {
       }
     },
     [deleteApi],
+  );
+
+  const onSave = useCallback(
+    async (song: Pick<Song, 'title' | 'artist'>) => {
+      await postApi(song);
+      onModalClose();
+    },
+    [onModalClose, postApi],
   );
 
   const rows = useMemo<GridRowsProp>(() => {
@@ -102,13 +114,14 @@ const AdminVideosPage = () => {
       <h1>songs</h1>
       <LinkList />
       <Button variant="contained" onClick={onAdd}>
-        Add Row
+        Add
       </Button>
       <Box sx={{ my: theme.spacing(1), height: theme.spacing(100) }}>
         <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onChange} />
       </Box>
+      <EditSongModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
     </Layout>
   );
 };
 
-export default AdminVideosPage;
+export default AdminSongsPage;

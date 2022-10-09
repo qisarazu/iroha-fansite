@@ -28,7 +28,7 @@ import { theme } from '../../styles/theme';
 
 export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
-const AdminVideosPage = () => {
+const AdminSingingStreamsPage = () => {
   const router = useRouter();
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -48,9 +48,17 @@ const AdminVideosPage = () => {
   const { api: putApi } = usePutSingingStreamApi({ mutate });
   const { api: deleteApi } = useDeleteSingingStreamApi({ mutate });
 
+  const onModalOpen = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const onModalClose = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
   const onSave = useCallback(
-    ({ video, sings }: { video: Video; sings: Sing[] }) => {
-      Promise.all(
+    async ({ video, sings }: { video: Video; sings: Sing[] }) => {
+      await Promise.all(
         sings.map((sing) => {
           if (!sing.song) return;
           postApi({
@@ -61,8 +69,9 @@ const AdminVideosPage = () => {
           });
         }),
       );
+      onModalClose();
     },
-    [postApi],
+    [onModalClose, postApi],
   );
 
   const onChange = useCallback(
@@ -85,14 +94,6 @@ const AdminVideosPage = () => {
     },
     [deleteApi],
   );
-
-  const onModalOpen = useCallback(() => {
-    setModalOpen(true);
-  }, []);
-
-  const onModalClose = useCallback(() => {
-    setModalOpen(false);
-  }, []);
 
   const rows = useMemo<GridRowsProp>(
     () =>
@@ -143,4 +144,4 @@ const AdminVideosPage = () => {
   );
 };
 
-export default AdminVideosPage;
+export default AdminSingingStreamsPage;

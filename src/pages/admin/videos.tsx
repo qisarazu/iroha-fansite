@@ -2,7 +2,6 @@ import { Box, Button } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
-  GridCellEditCommitParams,
   GridColDef,
   GridRenderCellParams,
   GridRowParams,
@@ -12,38 +11,50 @@ import type { Video } from '@prisma/client';
 import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 
+import { EditVideoModal } from '../../components/features/admin/EditVideoModal/EditVideoModal';
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
 import { useDeleteVideoApi } from '../../hooks/api/videos/useDeleteVideoApi';
 import { useGetVideosApi } from '../../hooks/api/videos/useGetVideosApi';
 import { usePostVideoApi } from '../../hooks/api/videos/usePostVideoApi';
-import { usePutVideoApi } from '../../hooks/api/videos/usePutVideoApi';
-import { useYouTubeVideoApiFetcher } from '../../hooks/api/youtube/useGetYouTubeVideoApi';
 import { theme } from '../../styles/theme';
+import type { GetYouTubeVideoResponse } from '../api/youtube/videos/[id]';
 
 export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
 
 const AdminVideosPage = () => {
   const { data: videos, isLoading, mutate } = useGetVideosApi();
   const { api: postVideo } = usePostVideoApi({ mutate });
-  const { api: putVideo } = usePutVideoApi({ mutate });
   const { api: deleteVideo } = useDeleteVideoApi({ mutate });
-  const getYouTubeVideo = useYouTubeVideoApiFetcher();
 
-  const onAddRow = useCallback(async () => {
-    await postVideo({
-      videoId: '',
-      title: '',
-      duration: 0,
-      thumbnailDefaultUrl: '',
-      thumbnailMediumUrl: '',
-      thumbnailHighUrl: '',
-      publishedAt: new Date(),
-    });
-  }, [postVideo]);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const onAdd = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const onModalClose = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
+  const onSave = useCallback(
+    async (video: GetYouTubeVideoResponse) => {
+      await postVideo({
+        videoId: video.id,
+        title: video.title,
+        duration: video.duration,
+        publishedAt: new Date(video.publishedAt),
+        thumbnailDefaultUrl: video.thumbnails.default,
+        thumbnailMediumUrl: video.thumbnails.medium,
+        thumbnailHighUrl: video.thumbnails.high,
+      });
+      onModalClose();
+    },
+    [onModalClose, postVideo],
+  );
 
   const onDelete = useCallback(
     (video: Video) => () => {
@@ -52,26 +63,6 @@ const AdminVideosPage = () => {
       }
     },
     [deleteVideo],
-  );
-
-  const onVideoIdChange = useCallback(
-    async ({ id, value }: GridCellEditCommitParams) => {
-      if (!value || !id || typeof id !== 'string') return;
-      const videoId = typeof value === 'number' ? value.toString() : value;
-      const video = await getYouTubeVideo(videoId);
-
-      await putVideo({
-        id,
-        videoId: video.id,
-        title: video.title,
-        duration: video.duration,
-        thumbnailDefaultUrl: video.thumbnails.default,
-        thumbnailMediumUrl: video.thumbnails.medium,
-        thumbnailHighUrl: video.thumbnails.high,
-        publishedAt: new Date(video.publishedAt),
-      });
-    },
-    [getYouTubeVideo, putVideo],
   );
 
   const rows = useMemo<GridRowsProp>(() => {
@@ -127,12 +118,13 @@ const AdminVideosPage = () => {
     <Layout title="videos">
       <h1>videos</h1>
       <LinkList />
-      <Button variant="contained" onClick={onAddRow}>
-        Add Row
+      <Button variant="contained" onClick={onAdd}>
+        Add
       </Button>
       <Box sx={{ my: theme.spacing(1), height: theme.spacing(100) }}>
-        <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onVideoIdChange} />
+        <DataGrid rows={rows} columns={columns} loading={isLoading} />
       </Box>
+      <EditVideoModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
     </Layout>
   );
 };
