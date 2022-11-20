@@ -2,7 +2,7 @@ import type { Song } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../lib/prisma';
-import { withAdminRequired } from '../../../utils/withAdminRequired';
+import { asAdminRequireApi } from '../../../utils/asAdminRequireApi';
 import type { ApiResponse } from './../../../types/api';
 
 export type GetSongsApiRequest = {
@@ -37,6 +37,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       return getSongs(req, res);
     case 'POST':
-      return withAdminRequired(postSong, req, res);
+      return asAdminRequireApi(postSong, req, res);
   }
 }

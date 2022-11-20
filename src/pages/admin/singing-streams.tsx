@@ -8,7 +8,6 @@ import {
   GridRowsProp,
 } from '@mui/x-data-grid';
 import type { SingingStream, Video } from '@prisma/client';
-import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
@@ -25,8 +24,9 @@ import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetS
 import { usePostSingingStreamApi } from '../../hooks/api/singing-streams/usePostSingingStreamApi';
 import { usePutSingingStreamApi } from '../../hooks/api/singing-streams/usePutSingingStreamApi';
 import { theme } from '../../styles/theme';
+import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 
-export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
+export const getServerSideProps = asAdminRequirePage;
 
 const AdminSingingStreamsPage = () => {
   const router = useRouter();

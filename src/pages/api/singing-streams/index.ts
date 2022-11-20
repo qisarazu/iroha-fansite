@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../lib/prisma';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
-import { withAdminRequired } from '../../../utils/withAdminRequired';
+import { asAdminRequireApi } from '../../../utils/asAdminRequireApi';
 import type { ApiResponse } from './../../../types/api';
 
 export type GetSingingStreamsRequest = {
@@ -64,6 +64,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       return getSingingStreams(req, res);
     case 'POST':
-      return withAdminRequired(postSingingStream, req, res);
+      return asAdminRequireApi(postSingingStream, req, res);
   }
 }

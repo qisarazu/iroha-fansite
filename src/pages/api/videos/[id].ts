@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../lib/prisma';
 import type { ApiResponse } from '../../../types/api';
-import { withAdminRequired } from '../../../utils/withAdminRequired';
+import { asAdminRequireApi } from '../../../utils/asAdminRequireApi';
 
 export type PutVideoApiRequest = Partial<Omit<Video, 'createdAt' | 'updatedAt'>>;
 async function putVideo(req: NextApiRequest, res: NextApiResponse<ApiResponse<Video>>) {
@@ -37,11 +37,11 @@ async function deleteVideo(req: NextApiRequest, res: NextApiResponse<ApiResponse
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'PUT': {
-      await withAdminRequired(putVideo, req, res);
+      await asAdminRequireApi(putVideo, req, res);
       return;
     }
     case 'DELETE': {
-      await withAdminRequired(deleteVideo, req, res);
+      await asAdminRequireApi(deleteVideo, req, res);
       return;
     }
   }
