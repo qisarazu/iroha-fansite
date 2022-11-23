@@ -18,6 +18,7 @@
     "storybook": "start-storybook -p 6006 -s ./public",
     "build-storybook": "build-storybook -s public",
     "update-tx": "txjs-cli push \"src/**/*.{js,jsx,ts,tsx}\" --key-generator=hash",
+    "prisma:generate": "prisma generate",
     "db:migrate": "dotenv -e .env.local prisma migrate dev",
     "db:seed": "dotenv -e .env.local tsx prisma/seed.ts"
   },
