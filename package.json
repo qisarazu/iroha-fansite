@@ -51,7 +51,7 @@
     "react-use": "^17.3.2",
     "sass": "^1.49.9",
     "swr": "^1.2.2",
-    "urlcat": "^2.0.4",
+    "urlcat": "^3.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
