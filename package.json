@@ -34,7 +34,7 @@
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.1.0",
     "@transifex/cli": "^4.0.0",
-    "@transifex/native": "^2.4.1",
+    "@transifex/native": "^4.0.0",
     "@transifex/react": "^2.4.1",
     "clsx": "^1.1.1",
     "date-fns": "^2.28.0",
