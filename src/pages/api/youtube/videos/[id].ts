@@ -2,13 +2,17 @@ import { google } from 'googleapis';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { ApiResponse } from '../../../../types/api';
+import { asAdminRequireApi } from '../../../../utils/asAdminRequireApi';
 import { parseDuration } from '../../../../utils/parseDuration';
-import { withAdminRequired } from '../../../../utils/withAdminRequired';
 
 const youtube = google.youtube({
   version: 'v3',
   auth: process.env.YOUTUBE_API_KEY,
 });
+
+export type GetYouTubeVideoRequestQuery = {
+  id: string;
+};
 
 export type GetYouTubeVideoResponse = {
   id: string;
@@ -22,7 +26,7 @@ export type GetYouTubeVideoResponse = {
   duration: number;
 };
 const get = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<GetYouTubeVideoResponse>>) => {
-  const videoId: string = (Array.isArray(req.query.id) ? req.query.id[0] : req.query.id).replace(/['"]+/g, '');
+  const videoId: string = (req.query as GetYouTubeVideoRequestQuery).id.replace(/['"]+/g, '');
 
   const { data } = await youtube.videos.list({
     part: ['snippet', 'contentDetails'],
@@ -64,7 +68,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<GetYouT
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
-      return withAdminRequired(get, req, res);
+      return asAdminRequireApi(get, req, res);
     }
   }
 }

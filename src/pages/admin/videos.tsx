@@ -8,7 +8,6 @@ import {
   GridRowsProp,
 } from '@mui/x-data-grid';
 import type { Video } from '@prisma/client';
-import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
@@ -21,9 +20,10 @@ import { useDeleteVideoApi } from '../../hooks/api/videos/useDeleteVideoApi';
 import { useGetVideosApi } from '../../hooks/api/videos/useGetVideosApi';
 import { usePostVideoApi } from '../../hooks/api/videos/usePostVideoApi';
 import { theme } from '../../styles/theme';
+import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 import type { GetYouTubeVideoResponse } from '../api/youtube/videos/[id]';
 
-export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
+export const getServerSideProps = asAdminRequirePage;
 
 const AdminVideosPage = () => {
   const { data: videos, isLoading, mutate } = useGetVideosApi();

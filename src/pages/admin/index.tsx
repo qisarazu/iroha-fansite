@@ -1,5 +1,6 @@
 import { Alert, Button, Typography } from '@mui/material';
-import getUser from '@supabase/supabase-auth-helpers/nextjs/utils/getUser';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { User } from '@supabase/supabase-js';
 import type { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
@@ -8,20 +9,29 @@ import { FaGoogle } from 'react-icons/fa';
 
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
-import { supabase } from '../../lib/supabase';
 import styles from './index.module.scss';
 
+type Props = {
+  user: User | null;
+  isAdmin: boolean;
+};
+
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const { user } = await getUser(ctx);
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   return {
     props: {
-      user,
-      isAdmin: user?.id === process.env.ADMIN_UUID,
+      user: session?.user || null,
+      isAdmin: session?.user?.id === process.env.ADMIN_UUID,
     },
   };
 }
 
-const AdminIndexPage = ({ user, isAdmin }: { user: User; isAdmin: boolean }) => {
+const AdminIndexPage = ({ user, isAdmin }: Props) => {
+  const supabase = useSupabaseClient();
   const router = useRouter();
 
   const redirectUrl = useMemo(() => {
@@ -32,20 +42,18 @@ const AdminIndexPage = ({ user, isAdmin }: { user: User; isAdmin: boolean }) => 
   }, []);
 
   const onLogin = useCallback(() => {
-    supabase.auth.signIn(
-      {
-        provider: 'google',
-      },
-      {
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
         redirectTo: redirectUrl,
       },
-    );
-  }, [redirectUrl]);
+    });
+  }, [redirectUrl, supabase.auth]);
 
   const onLogout = useCallback(async () => {
     await supabase.auth.signOut();
-    router.reload();
-  }, [router]);
+    router.push('/');
+  }, [router, supabase.auth]);
 
   if (!isAdmin || !user) {
     return (

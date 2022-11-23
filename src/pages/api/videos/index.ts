@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '../../../lib/prisma';
 import type { ApiResponse } from '../../../types/api';
-import { withAdminRequired } from '../../../utils/withAdminRequired';
+import { asAdminRequireApi } from '../../../utils/asAdminRequireApi';
 
 export type GetVideosApiRequest = {
   orderBy?: keyof Video;
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
     case 'POST': {
-      await withAdminRequired(postVideo, req, res);
+      await asAdminRequireApi(postVideo, req, res);
       return;
     }
   }

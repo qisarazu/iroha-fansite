@@ -1,7 +1,7 @@
+import { act, renderHook } from '@testing-library/react-hooks';
 import { addMilliseconds } from 'date-fns';
 import MockDate from 'mockdate';
 
-import { renderHook, act } from '@testing-library/react-hooks';
 import { useIsPlayedVideos, VALID_TIME } from './useIsPlayedVideos';
 
 describe('useIsPlayedVideos', () => {

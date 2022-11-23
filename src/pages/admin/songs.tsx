@@ -8,7 +8,6 @@ import {
   GridRowsProp,
 } from '@mui/x-data-grid';
 import type { Song } from '@prisma/client';
-import withAuthRequired from '@supabase/supabase-auth-helpers/nextjs/utils/withAuthRequired';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
@@ -22,8 +21,9 @@ import { useGetSongsApi } from '../../hooks/api/songs/useGetSongsApi';
 import { usePostSongApi } from '../../hooks/api/songs/usePostSongApi';
 import { usePutSongApi } from '../../hooks/api/songs/usePutSongApi';
 import { theme } from '../../styles/theme';
+import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 
-export const getServerSideProps = withAuthRequired({ redirectTo: '/' });
+export const getServerSideProps = asAdminRequirePage;
 
 const AdminSongsPage = () => {
   const router = useRouter();

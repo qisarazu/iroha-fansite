@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../lib/prisma';
 import type { ApiResponse } from '../../../types/api';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
-import { withAdminRequired } from '../../../utils/withAdminRequired';
+import { asAdminRequireApi } from '../../../utils/asAdminRequireApi';
 
 export type GetSingingStreamRequest = Pick<SingingStream, 'id'>;
 async function getSingingStream(
@@ -70,10 +70,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       return getSingingStream(req, res);
     }
     case 'PUT': {
-      return withAdminRequired(putSingingStream, req, res);
+      return asAdminRequireApi(putSingingStream, req, res);
     }
     case 'DELETE': {
-      return withAdminRequired(deleteSingingStream, req, res);
+      return asAdminRequireApi(deleteSingingStream, req, res);
     }
   }
 }
