@@ -19,8 +19,16 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
 
+      - name: Waiting for 200 from the Vercel Preview
+        uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
+        id: waitFor200
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run e2e test
         run: npm run test:e2e
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.waitFor200.outputs.url }}
 
       - name: Upload the test result
         uses: actions/upload-artifact@v3

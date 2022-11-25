@@ -10,6 +10,7 @@ const customJestConfig = {
     '^lodash-es$': 'lodash',
   },
   testEnvironment: 'jest-environment-jsdom',
+  testMatch: ['**/src/**/*.test.ts?(x)'],
 };
 
 module.exports = createJestConfig(customJestConfig);

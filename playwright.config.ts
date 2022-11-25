@@ -5,22 +5,23 @@ const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || `http://localhost:3000`;
 
 // Reference: https://playwright.dev/docs/test-configuration
 const config: PlaywrightTestConfig = {
-  // Timeout per test
   timeout: 30 * 1000,
-  // Test directory
   testDir: path.join(__dirname, 'e2e'),
   testMatch: /\.test.ts$/,
+
   // Artifacts folder where screenshots, videos, and traces are stored.
   outputDir: 'test-results/',
 
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: {
-    command: 'npm run dev',
-    url: baseURL,
-    timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: process.env.PLAYWRIGHT_TEST_BASE_URL
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: baseURL,
+        timeout: 120 * 1000,
+        reuseExistingServer: !process.env.CI,
+      },
 
   use: {
     // Use baseURL so to make navigations relative.
@@ -30,11 +31,6 @@ const config: PlaywrightTestConfig = {
     // Retry a test if its failing with enabled tracing. This allows you to analyse the DOM, console logs, network traffic etc.
     // More information: https://playwright.dev/docs/trace-viewer
     trace: 'retry-with-trace',
-
-    // All available context options: https://playwright.dev/docs/api/class-browser#browser-new-context
-    // contextOptions: {
-    //   ignoreHTTPSErrors: true,
-    // },
   },
 
   projects: [
