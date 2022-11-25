@@ -8,10 +8,9 @@ const config: PlaywrightTestConfig = {
   timeout: 30 * 1000,
   testDir: path.join(__dirname, 'e2e'),
   testMatch: /\.test.ts$/,
-
-  // Artifacts folder where screenshots, videos, and traces are stored.
-  outputDir: 'test-results/',
-
+  retries: process.env.CI ? 1 : undefined,
+  fullyParallel: true,
+  reporter: [['list'], ['html']],
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: process.env.PLAYWRIGHT_TEST_BASE_URL

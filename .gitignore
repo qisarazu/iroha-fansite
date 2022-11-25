@@ -1,6 +1,9 @@
 node_modules/
 supabase/
+playwright-report/
+test-results/
 .next/
+e2e/**/*.png
 .env
 .env.local
 .vercel
