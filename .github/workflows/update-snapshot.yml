@@ -1,0 +1,38 @@
+name: Update snapshots
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  update-snapshots:
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/update-snapshots' }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+
+      - uses: actions/checkout@v3
+        if: success()
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - name: Setup node@lts
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+
+      - name: Installation
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Update snapshots
+        run: npx playwright test --update-snapshots
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: '[CI] Update snapshots'
