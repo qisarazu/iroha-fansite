@@ -8,7 +8,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name:
+      - name: Setup node@lts
         uses: actions/setup-node@v3
         with:
           node-version: lts/*
@@ -17,7 +17,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chrome webkit
 
       - name: Waiting for 200 from the Vercel Preview
         uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
@@ -26,6 +26,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run e2e test
+        if: success()
         run: npm run test:e2e
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ steps.waitFor200.outputs.url }}
