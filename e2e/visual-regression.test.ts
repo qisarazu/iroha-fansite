@@ -20,3 +20,19 @@ test('/singing-streams', async ({ page }) => {
 
   await expect(page).toHaveScreenshot({ scale: 'device' });
 });
+
+test('/singing-streams/watch', async ({ page, baseURL }) => {
+  // Navigate from /singing-streams to the page to be tested.
+  await page.goto('/singing-streams');
+  await page.getByPlaceholder('曲名').fill('king');
+  await Promise.all([
+    page.waitForResponse(`${baseURL}/api/singing-streams?keyword=king`),
+    page.getByRole('button', { name: '検索' }).click(),
+  ]);
+  await page
+    .getByRole('link', { name: /KING \/?Kanaria 【歌枠】歌初め✨週1歌枠でござる🎤【風真いろは\/ホロライブ】/ })
+    .click();
+  await page.waitForLoadState('networkidle');
+
+  await expect(page).toHaveScreenshot({ scale: 'device' });
+});
