@@ -11,6 +11,7 @@
     "lint:fix": "next lint --fix",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "test": "jest",
+    "test:e2e": "playwright test",
     "type-check": "tsc",
     "check": "npm run prettier && npm run lint && npm run test",
     "deploy": "npx vercel --prod",
@@ -56,6 +57,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
+    "@playwright/test": "^1.28.0",
     "@storybook/addon-actions": "^6.5.13",
     "@storybook/addon-essentials": "^6.5.13",
     "@storybook/addon-links": "^6.5.13",

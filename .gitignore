@@ -1,5 +1,7 @@
 node_modules/
 supabase/
+playwright-report/
+test-results/
 .next/
 .env
 .env.local

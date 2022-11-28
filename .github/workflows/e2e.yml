@@ -1,0 +1,40 @@
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node@lts
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Waiting for 200 from the Vercel Preview
+        uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
+        id: waitFor200
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run e2e test
+        if: success()
+        run: npm run test:e2e
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.waitFor200.outputs.url }}
+
+      - name: Upload the test result
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
