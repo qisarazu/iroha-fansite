@@ -30,7 +30,7 @@ jobs:
         run: npm run type-check
 
       - name: Lint
-        run: npm run link
+        run: npm run lint
 
       - name: Test
         run: npm test
