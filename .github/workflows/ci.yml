@@ -1,4 +1,11 @@
-on: [push]
+name: Type check, Lint and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   test:
@@ -21,6 +28,9 @@ jobs:
 
       - name: Type checking
         run: npm run type-check
+
+      - name: Lint
+        run: npm run link
 
       - name: Test
         run: npm test

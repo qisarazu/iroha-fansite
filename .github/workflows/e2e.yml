@@ -1,4 +1,11 @@
-on: [push]
+name: E2E test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   test:
@@ -40,7 +47,6 @@ jobs:
           retention-days: 30
 
       - name: Publish playwright-reports to gh-pages
-        id: publish-gh-pages
         if: failure()
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -50,8 +56,7 @@ jobs:
           user_email: '41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Post gh-pages url as comment
-        if: always()
-        needs: publish-gh-pages
+        if: failure()
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
