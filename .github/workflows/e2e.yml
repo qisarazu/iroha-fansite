@@ -39,10 +39,11 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      - name: Publish to gh-pages
+      - name: Publish playwright-reports to gh-pages
+        if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: playwright-report/
+          publish_dir: ./playwright-report
           user_name: 'github-actions[bot]'
           user_email: '41898282+github-actions[bot]@users.noreply.github.com'
