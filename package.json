@@ -34,7 +34,7 @@
     "@supabase/auth-helpers-nextjs": "^0.5.2",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.1.0",
-    "@transifex/cli": "^4.3.0",
+    "@transifex/cli": "^5.0.0",
     "@transifex/native": "^4.3.0",
     "@transifex/react": "^4.3.0",
     "clsx": "^1.1.1",
