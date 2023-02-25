@@ -14,7 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "importsNotUsedAsValues": "error"
+    "importsNotUsedAsValues": "error",
+    "noUnusedParameters": true,
   },
   "include": ["next-env.d.ts", "src"],
   "exclude": ["node_modules", ".next"]

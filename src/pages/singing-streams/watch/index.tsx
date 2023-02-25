@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { shuffle, without } from 'lodash-es';
+import { shuffle } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdQueueMusic } from 'react-icons/md';
@@ -104,7 +104,7 @@ export default function SingingStreamsWatchPage() {
   }, [currentStream, router, streams]);
 
   const onVolumeChange = useCallback(
-    (value) => {
+    (value: number) => {
       if (!player) return;
       player.setVolume(value);
       setVolume(value);
@@ -176,7 +176,7 @@ export default function SingingStreamsWatchPage() {
 
   const onShuffle = useCallback(() => {
     if (!rawStreams || !currentStream) return;
-    setStreams([currentStream].concat(shuffle(without(streams, currentStream))));
+    setStreams([currentStream].concat(shuffle(streams.filter((s) => s.id !== currentStream.id))));
     setShuffledOnce(true);
   }, [rawStreams, currentStream, streams]);
 

@@ -36,35 +36,31 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
       dragListener={false}
       ref={ref}
     >
-      <Link href={watchPath}>
-        <a className={styles.thumbnail}>
-          <Image alt={stream.song.title} layout="fill" src={stream.video.thumbnailDefaultUrl} objectFit="cover" />
-          {isHovering && !isPlaying ? (
-            <div className={styles.hoveringIcon}>
-              <MdPlayArrow />
-            </div>
-          ) : null}
-          {isPlaying ? (
-            <div className={styles.playingIcon}>
-              <MdVolumeUp />
-            </div>
-          ) : null}
-        </a>
+      <Link className={styles.thumbnail} href={watchPath}>
+        <Image alt={stream.song.title} layout="fill" src={stream.video.thumbnailDefaultUrl} objectFit="cover" />
+        {isHovering && !isPlaying ? (
+          <div className={styles.hoveringIcon}>
+            <MdPlayArrow />
+          </div>
+        ) : null}
+        {isPlaying ? (
+          <div className={styles.playingIcon}>
+            <MdVolumeUp />
+          </div>
+        ) : null}
       </Link>
-      <Link href={watchPath}>
-        <a className={styles.info}>
-          <h2 className={styles.songTitle}>{stream.song.title}</h2>
-          <span className={styles.songArtist}>
-            {stream.song.artist} /{' '}
-            <T
-              _str="{date} 配信"
-              _comment={
-                'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy-MM-dd (e.g. "2022-02-18")'
-              }
-              date={format(new Date(stream.video.publishedAt), 'yyyy-MM-dd')}
-            />
-          </span>
-        </a>
+      <Link className={styles.info} href={watchPath}>
+        <h2 className={styles.songTitle}>{stream.song.title}</h2>
+        <span className={styles.songArtist}>
+          {stream.song.artist} /{' '}
+          <T
+            _str="{date} 配信"
+            _comment={
+              'The text that indicates when a source video is streamed. Used in the player, playlists, and search result.\n\ndate: yyyy-MM-dd (e.g. "2022-02-18")'
+            }
+            date={format(new Date(stream.video.publishedAt), 'yyyy-MM-dd')}
+          />
+        </span>
       </Link>
       <KebabMenu buttonClassName={styles.menu} size="small" placement="bottom-end">
         <ExternalLink className={styles.originalLink} href={youtubeUrl}>

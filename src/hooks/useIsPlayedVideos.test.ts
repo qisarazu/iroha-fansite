@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { addMilliseconds } from 'date-fns';
 import MockDate from 'mockdate';
 
