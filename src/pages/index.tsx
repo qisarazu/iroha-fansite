@@ -23,10 +23,8 @@ function IndexPage() {
             _str="{search} をご利用ください !"
             _comment="search: 歌枠検索"
             search={
-              <Link href="/singing-streams">
-                <a className={styles.link}>
-                  <T _str="歌枠検索" />
-                </a>
+              <Link className={styles.link} href="/singing-streams">
+                <T _str="歌枠検索" />
               </Link>
             }
           />
@@ -48,10 +46,8 @@ function IndexPage() {
           _str="詳しくは {aboutUs} をご覧ください。"
           _comment="aboutUs: 当サイトについて"
           aboutUs={
-            <Link href="/about">
-              <a className={styles.link}>
-                <T _str="当サイトについて" />
-              </a>
+            <Link className={styles.link} href="/about">
+              <T _str="当サイトについて" />
             </Link>
           }
         />

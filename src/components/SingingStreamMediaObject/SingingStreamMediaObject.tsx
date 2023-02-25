@@ -26,25 +26,21 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
 
   return (
     <article className={styles.root}>
-      <Link href={watchPath}>
-        <a className={styles.thumbnail}>
-          <Image
-            src={singingStream.video.thumbnailMediumUrl}
-            alt={singingStream.video.title}
-            layout="fill"
-            objectFit="cover"
-          />
-        </a>
+      <Link className={styles.thumbnail} href={watchPath}>
+        <Image
+          src={singingStream.video.thumbnailMediumUrl}
+          alt={singingStream.video.title}
+          layout="fill"
+          objectFit="cover"
+        />
       </Link>
       <div className={styles.info}>
         <Link href={watchPath}>
-          <a>
-            <div className={styles.song}>
-              <h2 className={styles.songTitle}>{singingStream.song.title}</h2>
-              <span className={styles.songArtist}>{singingStream.song.artist}</span>
-            </div>
-            <span className={styles.videoTitle}>{singingStream.video.title}</span>
-          </a>
+          <div className={styles.song}>
+            <h2 className={styles.songTitle}>{singingStream.song.title}</h2>
+            <span className={styles.songArtist}>{singingStream.song.artist}</span>
+          </div>
+          <span className={styles.videoTitle}>{singingStream.video.title}</span>
         </Link>
         <span className={styles.publishedAt}>
           <T

@@ -11,9 +11,5 @@ type Props = ComponentPropsWithoutRef<'a'> & {
 export const ActiveLink = memo(function ActiveLink({ className, activeClassName, href, ...props }: Props) {
   const { asPath } = useRouter();
 
-  return (
-    <Link href={href}>
-      <a {...props} className={clsx(className, { [activeClassName]: asPath === href })} href={href} />
-    </Link>
-  );
+  return <Link {...props} href={href} className={clsx(className, { [activeClassName]: asPath === href })}></Link>;
 });
