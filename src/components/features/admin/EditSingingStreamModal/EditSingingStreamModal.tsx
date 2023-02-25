@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import type { Song, Video } from '@prisma/client';
-import { ChangeEvent, memo, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, memo, SyntheticEvent, useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdPlayArrow, MdTimer, MdTimer3 } from 'react-icons/md';
 import { v4 as uuid } from 'uuid';
 
@@ -79,7 +79,7 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
   });
 
   const onVideoChange = useCallback(
-    (_, option: Option<Video> | null) => {
+    (_: SyntheticEvent, option: Option<Video> | null) => {
       if (!option) return;
       setSelectedVideo(option.value);
       player?.cueVideoById(option.value.videoId);
