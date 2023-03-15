@@ -55,7 +55,7 @@ const AdminIndexPage = ({ user, isAdmin }: Props) => {
     router.push('/');
   }, [router, supabase.auth]);
 
-  if (!isAdmin || !user) {
+  if (!user || !isAdmin) {
     return (
       <Layout title="admin">
         <Alert severity="warning">このページは管理者専用ページです。管理者アカウントでログインが必要となります。</Alert>

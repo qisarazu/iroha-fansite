@@ -132,7 +132,9 @@ export const PlayerController = memo(function PlayerController({
           width={64}
           height={36}
           src={`https://i.ytimg.com/vi/${videoId}/default.jpg`}
-          objectFit="cover"
+          style={{
+            objectFit: 'cover',
+          }}
         />
         <div className={styles.info}>
           <div className={styles.sonTitle}>{songTitle}</div>

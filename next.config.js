@@ -5,18 +5,24 @@ const path = require('path');
  */
 module.exports = {
   images: {
-    domains: ['i.ytimg.com']
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        pathname: '/vi/**',
+      },
+    ],
   },
   sassOptions: {
-    includePaths: [path.join(__dirname, 'src/styles')]
+    includePaths: [path.join(__dirname, 'src/styles')],
   },
   async redirects() {
     return [
       {
         source: '/singing-streams/search',
         destination: '/singing-streams',
-        permanent: true
-      }
+        permanent: true,
+      },
     ];
-  }
+  },
 };
