@@ -30,8 +30,11 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
         <Image
           src={singingStream.video.thumbnailMediumUrl}
           alt={singingStream.video.title}
-          layout="fill"
-          objectFit="cover"
+          fill
+          sizes="100vw"
+          style={{
+            objectFit: 'cover',
+          }}
         />
       </Link>
       <div className={styles.info}>

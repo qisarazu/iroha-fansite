@@ -106,7 +106,9 @@ export const EditVideoModal = ({ open, onSave, onClose }: Props) => {
                       alt={videoData.title}
                       width={160}
                       height={90}
-                      objectFit="cover"
+                      style={{
+                        objectFit: 'cover',
+                      }}
                     />
                   </TableCell>
                   <TableCell>{videoData.title}</TableCell>

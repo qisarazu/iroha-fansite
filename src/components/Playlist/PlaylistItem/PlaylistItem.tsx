@@ -37,7 +37,15 @@ export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
       ref={ref}
     >
       <Link className={styles.thumbnail} href={watchPath}>
-        <Image alt={stream.song.title} layout="fill" src={stream.video.thumbnailDefaultUrl} objectFit="cover" />
+        <Image
+          alt={stream.song.title}
+          src={stream.video.thumbnailDefaultUrl}
+          fill
+          sizes="100vw"
+          style={{
+            objectFit: 'cover',
+          }}
+        />
         {isHovering && !isPlaying ? (
           <div className={styles.hoveringIcon}>
             <MdPlayArrow />

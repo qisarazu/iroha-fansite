@@ -1,9 +1,8 @@
 import { List, ListItem } from '@mui/material';
-import { memo } from 'react';
 
 import { Link } from '../../../Link/Link';
 
-export const LinkList = memo(() => {
+export function LinkList() {
   return (
     <List>
       {[
@@ -17,4 +16,4 @@ export const LinkList = memo(() => {
       ))}
     </List>
   );
-});
+}

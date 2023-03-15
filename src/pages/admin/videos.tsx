@@ -91,7 +91,17 @@ const AdminVideosPage = () => {
         headerName: 'サムネイル',
         width: 80,
         renderCell: ({ value }: GridRenderCellParams) =>
-          value ? <Image src={value} width={64} height={36} alt="value" objectFit="cover" /> : null,
+          value ? (
+            <Image
+              src={value}
+              width={64}
+              height={36}
+              alt="image"
+              style={{
+                objectFit: 'cover',
+              }}
+            />
+          ) : null,
       },
       {
         field: 'title',
