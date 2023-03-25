@@ -6,23 +6,19 @@ const meta: Meta<typeof PublishedAt> = {
   title: 'components/base/display/PublishedAt',
   component: PublishedAt,
   tags: ['autodocs'],
+  args: {
+    publishedAt: new Date('2021/06/18 05:36'),
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof PublishedAt>;
 
-const publishedAt = new Date('2021/06/18 05:36');
-
-export const Default: Story = {
-  args: {
-    publishedAt,
-  },
-};
+export const Default: Story = {};
 
 export const Bold: Story = {
   args: {
-    publishedAt,
-    weight: 'bold',
+    fontWeight: 'bold',
   },
 };
