@@ -5,7 +5,6 @@ import { PublishedAt } from './PublishedAt';
 const meta: Meta<typeof PublishedAt> = {
   title: 'components/base/display/PublishedAt',
   component: PublishedAt,
-  tags: ['autodocs'],
   args: {
     publishedAt: new Date('2021/06/18 05:36'),
   },
@@ -19,6 +18,6 @@ export const Default: Story = {};
 
 export const Bold: Story = {
   args: {
-    fontWeight: 'bold',
+    weight: 'bold',
   },
 };
