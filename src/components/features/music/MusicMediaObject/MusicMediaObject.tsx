@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Group, Menu, Text } from '@mantine/core';
+import { ActionIcon, Box, Group, Menu, Stack, Text } from '@mantine/core';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,25 +23,33 @@ export function MusicMediaObject({ singingStream }: Props) {
     <div>
       <Group noWrap>
         <Link href={watchUrl}>
-          <Image
-            src={singingStream.video.thumbnailMediumUrl}
-            width={256}
-            height={144}
-            alt={singingStream.video.title}
-            style={{ objectFit: 'cover' }}
-          />
+          <Box w={{ base: 128, lg: 256 }} h={{ base: 72, lg: 144 }} pos="relative">
+            <Image
+              src={singingStream.video.thumbnailMediumUrl}
+              alt={singingStream.video.title}
+              fill
+              style={{ objectFit: 'cover' }}
+            />
+          </Box>
         </Link>
-        <Box sx={{ flexGrow: 1 }}>
-          <Text size="sm">{singingStream.song.artist}</Text>
-          <Text size="lg" weight="bold">
-            {singingStream.song.title}
-          </Text>
-          <Text size="sm" mt={48} lineClamp={1} title={singingStream.video.title}>
+        <Stack sx={{ flexGrow: 1, alignSelf: 'stretch' }} spacing={0}>
+          <Box component={Link} href={watchUrl} sx={{ ':hover': { textDecoration: 'underline' } }}>
+            <Text fz={{ base: 'xs', md: 'sm' }}>{singingStream.song.artist}</Text>
+            <Text component="h2" fz={{ base: 'sm', md: 'xl' }} weight="bold" lineClamp={1}>
+              {singingStream.song.title}
+            </Text>
+          </Box>
+          <Text mt="auto" fz={{ base: 'xs', md: 'sm' }} lineClamp={1} title={singingStream.video.title} color="dimmed">
             {singingStream.video.title}
           </Text>
-          <PublishedAt publishedAt={singingStream.video.publishedAt} size="sm" />
-        </Box>
-        <Menu>
+          <PublishedAt
+            color="dimmed"
+            fz={{ base: 'xs', md: 'sm' }}
+            publishedAt={singingStream.video.publishedAt}
+            live
+          />
+        </Stack>
+        <Menu position="bottom-end">
           <Menu.Target>
             <ActionIcon size="lg" sx={{ alignSelf: 'flex-start' }}>
               <MdMoreVert size={24} />

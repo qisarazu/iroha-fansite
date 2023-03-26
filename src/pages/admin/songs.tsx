@@ -2,10 +2,10 @@ import { Box, Button } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
-  GridCellEditCommitParams,
-  GridColDef,
-  GridRowParams,
-  GridRowsProp,
+  type GridCellEditCommitParams,
+  type GridColDef,
+  type GridRowParams,
+  type GridRowsProp,
 } from '@mui/x-data-grid';
 import type { Song } from '@prisma/client';
 import { format } from 'date-fns';
@@ -20,7 +20,7 @@ import { useDeleteSongApi } from '../../hooks/api/songs/useDeleteSongApi';
 import { useGetSongsApi } from '../../hooks/api/songs/useGetSongsApi';
 import { usePostSongApi } from '../../hooks/api/songs/usePostSongApi';
 import { usePutSongApi } from '../../hooks/api/songs/usePutSongApi';
-import { theme } from '../../styles/theme';
+import { muiTheme } from '../../styles/theme';
 import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 
 export const getServerSideProps = asAdminRequirePage;
@@ -116,7 +116,7 @@ const AdminSongsPage = () => {
       <Button variant="contained" onClick={onAdd}>
         Add
       </Button>
-      <Box sx={{ my: theme.spacing(1), height: theme.spacing(100) }}>
+      <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
         <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onChange} />
       </Box>
       <EditSongModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />

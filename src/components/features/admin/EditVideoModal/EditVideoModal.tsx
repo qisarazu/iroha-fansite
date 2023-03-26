@@ -20,7 +20,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { useYouTubeVideoApiFetcher } from '../../../../hooks/api/youtube/useGetYouTubeVideoApi';
 import type { GetYouTubeVideoResponse } from '../../../../pages/api/youtube/videos/[id]';
-import { theme } from '../../../../styles/theme';
+import { muiTheme } from '../../../../styles/theme';
 
 type Props = {
   open: boolean;
@@ -37,9 +37,9 @@ const modalStyle: CSSObject = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: theme.spacing(120),
-  height: theme.spacing(48),
-  padding: theme.spacing(2),
+  width: muiTheme.spacing(120),
+  height: muiTheme.spacing(48),
+  padding: muiTheme.spacing(2),
   overflowY: 'auto',
 };
 

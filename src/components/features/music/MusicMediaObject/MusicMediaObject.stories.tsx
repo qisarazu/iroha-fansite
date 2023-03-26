@@ -34,7 +34,6 @@ const singingStream = {
 const meta: Meta<typeof MusicMediaObject> = {
   title: 'components/features/music/MusicMediaObject',
   component: MusicMediaObject,
-  tags: ['autodocs'],
   args: {
     singingStream,
   },
@@ -44,8 +43,4 @@ export default meta;
 
 type Story = StoryObj<typeof MusicMediaObject>;
 
-export const Default: Story = {
-  args: {
-    singingStream,
-  },
-};
+export const Default: Story = {};

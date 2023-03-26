@@ -3,7 +3,7 @@ import type { Song } from '@prisma/client';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { theme } from '../../../../styles/theme';
+import { muiTheme } from '../../../../styles/theme';
 
 type Props = {
   open: boolean;
@@ -18,9 +18,9 @@ const modalStyle: CSSObject = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: theme.spacing(120),
-  height: theme.spacing(32),
-  padding: theme.spacing(2),
+  width: muiTheme.spacing(120),
+  height: muiTheme.spacing(32),
+  padding: muiTheme.spacing(2),
   overflowY: 'auto',
 };
 

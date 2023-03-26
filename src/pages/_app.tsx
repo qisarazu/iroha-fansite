@@ -1,7 +1,7 @@
 import '../styles/global.scss';
 
-import { ThemeProvider } from '@mui/material/styles';
-import { createBrowserSupabaseClient, Session } from '@supabase/auth-helpers-nextjs';
+import { MantineProvider } from '@mantine/core';
+import { createBrowserSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { tx } from '@transifex/native';
 import type { AppProps } from 'next/app';
@@ -31,7 +31,7 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
   }, [router.events]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
       <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
         <YTPlayerContextProvider>
           <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
@@ -52,6 +52,6 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
           <Component {...pageProps} />
         </YTPlayerContextProvider>
       </SessionContextProvider>
-    </ThemeProvider>
+    </MantineProvider>
   );
 }
