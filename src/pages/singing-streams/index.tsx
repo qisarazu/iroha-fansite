@@ -4,8 +4,8 @@ import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { MdClear, MdSearch } from 'react-icons/md';
 
+import { MusicMediaObject } from '../../components/features/music/MusicMediaObject/MusicMediaObject';
 import { Layout } from '../../components/Layout/Layout';
-import { SingingStreamMediaObject } from '../../components/SingingStreamMediaObject/SingingStreamMediaObject';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import styles from './index.module.scss';
@@ -98,7 +98,7 @@ function SingingStreamsPage() {
           <ul className={styles.list}>
             {singingStreams.map((singingStream) => (
               <li className={styles.listItem} key={singingStream.id}>
-                <SingingStreamMediaObject singingStream={singingStream} />
+                <MusicMediaObject singingStream={singingStream} />
               </li>
             ))}
           </ul>

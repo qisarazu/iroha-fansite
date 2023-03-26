@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ComponentPropsWithoutRef, memo } from 'react';
+import { type ComponentPropsWithoutRef, memo } from 'react';
 import { MdLaunch } from 'react-icons/md';
 
 import styles from './ExternalLink.module.scss';

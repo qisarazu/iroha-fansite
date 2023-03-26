@@ -8,7 +8,7 @@ import { MdShuffle, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
 import { PlayButton } from '../PlayButton/PlayButton';
-import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
+import { RepeatButton, type RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './MobilePlayerController.module.scss';
 

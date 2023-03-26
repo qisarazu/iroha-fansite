@@ -1,5 +1,5 @@
 import type PopperJS from '@popperjs/core';
-import { ComponentPropsWithoutRef, memo, useCallback, useState } from 'react';
+import { type ComponentPropsWithoutRef, memo, useCallback, useState } from 'react';
 import { MdMoreVert } from 'react-icons/md';
 import { usePopper } from 'react-popper';
 import { useClickAway } from 'react-use';

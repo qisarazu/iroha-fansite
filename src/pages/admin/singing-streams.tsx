@@ -2,10 +2,10 @@ import { Box, Button } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
-  GridCellEditCommitParams,
-  GridColDef,
-  GridRowParams,
-  GridRowsProp,
+  type GridCellEditCommitParams,
+  type GridColDef,
+  type GridRowParams,
+  type GridRowsProp,
 } from '@mui/x-data-grid';
 import type { SingingStream, Video } from '@prisma/client';
 import { format } from 'date-fns';
@@ -15,7 +15,7 @@ import { MdDelete } from 'react-icons/md';
 
 import {
   EditSingingStreamModal,
-  Sing,
+  type Sing,
 } from '../../components/features/admin/EditSingingStreamModal/EditSingingStreamModal';
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
@@ -23,7 +23,7 @@ import { useDeleteSingingStreamApi } from '../../hooks/api/singing-streams/useDe
 import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import { usePostSingingStreamApi } from '../../hooks/api/singing-streams/usePostSingingStreamApi';
 import { usePutSingingStreamApi } from '../../hooks/api/singing-streams/usePutSingingStreamApi';
-import { theme } from '../../styles/theme';
+import { muiTheme } from '../../styles/theme';
 import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 
 export const getServerSideProps = asAdminRequirePage;
@@ -136,7 +136,7 @@ const AdminSingingStreamsPage = () => {
       <Button variant="contained" sx={{ my: 1 }} onClick={onModalOpen}>
         Add
       </Button>
-      <Box sx={{ my: 1, height: theme.spacing(100) }}>
+      <Box sx={{ my: 1, height: muiTheme.spacing(100) }}>
         <DataGrid rows={rows} columns={columns} onCellEditCommit={onChange} />
       </Box>
       <EditSingingStreamModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />

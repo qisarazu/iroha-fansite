@@ -12,10 +12,11 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "jsx": "preserve",
-    "importsNotUsedAsValues": "error",
     "noUnusedParameters": true,
+    "isolatedModules": true,
+    "ignoreDeprecations": "5.0",
+    "importsNotUsedAsValues": "error"
   },
   "include": ["next-env.d.ts", "src"],
   "exclude": ["node_modules", ".next"]

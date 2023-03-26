@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 
 // based on https://github.com/streamich/react-use/blob/3685b7502a/src/useLocalStorage.ts
 export const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>, () => void] => {

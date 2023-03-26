@@ -2,10 +2,10 @@ import { Box, Button } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
-  GridColDef,
-  GridRenderCellParams,
-  GridRowParams,
-  GridRowsProp,
+  type GridColDef,
+  type GridRenderCellParams,
+  type GridRowParams,
+  type GridRowsProp,
 } from '@mui/x-data-grid';
 import type { Video } from '@prisma/client';
 import { format } from 'date-fns';
@@ -19,7 +19,7 @@ import { Layout } from '../../components/Layout/Layout';
 import { useDeleteVideoApi } from '../../hooks/api/videos/useDeleteVideoApi';
 import { useGetVideosApi } from '../../hooks/api/videos/useGetVideosApi';
 import { usePostVideoApi } from '../../hooks/api/videos/usePostVideoApi';
-import { theme } from '../../styles/theme';
+import { muiTheme } from '../../styles/theme';
 import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 import type { GetYouTubeVideoResponse } from '../api/youtube/videos/[id]';
 
@@ -131,7 +131,7 @@ const AdminVideosPage = () => {
       <Button variant="contained" onClick={onAdd}>
         Add
       </Button>
-      <Box sx={{ my: theme.spacing(1), height: theme.spacing(100) }}>
+      <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
         <DataGrid rows={rows} columns={columns} loading={isLoading} />
       </Box>
       <EditVideoModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />

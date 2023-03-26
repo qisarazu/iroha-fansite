@@ -9,7 +9,7 @@ import { useHoverDirty } from 'react-use';
 import { formatVideoLength } from '../../utils/formatVideoLength';
 import { IconButton } from '../IconButton/IconButton';
 import { PlayButton } from '../PlayButton/PlayButton';
-import { RepeatButton, RepeatType } from '../RepeatButton/RepeatButton';
+import { RepeatButton, type RepeatType } from '../RepeatButton/RepeatButton';
 import { Slider } from '../Slider/Slider';
 import styles from './PlayerController.module.scss';
 

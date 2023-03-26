@@ -1,9 +1,9 @@
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
+  type AutocompleteRenderInputParams,
   Box,
   Button,
-  CSSObject,
+  type CSSObject,
   Grid,
   IconButton,
   InputAdornment,
@@ -13,14 +13,14 @@ import {
   TextField,
 } from '@mui/material';
 import type { Song, Video } from '@prisma/client';
-import { ChangeEvent, memo, SyntheticEvent, useCallback, useMemo, useState } from 'react';
+import { type ChangeEvent, memo, type SyntheticEvent, useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdPlayArrow, MdTimer, MdTimer3 } from 'react-icons/md';
 import { v4 as uuid } from 'uuid';
 
 import { useGetSongsApi } from '../../../../hooks/api/songs/useGetSongsApi';
 import { useGetVideosApi } from '../../../../hooks/api/videos/useGetVideosApi';
 import { useYTPlayer } from '../../../../hooks/useYTPlayer';
-import { theme } from '../../../../styles/theme';
+import { muiTheme } from '../../../../styles/theme';
 import { formatToSec } from '../../../../utils/formatToSec';
 import { YTPlayer } from '../../../YTPlayer/YTPlayer';
 
@@ -39,9 +39,9 @@ const modalStyle: CSSObject = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: theme.spacing(120),
-  height: theme.spacing(100),
-  padding: theme.spacing(2),
+  width: muiTheme.spacing(120),
+  height: muiTheme.spacing(100),
+  padding: muiTheme.spacing(2),
   overflowY: 'auto',
 };
 
@@ -272,7 +272,7 @@ export const EditSingingStreamModal = memo(({ open, onSave, onClose }: Props) =>
         ))}
 
         {/* footer */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: theme.spacing(1), marginTop: 'auto' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: muiTheme.spacing(1), marginTop: 'auto' }}>
           <Button onClick={handleClose}>キャンセル</Button>
           <Button onClick={handleSave}>保存</Button>
         </Box>
