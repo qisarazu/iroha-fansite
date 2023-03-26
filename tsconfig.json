@@ -13,8 +13,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "preserve",
-    "verbatimModuleSyntax": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "isolatedModules": true,
+    "ignoreDeprecations": "5.0",
+    "importsNotUsedAsValues": "error"
   },
   "include": ["next-env.d.ts", "src"],
   "exclude": ["node_modules", ".next"]
