@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ComponentPropsWithoutRef, memo } from 'react';
+import { type ComponentPropsWithoutRef, memo } from 'react';
 
 type Props = ComponentPropsWithoutRef<'a'> & {
   href: string;

@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { type RefObject, useCallback, useEffect, useState } from 'react';
 
 export const useHovering = (ref: RefObject<HTMLElement>) => {
   const [isHovering, setHovering] = useState(false);

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ComponentPropsWithoutRef, memo } from 'react';
+import { type ComponentPropsWithoutRef, memo } from 'react';
 import type { IconType } from 'react-icons';
 
 import styles from './IconLink.module.scss';

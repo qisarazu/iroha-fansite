@@ -1,4 +1,4 @@
-import { Button, CSSObject, Input, Modal, Paper, Stack } from '@mui/material';
+import { Button, type CSSObject, Input, Modal, Paper, Stack } from '@mui/material';
 import type { Song } from '@prisma/client';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';

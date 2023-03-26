@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, useContext, useEffect, useMemo } from 'react';
+import { type ComponentPropsWithoutRef, useContext, useEffect, useMemo } from 'react';
 
 import type { YTPlayer } from '../components/YTPlayer/YTPlayer';
 import { YTPlayerContext } from '../contexts/ytplayer';

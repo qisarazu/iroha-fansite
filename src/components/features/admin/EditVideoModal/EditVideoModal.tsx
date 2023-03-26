@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  CSSObject,
+  type CSSObject,
   Grid,
   Input,
   Modal,

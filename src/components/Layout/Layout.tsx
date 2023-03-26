@@ -1,7 +1,7 @@
 import { useT } from '@transifex/react';
 import clsx from 'clsx';
 import Head from 'next/head';
-import { memo, ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 
 import { Header } from '../Header/Header';
 import styles from './Layout.module.scss';

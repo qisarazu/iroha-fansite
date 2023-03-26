@@ -1,5 +1,13 @@
 import clsx from 'clsx';
-import { ChangeEvent, ComponentPropsWithoutRef, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ComponentPropsWithoutRef,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import styles from './Switch.module.scss';
 

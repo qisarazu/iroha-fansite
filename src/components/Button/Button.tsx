@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ComponentPropsWithoutRef, memo, ReactNode } from 'react';
+import { type ComponentPropsWithoutRef, memo, type ReactNode } from 'react';
 
 import styles from './Button.module.scss';
 

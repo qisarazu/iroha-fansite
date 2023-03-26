@@ -1,9 +1,9 @@
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
+  type AutocompleteRenderInputParams,
   Box,
   Button,
-  CSSObject,
+  type CSSObject,
   Grid,
   IconButton,
   InputAdornment,
@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import type { Song, Video } from '@prisma/client';
-import { ChangeEvent, memo, SyntheticEvent, useCallback, useMemo, useState } from 'react';
+import { type ChangeEvent, memo, type SyntheticEvent, useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdPlayArrow, MdTimer, MdTimer3 } from 'react-icons/md';
 import { v4 as uuid } from 'uuid';
 
