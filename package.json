@@ -21,7 +21,8 @@
     "db:migrate": "dotenv -e .env.local prisma migrate dev",
     "db:seed": "dotenv -e .env.local tsx prisma/seed.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=40e407e6fabc"
   },
   "license": "MIT",
   "dependencies": {
@@ -75,6 +76,7 @@
     "@types/react-dom": "^18.0.11",
     "@types/uuid": "^9.0.1",
     "babel-loader": "^9.1.2",
+    "chromatic": "^6.17.2",
     "dotenv-cli": "^7.0.0",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
@@ -90,5 +92,7 @@
     "storybook": "^7.0.0-rc.7",
     "tsx": "^3.12.3",
     "typescript": "^5.0.2"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "iroha-fansite@1.0.0"
 }
