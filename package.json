@@ -34,7 +34,7 @@
     "@mui/x-data-grid": "^5.17.25",
     "@popperjs/core": "^2.11.6",
     "@prisma/client": "^4.10.1",
-    "@supabase/auth-helpers-nextjs": "^0.5.4",
+    "@supabase/auth-helpers-nextjs": "^0.6.0",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.8.0",
     "@transifex/cli": "^5.1.0",
