@@ -57,7 +57,7 @@ jobs:
 
       - name: Post gh-pages url as comment
         if: failure()
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
