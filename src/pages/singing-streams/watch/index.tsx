@@ -33,7 +33,7 @@ export default function SingingStreamsWatchPage() {
   const { v: streamId } = router.query as SingingStreamWatchPageQuery;
 
   const { data: currentStream } = useGetSingingStreamApi(streamId);
-  const { data: rawStreams } = useGetSingingStreamsApi();
+  const { data: rawStreams } = useGetSingingStreamsApi({ request: { all: true } });
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
@@ -181,10 +181,10 @@ export default function SingingStreamsWatchPage() {
   }, [rawStreams, currentStream, streams]);
 
   useEffect(() => {
-    if (rawStreams.length) {
+    if (rawStreams?.length) {
       setStreams(rawStreams);
     }
-  }, [rawStreams]);
+  }, [rawStreams?.length]);
 
   // When repeatType is changed, the local variable is also changed.
   useEffect(() => {

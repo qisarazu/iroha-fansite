@@ -51,6 +51,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.2",
     "react-icons": "^4.7.1",
+    "react-intersection-observer": "^9.4.3",
     "react-popper": "^2.3.0",
     "react-use": "^17.4.0",
     "sass": "^1.58.3",

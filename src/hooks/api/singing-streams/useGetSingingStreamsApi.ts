@@ -1,30 +1,48 @@
-import { useCallback, useMemo, useState } from 'react';
-import useSWRImmutable from 'swr/immutable';
-import urlcat from 'urlcat';
+import useSWRInfinite from 'swr/infinite';
 
 import type { GetSingingStreamsRequest } from '../../../pages/api/singing-streams';
+import type { CursorResponse } from '../../../types/api';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
-  request?: GetSingingStreamsRequest;
+  request?: Omit<GetSingingStreamsRequest, 'cursor'>;
 };
 
 export function useGetSingingStreamsApi({ request }: Props = {}) {
-  const [isLoading, setLoading] = useState(false);
+  const { data, isLoading, isValidating, setSize } = useSWRInfinite<CursorResponse<SingingStreamWithVideoAndSong[]>>(
+    (pageIndex, previousPageData) => {
+      // In last page.
+      if (previousPageData && !previousPageData.data.length) return null;
 
-  const url = useMemo(() => urlcat('/api/singing-streams', request ?? {}), [request]);
+      const url = new URL('/api/singing-streams', location.origin);
+      const search = new URLSearchParams();
 
-  const { data, mutate } = useSWRImmutable<SingingStreamWithVideoAndSong[]>(url, fetcher);
+      for (const key in request) {
+        const value = request[key as keyof typeof request];
+        if (!value) break;
+        const strValue = typeof value === 'string' ? value : `${value}`;
+        search.append(key, strValue);
+      }
 
-  const refetch = useCallback(async () => {
-    setLoading(true);
+      if (pageIndex !== 0 && previousPageData && previousPageData.nextCursor) {
+        search.append('cursor', previousPageData.nextCursor);
+      }
+      url.search = search.toString();
 
-    const newData = await fetcher<SingingStreamWithVideoAndSong[]>(url);
-    mutate(newData);
+      return url.toString();
+    },
+    fetcher,
+    {
+      revalidateFirstPage: false,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    },
+  );
 
-    setLoading(false);
-  }, [mutate, url]);
+  const flattenData = data?.flatMap((page) => page.data?.filter((d): d is SingingStreamWithVideoAndSong => !!d) ?? []);
+  const hasNext = data?.at(-1)?.hasNext;
 
-  return { data: data ?? [], isLoading: isLoading || !data, refetch, mutate };
+  return { data: flattenData, isLoading: !data || isLoading, isValidating, hasNext, setSize };
 }
