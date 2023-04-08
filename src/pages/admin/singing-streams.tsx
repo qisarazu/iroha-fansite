@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, ThemeProvider } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -43,7 +43,9 @@ const AdminSingingStreamsPage = () => {
     return (orderDirection as 'asc' | 'desc') || 'desc';
   }, [router]);
 
-  const { data: singingStreams, mutate } = useGetSingingStreamsApi({ request: { orderBy, orderDirection } });
+  const { data: singingStreams, mutate } = useGetSingingStreamsApi({
+    request: { orderBy, orderDirection, all: true },
+  });
   const { api: postApi } = usePostSingingStreamApi({ mutate });
   const { api: putApi } = usePutSingingStreamApi({ mutate });
   const { api: deleteApi } = useDeleteSingingStreamApi({ mutate });
@@ -97,7 +99,7 @@ const AdminSingingStreamsPage = () => {
 
   const rows = useMemo<GridRowsProp>(
     () =>
-      singingStreams.map((stream) => ({
+      (singingStreams || []).map((stream) => ({
         id: stream.id,
         song: `${stream.song.title} / ${stream.song.artist}`,
         video: stream.video.title,
@@ -130,17 +132,19 @@ const AdminSingingStreamsPage = () => {
   );
 
   return (
-    <Layout title="singingStreams">
-      <h1>singing streams</h1>
-      <LinkList />
-      <Button variant="contained" sx={{ my: 1 }} onClick={onModalOpen}>
-        Add
-      </Button>
-      <Box sx={{ my: 1, height: muiTheme.spacing(100) }}>
-        <DataGrid rows={rows} columns={columns} onCellEditCommit={onChange} />
-      </Box>
-      <EditSingingStreamModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
-    </Layout>
+    <ThemeProvider theme={muiTheme}>
+      <Layout title="singingStreams">
+        <h1>singing streams</h1>
+        <LinkList />
+        <Button variant="contained" sx={{ my: 1 }} onClick={onModalOpen}>
+          Add
+        </Button>
+        <Box sx={{ my: 1, height: muiTheme.spacing(100) }}>
+          <DataGrid rows={rows} columns={columns} onCellEditCommit={onChange} />
+        </Box>
+        <EditSingingStreamModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
+      </Layout>
+    </ThemeProvider>
   );
 };
 

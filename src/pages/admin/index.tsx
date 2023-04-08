@@ -1,4 +1,4 @@
-import { Alert, Button, Typography } from '@mui/material';
+import { Alert, Button, ThemeProvider, Typography } from '@mui/material';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { User } from '@supabase/supabase-js';
@@ -9,6 +9,7 @@ import { FaGoogle } from 'react-icons/fa';
 
 import { LinkList } from '../../components/features/admin/LinkList/LinkList';
 import { Layout } from '../../components/Layout/Layout';
+import { muiTheme } from '../../styles/theme';
 import styles from './index.module.scss';
 
 type Props = {
@@ -57,26 +58,32 @@ const AdminIndexPage = ({ user, isAdmin }: Props) => {
 
   if (!user || !isAdmin) {
     return (
-      <Layout title="admin">
-        <Alert severity="warning">このページは管理者専用ページです。管理者アカウントでログインが必要となります。</Alert>
-        <Button startIcon={<FaGoogle />} onClick={onLogin}>
-          Login with Google
-        </Button>
-      </Layout>
+      <ThemeProvider theme={muiTheme}>
+        <Layout title="admin">
+          <Alert severity="warning">
+            このページは管理者専用ページです。管理者アカウントでログインが必要となります。
+          </Alert>
+          <Button startIcon={<FaGoogle />} onClick={onLogin}>
+            Login with Google
+          </Button>
+        </Layout>
+      </ThemeProvider>
     );
   }
 
   return (
-    <Layout title="admin">
-      <div className={styles.links}>
-        <Typography variant="subtitle1">links</Typography>
-        <LinkList />
-      </div>
-      <Typography sx={{ my: 1 }}>Login as: {user.email}</Typography>
-      <Button variant="outlined" startIcon={<FaGoogle />} onClick={onLogout}>
-        Logout
-      </Button>
-    </Layout>
+    <ThemeProvider theme={muiTheme}>
+      <Layout title="admin">
+        <div className={styles.links}>
+          <Typography variant="subtitle1">links</Typography>
+          <LinkList />
+        </div>
+        <Typography sx={{ my: 1 }}>Login as: {user.email}</Typography>
+        <Button variant="outlined" startIcon={<FaGoogle />} onClick={onLogout}>
+          Logout
+        </Button>
+      </Layout>
+    </ThemeProvider>
   );
 };
 

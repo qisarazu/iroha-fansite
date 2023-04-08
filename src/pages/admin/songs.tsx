@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, ThemeProvider } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -110,17 +110,19 @@ const AdminSongsPage = () => {
   }, [onDelete]);
 
   return (
-    <Layout title="songs">
-      <h1>songs</h1>
-      <LinkList />
-      <Button variant="contained" onClick={onAdd}>
-        Add
-      </Button>
-      <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
-        <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onChange} />
-      </Box>
-      <EditSongModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
-    </Layout>
+    <ThemeProvider theme={muiTheme}>
+      <Layout title="songs">
+        <h1>songs</h1>
+        <LinkList />
+        <Button variant="contained" onClick={onAdd}>
+          Add
+        </Button>
+        <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
+          <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onChange} />
+        </Box>
+        <EditSongModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
+      </Layout>
+    </ThemeProvider>
   );
 };
 

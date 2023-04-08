@@ -10,7 +10,9 @@ type Props = {
 };
 
 export function useGetSingingStreamsApi({ request }: Props = {}) {
-  const { data, isLoading, isValidating, setSize } = useSWRInfinite<CursorResponse<SingingStreamWithVideoAndSong[]>>(
+  const { data, isLoading, isValidating, setSize, mutate } = useSWRInfinite<
+    CursorResponse<SingingStreamWithVideoAndSong[]>
+  >(
     (pageIndex, previousPageData) => {
       // In last page.
       if (previousPageData && !previousPageData.data.length) return null;
@@ -44,5 +46,5 @@ export function useGetSingingStreamsApi({ request }: Props = {}) {
   const flattenData = data?.flatMap((page) => page.data?.filter((d): d is SingingStreamWithVideoAndSong => !!d) ?? []);
   const hasNext = data?.at(-1)?.hasNext;
 
-  return { data: flattenData, isLoading: !data || isLoading, isValidating, hasNext, setSize };
+  return { data: flattenData, isLoading: !data || isLoading, isValidating, hasNext, setSize, mutate };
 }

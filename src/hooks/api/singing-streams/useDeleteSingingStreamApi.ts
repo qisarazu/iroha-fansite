@@ -2,11 +2,12 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { DeleteSingingStream } from '../../../pages/api/singing-streams/[id]';
+import type { CursorResponse } from '../../../types/api';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
-  mutate: KeyedMutator<SingingStreamWithVideoAndSong[]>;
+  mutate: KeyedMutator<CursorResponse<SingingStreamWithVideoAndSong[]>[]>;
 };
 
 export function useDeleteSingingStreamApi({ mutate }: Props) {
@@ -18,8 +19,7 @@ export function useDeleteSingingStreamApi({ mutate }: Props) {
 
       await fetcher(`/api/singing-streams/${request.id}`, 'delete');
 
-      mutate((data) => (data ? data.filter((song) => song.id !== request.id) : []));
-
+      mutate();
       setLoading(false);
     },
     [mutate],
