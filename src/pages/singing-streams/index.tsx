@@ -1,8 +1,10 @@
+import { Center, Loader } from '@mantine/core';
 import { T, useT } from '@transifex/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { MdClear, MdSearch } from 'react-icons/md';
+import { useInView } from 'react-intersection-observer';
 
 import { MusicMediaObject } from '../../components/features/music/MusicMediaObject/MusicMediaObject';
 import { Layout } from '../../components/Layout/Layout';
@@ -19,13 +21,19 @@ type SearchForm = {
 };
 
 function SingingStreamsPage() {
+  const t = useT();
   const router = useRouter();
   const { keyword } = router.query as Query;
   const { register, handleSubmit, resetField, watch, setValue } = useForm<SearchForm>();
-  const { data: singingStreams, isLoading } = useGetSingingStreamsApi({
-    request: { keyword },
-  });
-  const t = useT();
+  const { ref: inviewRef, inView } = useInView();
+
+  const {
+    data: singingStreams,
+    isLoading,
+    isValidating,
+    hasNext,
+    setSize,
+  } = useGetSingingStreamsApi({ request: { keyword } });
 
   const onSubmit = useCallback(
     (data: SearchForm) => {
@@ -35,9 +43,10 @@ function SingingStreamsPage() {
         router.push({
           query: { keyword: data.keyword },
         });
+        setSize(1);
       }
     },
-    [router],
+    [router, setSize],
   );
 
   const onReset = useCallback(() => {
@@ -50,6 +59,10 @@ function SingingStreamsPage() {
       setValue('keyword', router.query.keyword);
     }
   }, [router.query.keyword, setValue]);
+
+  if (inView && !isValidating && hasNext) {
+    setSize((size) => size + 1);
+  }
 
   return (
     <Layout
@@ -90,8 +103,10 @@ function SingingStreamsPage() {
         </button>
       </form>
       <div className={styles.result}>
-        {isLoading ? (
-          <Spinner className={styles.spinner} />
+        {!singingStreams || isLoading ? (
+          <Center mt={48}>
+            <Loader size="xl" />
+          </Center>
         ) : !singingStreams.length ? (
           <T _str="検索結果はありません" />
         ) : (
@@ -101,8 +116,14 @@ function SingingStreamsPage() {
                 <MusicMediaObject singingStream={singingStream} />
               </li>
             ))}
+            {hasNext && !isValidating ? <li ref={inviewRef} /> : null}
           </ul>
         )}
+        {!isLoading && isValidating ? (
+          <Center mt={48}>
+            <Loader size="xl" />
+          </Center>
+        ) : null}
       </div>
     </Layout>
   );

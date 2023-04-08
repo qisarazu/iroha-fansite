@@ -1,4 +1,4 @@
-import type { ApiResponse } from '../types/api';
+import type { ApiResponse, CursorResponse } from '../types/api';
 
 type Method = 'get' | 'post' | 'put' | 'delete';
 
@@ -11,9 +11,17 @@ export const fetcher = <T>(url: string, method: Method = 'get', body?: Record<st
     body: ['post', 'put'].includes(method) && body ? JSON.stringify(body) : undefined,
   })
     .then((res) => res.json())
-    .then((res: ApiResponse<T>) => {
-      if ('data' in res && res.data !== undefined) {
-        return res.data;
+    .then((res: T) => {
+      if (!res || typeof res !== 'object') {
+        throw new Error('invalid response');
       }
-      throw new Error(res.error);
+
+      if ('data' in res && res.data !== undefined) {
+        return res;
+      }
+
+      if ('error' in res) {
+        throw res.error;
+      }
+      throw new Error('Unknown fetcher error');
     });

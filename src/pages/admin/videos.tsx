@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, ThemeProvider } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -125,17 +125,19 @@ const AdminVideosPage = () => {
   );
 
   return (
-    <Layout title="videos">
-      <h1>videos</h1>
-      <LinkList />
-      <Button variant="contained" onClick={onAdd}>
-        Add
-      </Button>
-      <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
-        <DataGrid rows={rows} columns={columns} loading={isLoading} />
-      </Box>
-      <EditVideoModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
-    </Layout>
+    <ThemeProvider theme={muiTheme}>
+      <Layout title="videos">
+        <h1>videos</h1>
+        <LinkList />
+        <Button variant="contained" onClick={onAdd}>
+          Add
+        </Button>
+        <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
+          <DataGrid rows={rows} columns={columns} loading={isLoading} />
+        </Box>
+        <EditVideoModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
+      </Layout>
+    </ThemeProvider>
   );
 };
 
