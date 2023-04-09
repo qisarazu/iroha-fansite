@@ -4,6 +4,7 @@ import useSWRImmutable from 'swr/immutable';
 import urlcat from 'urlcat';
 
 import type { GetSongsApiRequest } from '../../../pages/api/songs';
+import type { ApiResponse } from '../../../types/api';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
@@ -15,16 +16,16 @@ export function useGetSongsApi({ request }: Props = {}) {
 
   const url = useMemo(() => urlcat('/api/songs', request ?? {}), [request]);
 
-  const { data, mutate } = useSWRImmutable<Song[]>(url, fetcher);
+  const { data, mutate } = useSWRImmutable<ApiResponse<Song[]>>(url, fetcher);
 
   const refetch = useCallback(async () => {
     setLoading(true);
 
-    const newData = await fetcher<Song[]>(url);
-    mutate(newData);
+    await fetcher(url);
+    mutate();
 
     setLoading(false);
   }, [mutate, url]);
 
-  return { data: data ?? [], isLoading: isLoading || !data, refetch, mutate };
+  return { data: data?.data ?? [], isLoading: isLoading || !data, refetch, mutate };
 }

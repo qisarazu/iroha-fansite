@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { DeleteSongApiRequest } from '../../../pages/api/songs/[id]';
+import type { ApiResponse } from '../../../types/api';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
-  mutate: KeyedMutator<Song[]>;
+  mutate: KeyedMutator<ApiResponse<Song[]>>;
 };
 
 export function useDeleteSongApi({ mutate }: Props) {
@@ -18,7 +19,7 @@ export function useDeleteSongApi({ mutate }: Props) {
 
       await fetcher(`/api/songs/${request.id}`, 'delete');
 
-      mutate((data) => (data ? data.filter((song) => song.id !== request.id) : []));
+      mutate();
 
       setLoading(false);
     },

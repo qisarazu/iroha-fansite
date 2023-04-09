@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { PostSongApiRequest } from '../../../pages/api/songs';
+import type { ApiResponse } from '../../../types/api';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
-  mutate: KeyedMutator<Song[]>;
+  mutate: KeyedMutator<ApiResponse<Song[]>>;
 };
 
 export function usePostSongApi({ mutate }: Props) {
@@ -16,9 +17,9 @@ export function usePostSongApi({ mutate }: Props) {
     async (request: PostSongApiRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetcher<Song>('/api/songs', 'post', request);
+      await fetcher('/api/songs', 'post', request);
 
-      mutate((data) => (data ? [...data, newData] : [newData]));
+      mutate();
 
       setLoading(false);
     },
