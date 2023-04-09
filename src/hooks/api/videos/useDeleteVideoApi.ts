@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { DeleteVideoApiRequest } from '../../../pages/api/videos/[id]';
+import type { ApiResponse } from '../../../types/api';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
-  mutate: KeyedMutator<Video[]>;
+  mutate: KeyedMutator<ApiResponse<Video[]>>;
 };
 
 export function useDeleteVideoApi({ mutate }: Props) {
@@ -18,7 +19,7 @@ export function useDeleteVideoApi({ mutate }: Props) {
 
       await fetcher(`/api/videos/${request.id}`, 'delete');
 
-      mutate((data) => (data ? data.filter((video) => video.id !== request.id) : []));
+      mutate();
 
       setLoading(false);
     },

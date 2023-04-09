@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 
 import type { PutVideoApiRequest } from '../../../pages/api/videos/[id]';
+import type { ApiResponse } from '../../../types/api';
 import { fetcher } from '../../../utils/fetcher';
 
 type Props = {
-  mutate: KeyedMutator<Video[]>;
+  mutate: KeyedMutator<ApiResponse<Video[]>>;
 };
 export function usePutVideoApi({ mutate }: Props) {
   const [isLoading, setLoading] = useState(false);
@@ -15,9 +16,9 @@ export function usePutVideoApi({ mutate }: Props) {
     async (request: PutVideoApiRequest): Promise<void> => {
       setLoading(true);
 
-      const newData = await fetcher<Video>(`/api/videos/${request.id}`, 'put', request);
+      await fetcher(`/api/videos/${request.id}`, 'put', request);
 
-      mutate((data) => (data ? data.map((video) => (video.id === newData.id ? newData : video)) : [newData]));
+      mutate();
 
       setLoading(false);
     },
