@@ -1,6 +1,7 @@
 import '../styles/global.scss';
 
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import { createBrowserSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { tx } from '@transifex/native';
@@ -32,14 +33,15 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
-      <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
-        <YTPlayerContextProvider>
-          <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-          <Script
-            id="gtag-init"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
+      <ModalsProvider>
+        <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
+          <YTPlayerContextProvider>
+            <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+            <Script
+              id="gtag-init"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -47,11 +49,12 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
             page_path: window.location.pathname,
           });
         `,
-            }}
-          />
-          <Component {...pageProps} />
-        </YTPlayerContextProvider>
-      </SessionContextProvider>
+              }}
+            />
+            <Component {...pageProps} />
+          </YTPlayerContextProvider>
+        </SessionContextProvider>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

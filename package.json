@@ -31,6 +31,7 @@
     "@emotion/styled": "^11.10.6",
     "@mantine/core": "^6.0.4",
     "@mantine/hooks": "^6.0.4",
+    "@mantine/modals": "^6.0.7",
     "@mui/material": "^5.11.10",
     "@mui/x-data-grid": "^5.17.25",
     "@popperjs/core": "^2.11.6",
@@ -58,7 +59,8 @@
     "sass": "^1.58.3",
     "swr": "^2.0.4",
     "urlcat": "^3.1.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
