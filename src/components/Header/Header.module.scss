@@ -23,6 +23,9 @@
 }
 
 .link {
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
   color: darken($base-white, 40);
 }
 

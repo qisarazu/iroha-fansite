@@ -1,71 +1,30 @@
-import type { Playlist, SingingStream } from '@prisma/client';
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import type { Session } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { prisma } from '../../../lib/prisma';
+import { createPlaylist, getPlaylists } from '../../../services/playlists/server';
+import type { PostPlaylistRequest } from '../../../services/playlists/type';
+import { withSession } from '../../../utils/api/withSession';
 
-async function getPlaylists(req: NextApiRequest, res: NextApiResponse) {
-  const supabase = createServerSupabaseClient({ req, res });
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+async function handleGet(req: NextApiRequest, res: NextApiResponse, session: Session) {
+  const items = await getPlaylists(session.user.id);
 
-  if (!session) {
-    res.status(401).json({ error: { message: 'Unauthorized' } });
-    return;
-  }
-
-  const items = await prisma.playlist.findMany({
-    where: {
-      ownerId: session.user.id,
-    },
-  });
-
-  res.status(200).json({ data: items });
+  return res.status(200).json({ data: items });
 }
 
-export type PostPlaylistRequest = {
-  title: Playlist['title'];
-  description?: Playlist['description'];
-  items: SingingStream['id'][];
-};
+async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Session) {
+  const { title, description } = req.body as PostPlaylistRequest;
 
-async function postPlaylist(req: NextApiRequest, res: NextApiResponse) {
-  const supabase = createServerSupabaseClient({ req, res });
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    res.status(401).json({ message: 'Unauthorized' });
-    return;
-  }
-
-  const { title, description, items } = req.body as PostPlaylistRequest;
-
-  const item = await prisma.playlist.create({
-    data: {
-      ownerId: session.user.id,
-      title,
-      description,
-      items: {
-        connect: items.map((id) => ({
-          id,
-        })),
-      },
-    },
-  });
-
-  res.status(200).json({ data: item });
+  const playlist = await createPlaylist(title, description, session.user.id);
+  return res.status(200).json({ data: playlist });
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
-      return getPlaylists(req, res);
+      return withSession(handleGet, req, res);
     }
     case 'POST': {
-      return postPlaylist(req, res);
+      return withSession(handlePost, req, res);
     }
   }
 }

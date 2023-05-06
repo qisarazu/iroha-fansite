@@ -1,46 +1,25 @@
-import { Box, Button, Space, Textarea, TextInput } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import type { Playlist } from '@prisma/client';
-import { useT } from '@transifex/react';
-import { useForm } from 'react-hook-form';
 
-import { useCreatePlaylist } from '../../../../hooks/api/playlists/useCreatePlaylist';
+import { useCreatePlaylist } from '../../../../services/playlists/client';
+import { PlaylistForm } from '../PlaylistForm/PlaylistForm';
 
 type FormValue = {
   title: Playlist['title'];
   description?: Playlist['description'];
 };
 
-const MAX_TITLE_LENGTH = 32;
-const MAX_DESCRIPTION_LENGTH = 32;
-
 export function CreatePlaylistModal() {
-  const t = useT();
-  const create = useCreatePlaylist();
+  const { createPlaylist } = useCreatePlaylist();
 
-  const { register, handleSubmit } = useForm<FormValue>();
-
-  function handleValid(value: FormValue) {
-    create({ title: value.title, description: value.description, items: [] });
+  function handleSubmit(data: FormValue) {
+    createPlaylist({ title: data.title, description: data.description ?? null });
+    handleClose();
   }
 
-  return (
-    <>
-      <form onSubmit={handleSubmit(handleValid)}>
-        <TextInput mb="xl" placeholder={t('タイトル')} {...register('title', { maxLength: MAX_TITLE_LENGTH })} />
-        <Textarea placeholder={t('説明')} {...register('description', { maxLength: MAX_DESCRIPTION_LENGTH })} />
+  function handleClose() {
+    modals.closeAll();
+  }
 
-        <Box
-          sx={(theme) => ({
-            display: 'flex',
-            gap: theme.spacing.md,
-            justifyContent: 'flex-end',
-            marginTop: theme.spacing.lg,
-          })}
-        >
-          <Button>{t('キャンセル')}</Button>
-          <Button type="submit">{t('保存')}</Button>
-        </Box>
-      </form>
-    </>
-  );
+  return <PlaylistForm mode="create" onSubmit={handleSubmit} />;
 }

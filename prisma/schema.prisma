@@ -34,24 +34,36 @@ model Song {
 }
 
 model SingingStream {
-  id        String     @id @default(uuid())
+  id        String         @id @default(uuid())
   start     Int
   end       Int
-  video     Video      @relation(fields: [videoId], references: [id])
+  video     Video          @relation(fields: [videoId], references: [id])
   videoId   String
-  song      Song       @relation(fields: [songId], references: [id])
+  song      Song           @relation(fields: [songId], references: [id])
   songId    String
-  playlists Playlist[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  playlists PlaylistItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model PlaylistItem {
+  id         String        @id @default(nanoid(12))
+  position   Int
+  playlist   Playlist      @relation(fields: [playlistId], references: [id])
+  playlistId String
+  music      SingingStream @relation(fields: [musicId], references: [id])
+  musicId    String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
 }
 
 model Playlist {
-  id          String          @id @default(nanoid(12))
-  title       String
-  description String?
-  items       SingingStream[]
-  ownerId     String
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id            String         @id @default(nanoid(12))
+  title         String
+  description   String?
+  thumbnailURLs String[]       @default([])
+  items         PlaylistItem[]
+  ownerId       String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }

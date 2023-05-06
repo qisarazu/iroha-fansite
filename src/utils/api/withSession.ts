@@ -13,5 +13,5 @@ export async function withSession(api: Arg, req: NextApiRequest, res: NextApiRes
     return res.status(401).json({ error: { message: 'Unauthorized' } });
   }
 
-  api(req, res, session);
+  return api(req, res, session);
 }

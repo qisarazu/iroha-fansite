@@ -39,6 +39,7 @@
     "@supabase/auth-helpers-nextjs": "^0.7.0",
     "@supabase/auth-helpers-react": "^0.4.0",
     "@supabase/supabase-js": "^2.8.0",
+    "@tabler/icons-react": "^2.17.0",
     "@transifex/cli": "^5.1.0",
     "@transifex/native": "^5.1.0",
     "@transifex/react": "^5.1.0",
