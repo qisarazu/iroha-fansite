@@ -1,4 +1,5 @@
 import type { Playlist, SingingStream } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '../../lib/prisma';
 
@@ -134,13 +135,22 @@ export async function addPlaylistItem(
     },
   });
 
-  return prisma.playlistItem.create({
-    data: {
-      playlistId,
-      musicId: musicId,
-      position: itemCount + 1,
-    },
-  });
+  try {
+    return await prisma.playlistItem.create({
+      data: {
+        playlistId,
+        musicId,
+        position: itemCount + 1,
+      },
+    });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        throw { error: { message: 'ItemAlreadyExists' } };
+      }
+    }
+    throw err;
+  }
 }
 
 export async function updatePlaylistThumbnailURLs(playlistId: Playlist['id']) {

@@ -1,7 +1,7 @@
 import { Box, Center, SimpleGrid } from '@mantine/core';
 import type { Playlist } from '@prisma/client';
+import { IconPlaylist } from '@tabler/icons-react';
 import Image from 'next/image';
-import { MdQueueMusic } from 'react-icons/md';
 
 type Props = {
   thumbnailURLs: Playlist['thumbnailURLs'];
@@ -17,7 +17,7 @@ export function PlaylistThumbnail({ thumbnailURLs, alt, width, height, fill = fa
   if (!thumbnailURLs.length) {
     return (
       <Center sx={{ aspectRatio: '16/9', borderRadius: 4 }} w={width} h={height} bg="gray">
-        <MdQueueMusic size={64} />
+        <IconPlaylist />
       </Center>
     );
   }

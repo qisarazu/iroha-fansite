@@ -8,11 +8,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Se
   const { id: playlistId } = req.query as { id: string };
   const { musicId } = req.body;
 
-  const newItem = await addPlaylistItem(playlistId, musicId, session.user.id);
+  try {
+    const newItem = await addPlaylistItem(playlistId, musicId, session.user.id);
 
-  await updatePlaylistThumbnailURLs(playlistId);
+    await updatePlaylistThumbnailURLs(playlistId);
 
-  res.status(200).json({ data: newItem });
+    res.status(200).json({ data: newItem });
+  } catch (err) {
+    res.status(401).json(err);
+  }
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {

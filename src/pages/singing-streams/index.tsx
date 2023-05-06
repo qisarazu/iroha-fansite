@@ -8,7 +8,6 @@ import { useInView } from 'react-intersection-observer';
 
 import { MusicMediaObject } from '../../components/features/music/MusicMediaObject/MusicMediaObject';
 import { Layout } from '../../components/Layout/Layout';
-import { Spinner } from '../../components/Spinner/Spinner';
 import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetSingingStreamsApi';
 import styles from './index.module.scss';
 

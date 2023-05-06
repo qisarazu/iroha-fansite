@@ -1,4 +1,5 @@
 import { ActionIcon, Box, Group, Menu, Stack, Text } from '@mantine/core';
+import { IconPlaylistAdd } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { useWatchUrl } from '../../../../hooks/useWatchUrl';
 import { useYouTubeUrl } from '../../../../hooks/useYouTubeUrl';
 import type { SingingStreamWithVideoAndSong } from '../../../../types/SingingStream';
 import { PublishedAt } from '../../../base/display/PublishedAt/PublishedAt';
+import { usePlaylistSelectionModal } from '../../playlist/PlaylistSelectionModal/usePlaylistSelectionModal';
 
 type Props = {
   singingStream: SingingStreamWithVideoAndSong;
@@ -18,6 +20,11 @@ export function MusicMediaObject({ singingStream }: Props) {
   const t = useT();
   const watchUrl = useWatchUrl(singingStream.id);
   const youtubeUrl = useYouTubeUrl(singingStream.video.videoId, singingStream.start);
+  const { open } = usePlaylistSelectionModal();
+
+  function handlePlaylistSelectionModalOpen() {
+    open(singingStream.id);
+  }
 
   return (
     <div>
@@ -55,7 +62,11 @@ export function MusicMediaObject({ singingStream }: Props) {
               <MdMoreVert size={24} />
             </ActionIcon>
           </Menu.Target>
+
           <Menu.Dropdown>
+            <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
+              {t('プレイリストに追加')}
+            </Menu.Item>
             <Menu.Item component="a" href={youtubeUrl} target="_blank" rel="noopener" icon={<FaYoutube />}>
               {t('YouTube で見る')}
             </Menu.Item>

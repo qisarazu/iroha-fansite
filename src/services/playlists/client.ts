@@ -4,6 +4,7 @@ import useSWRMutation from 'swr/mutation';
 
 import type { ApiResponse } from '../../types/api';
 import { apiClient } from '../apiClient';
+import type { PlaylistWithItem } from './type';
 
 const KEY = '/api/playlists';
 
@@ -11,6 +12,15 @@ export function usePlaylists() {
   const { data, error } = useSWR<ApiResponse<Playlist[]>>(KEY, apiClient);
 
   return { playlists: data?.data, isLoading: !data && !error };
+}
+
+export function usePlaylistDetails(playlistId: Playlist['id'] | undefined) {
+  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(
+    () => (playlistId ? `${KEY}/${playlistId}` : null),
+    apiClient,
+  );
+
+  return { playlist: data?.data, isLoading: !data && !error };
 }
 
 export function useCreatePlaylist() {
@@ -38,7 +48,13 @@ export function useDeletePlaylist() {
     return apiClient<Playlist & PlaylistItem[]>(`${key}/${arg.id}`, 'delete', arg);
   }
 
-  const { trigger: deletePlaylist } = useSWRMutation(KEY, fetcher);
+  const { trigger } = useSWRMutation(KEY, fetcher);
+
+  function deletePlaylist(arg: Parameters<typeof trigger>[0]) {
+    if (confirm('プレイリストを削除しますか？')) {
+      trigger(arg);
+    }
+  }
 
   return { deletePlaylist };
 }

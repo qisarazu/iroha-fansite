@@ -49,12 +49,14 @@ model SingingStream {
 model PlaylistItem {
   id         String        @id @default(nanoid(12))
   position   Int
-  playlist   Playlist      @relation(fields: [playlistId], references: [id])
+  playlist   Playlist      @relation(fields: [playlistId], references: [id], onDelete: Cascade)
   playlistId String
   music      SingingStream @relation(fields: [musicId], references: [id])
   musicId    String
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
+
+  @@unique([playlistId, musicId])
 }
 
 model Playlist {
