@@ -19,7 +19,7 @@ export function PlaylistItem({ item, sx }: Props) {
   const t = useT();
   const { ref: hoverTarget, hovered } = useHover<HTMLAnchorElement>();
 
-  const { deletePlaylistItem } = useDeletePlaylistItem();
+  const { deletePlaylistItem } = useDeletePlaylistItem(item.playlistId);
 
   function handleDelete() {
     deletePlaylistItem({

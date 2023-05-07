@@ -1,11 +1,16 @@
+import type { Playlist } from '@prisma/client';
 import type { Session } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { addPlaylistItem, updatePlaylistThumbnailURLs } from '../../../../services/playlists/server';
-import { withSession } from '../../../../utils/api/withSession';
+import { addPlaylistItem, updatePlaylistThumbnailURLs } from '../../../../../services/playlists/server';
+import { withSession } from '../../../../../utils/api/withSession';
+
+type Query = {
+  playlistId: Playlist['id'];
+};
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Session) {
-  const { id: playlistId } = req.query as { id: string };
+  const { playlistId } = req.query as Query;
   const { musicId } = req.body;
 
   try {

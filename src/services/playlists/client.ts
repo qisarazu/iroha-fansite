@@ -15,10 +15,7 @@ export function usePlaylists() {
 }
 
 export function usePlaylistDetails(playlistId: Playlist['id'] | undefined) {
-  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(
-    () => (playlistId ? `${KEY}/${playlistId}` : null),
-    apiClient,
-  );
+  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(playlistId ? `${KEY}/${playlistId}` : null, apiClient);
 
   return { playlist: data?.data, isLoading: !data && !error };
 }
@@ -59,25 +56,25 @@ export function useDeletePlaylist() {
   return { deletePlaylist };
 }
 
-export function useAddPlaylistItem() {
+export function useAddPlaylistItem(playlistId: Playlist['id']) {
   async function fetcher(
-    key: string,
+    url: string,
     { arg }: { arg: { playlistId: Playlist['id']; musicId: PlaylistItem['musicId'] } },
   ) {
-    return apiClient(`${key}/${arg.playlistId}/items`, 'post', arg);
+    return apiClient(`${url}/items`, 'post', arg);
   }
 
-  const { trigger: addPlaylistItem } = useSWRMutation(KEY, fetcher);
+  const { trigger: addPlaylistItem } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
 
   return { addPlaylistItem };
 }
 
-export function useDeletePlaylistItem() {
-  async function fetcher(key: string, { arg }: { arg: { playlistId: Playlist['id']; itemId: PlaylistItem['id'] } }) {
-    return apiClient(`${key}/${arg.playlistId}/items`, 'delete', arg);
+export function useDeletePlaylistItem(playlistId: Playlist['id']) {
+  async function fetcher(url: string, { arg }: { arg: { playlistId: Playlist['id']; itemId: PlaylistItem['id'] } }) {
+    return apiClient(`${url}/items/${arg.itemId}`, 'delete', arg);
   }
 
-  const { trigger: deletePlaylistItem } = useSWRMutation(KEY, fetcher);
+  const { trigger: deletePlaylistItem } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
 
   return { deletePlaylistItem };
 }

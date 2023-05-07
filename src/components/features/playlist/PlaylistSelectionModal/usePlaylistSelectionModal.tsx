@@ -9,10 +9,10 @@ export function usePlaylistSelectionModal() {
   const t = useT();
 
   const open = useCallback(
-    (itemId: SingingStream['id']) => {
+    (musicId: SingingStream['id']) => {
       modals.open({
         title: t('プレイリストに追加'),
-        children: <PlaylistSelectionModal itemId={itemId} />,
+        children: <PlaylistSelectionModal musicId={musicId} />,
       });
     },
     [t],

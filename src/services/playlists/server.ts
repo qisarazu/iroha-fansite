@@ -1,4 +1,4 @@
-import type { Playlist, SingingStream } from '@prisma/client';
+import type { Playlist, PlaylistItem, SingingStream } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '../../lib/prisma';
@@ -80,7 +80,7 @@ export async function editPlaylist(
   const target = await prisma.playlist.findFirst({
     where: { id, ownerId },
   });
-  console.log('debug:target', target);
+
   if (!target) {
     throw { error: { message: 'NotFound' } };
   }
@@ -111,6 +111,35 @@ export async function deletePlaylist(id: Playlist['id'], ownerId: Playlist['owne
     console.error('Error creating playlist:', error);
     throw error;
   }
+}
+
+export async function updatePlaylistThumbnailURLs(playlistId: Playlist['id']) {
+  const playlistItems = await prisma.playlistItem.findMany({
+    where: { playlistId },
+    orderBy: { createdAt: 'asc' },
+    select: {
+      music: {
+        select: {
+          video: {
+            select: { thumbnailMediumUrl: true },
+          },
+        },
+      },
+    },
+  });
+
+  const uniqueThumbnails = Array.from(new Set(playlistItems.map((item) => item.music.video.thumbnailMediumUrl)));
+
+  const thumbnailURLs = uniqueThumbnails.length
+    ? uniqueThumbnails.length < 4
+      ? [uniqueThumbnails[0]]
+      : uniqueThumbnails.slice(0, 4)
+    : [];
+
+  await prisma.playlist.update({
+    where: { id: playlistId },
+    data: { thumbnailURLs },
+  });
 }
 
 export async function addPlaylistItem(
@@ -153,31 +182,47 @@ export async function addPlaylistItem(
   }
 }
 
-export async function updatePlaylistThumbnailURLs(playlistId: Playlist['id']) {
-  const playlistItems = await prisma.playlistItem.findMany({
-    where: { playlistId },
-    orderBy: { createdAt: 'asc' },
-    select: {
-      music: {
-        select: {
-          video: {
-            select: { thumbnailMediumUrl: true },
-          },
-        },
-      },
+export async function deletePlaylistItem(
+  playlistId: Playlist['id'],
+  itemId: PlaylistItem['id'],
+  ownerId: Playlist['ownerId'],
+) {
+  const targetPlaylist = await prisma.playlist.findFirst({
+    where: {
+      id: playlistId,
+      ownerId,
     },
   });
 
-  const uniqueThumbnails = Array.from(new Set(playlistItems.map((item) => item.music.video.thumbnailMediumUrl)));
+  if (!targetPlaylist) {
+    throw { error: { message: 'NotFound' } };
+  }
 
-  const thumbnailURLs = uniqueThumbnails.length
-    ? uniqueThumbnails.length < 4
-      ? [uniqueThumbnails[0]]
-      : uniqueThumbnails.slice(0, 4)
-    : [];
-
-  await prisma.playlist.update({
-    where: { id: playlistId },
-    data: { thumbnailURLs },
+  const itemToDelete = await prisma.playlistItem.findUnique({
+    where: { id: itemId },
+    select: { position: true },
   });
+
+  if (!itemToDelete) {
+    throw { error: { message: 'NotFound' } };
+  }
+
+  const [_, deletedItem] = await prisma.$transaction([
+    prisma.playlistItem.updateMany({
+      where: {
+        playlistId,
+        position: { gt: itemToDelete.position },
+      },
+      data: {
+        position: {
+          decrement: 1,
+        },
+      },
+    }),
+    prisma.playlistItem.delete({
+      where: { id: itemId },
+    }),
+  ]);
+
+  return deletedItem;
 }
