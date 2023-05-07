@@ -200,14 +200,14 @@ export async function deletePlaylistItem(
 
   const itemToDelete = await prisma.playlistItem.findUnique({
     where: { id: itemId },
-    select: { position: true },
+    select: { position: true, music: { select: { video: { select: { thumbnailMediumUrl: true } } } } },
   });
 
   if (!itemToDelete) {
     throw { error: { message: 'NotFound' } };
   }
 
-  const [_, deletedItem] = await prisma.$transaction([
+  await prisma.$transaction([
     prisma.playlistItem.updateMany({
       where: {
         playlistId,
@@ -224,5 +224,5 @@ export async function deletePlaylistItem(
     }),
   ]);
 
-  return deletedItem;
+  return itemToDelete;
 }

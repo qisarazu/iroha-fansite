@@ -16,7 +16,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Se
   try {
     const newItem = await addPlaylistItem(playlistId, musicId, session.user.id);
 
-    await updatePlaylistThumbnailURLs(playlistId);
+    const playlist = await prisma.playlist.findUnique({
+      where: { id: playlistId },
+      select: { thumbnailURLs: true },
+    });
+
+    // プレイリストのサムネイルに利用されているのが 4 つ未満の場合、サムネイル更新
+    if (playlist && playlist.thumbnailURLs.length < 4) {
+      await updatePlaylistThumbnailURLs(playlistId);
+    }
 
     res.status(200).json({ data: newItem });
   } catch (err) {
