@@ -5,7 +5,7 @@ import { createPlaylist, getPlaylists } from '../../../services/playlists/server
 import type { PostPlaylistRequest } from '../../../services/playlists/type';
 import { withSession } from '../../../utils/api/withSession';
 
-async function handleGet(req: NextApiRequest, res: NextApiResponse, session: Session) {
+async function handleGet(_: NextApiRequest, res: NextApiResponse, session: Session) {
   const items = await getPlaylists(session.user.id);
 
   return res.status(200).json({ data: items });

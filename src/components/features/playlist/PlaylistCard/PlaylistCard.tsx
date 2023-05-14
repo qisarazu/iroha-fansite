@@ -20,7 +20,7 @@ export function PlaylistCard({ playlist }: Props) {
   const { open } = useEditPlaylistModal();
   const { deletePlaylist } = useDeletePlaylist();
 
-  function handleDelete(event: MouseEvent<HTMLButtonElement>) {
+  function handleDelete() {
     deletePlaylist({ id: playlist.id });
   }
 
@@ -34,10 +34,6 @@ export function PlaylistCard({ playlist }: Props) {
 
   function handleShufflePlay() {
     console.log('shuffle');
-  }
-
-  function handleOpen(event: MouseEvent<HTMLButtonElement>) {
-    event.stopPropagation();
   }
 
   return (

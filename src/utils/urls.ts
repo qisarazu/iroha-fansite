@@ -17,7 +17,10 @@ export function getMusicWatchURL(watchId: string, query?: MusicWatchQuery) {
   let url = `/singing-streams/watch?v=${watchId}`;
 
   for (const key in query) {
-    url += `&${key}=${query[key as keyof MusicWatchQuery]}`;
+    const value = query[key as keyof MusicWatchQuery];
+    if (value) {
+      url += `&${key}=${value}`;
+    }
   }
 
   return url;

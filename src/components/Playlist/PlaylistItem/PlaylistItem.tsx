@@ -1,3 +1,4 @@
+import type { Playlist } from '@prisma/client';
 import { T } from '@transifex/react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
@@ -9,6 +10,7 @@ import { MdPlayArrow, MdVolumeUp } from 'react-icons/md';
 
 import { useHovering } from '../../../hooks/useHovering';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
+import { getMusicWatchURL } from '../../../utils/urls';
 import { ExternalLink } from '../../ExternalLink/ExternalLink';
 import { KebabMenu } from '../../KebabMenu/KebabMenu';
 import styles from './PlaylistItem.module.scss';
@@ -16,14 +18,15 @@ import styles from './PlaylistItem.module.scss';
 type Props = {
   className?: string;
   stream: SingingStreamWithVideoAndSong;
+  playlistId?: Playlist['id'];
   isPlaying: boolean;
 };
 
-export const PlaylistItem = memo(({ className, stream, isPlaying }: Props) => {
+export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
 
-  const watchPath = useMemo(() => `/singing-streams/watch?v=${stream.id}`, [stream.id]);
+  const watchPath = getMusicWatchURL(stream.id, { playlist: playlistId });
   const youtubeUrl = useMemo(
     () => `https://www.youtube.com/watch?v=${stream.video.videoId}&t=${stream.start}`,
     [stream.start, stream.video.videoId],
