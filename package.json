@@ -81,7 +81,7 @@
     "chromatic": "^6.17.2",
     "dotenv-cli": "^7.0.0",
     "eslint": "8.41.0",
-    "eslint-config-next": "13.4.3",
+    "eslint-config-next": "13.4.4",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.11",
     "husky": "^8.0.3",
