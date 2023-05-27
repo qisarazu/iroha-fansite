@@ -9,6 +9,17 @@ export async function getPlaylists(ownerId: string) {
       where: {
         ownerId,
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        thumbnailURLs: true,
+        items: {
+          select: {
+            musicId: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },

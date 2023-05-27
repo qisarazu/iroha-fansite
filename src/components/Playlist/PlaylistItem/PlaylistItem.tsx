@@ -1,5 +1,6 @@
-import type { Playlist } from '@prisma/client';
-import { T } from '@transifex/react';
+import { ActionIcon, Menu } from '@mantine/core';
+import { IconBrandYoutube, IconDotsVertical, IconPlaylistAdd } from '@tabler/icons-react';
+import { T, useT } from '@transifex/react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { Reorder } from 'framer-motion';
@@ -9,10 +10,11 @@ import { memo, useMemo, useRef } from 'react';
 import { MdPlayArrow, MdVolumeUp } from 'react-icons/md';
 
 import { useHovering } from '../../../hooks/useHovering';
+import { useDeletePlaylistItem } from '../../../services/playlists/client';
+import type { Playlist } from '../../../services/playlists/type';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
-import { getMusicWatchURL } from '../../../utils/urls';
-import { ExternalLink } from '../../ExternalLink/ExternalLink';
-import { KebabMenu } from '../../KebabMenu/KebabMenu';
+import { getMusicWatchURL, getYouTubeURL } from '../../../utils/urls';
+import { usePlaylistSelectionModal } from '../../features/playlist/PlaylistSelectionModal/usePlaylistSelectionModal';
 import styles from './PlaylistItem.module.scss';
 
 type Props = {
@@ -23,6 +25,7 @@ type Props = {
 };
 
 export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: Props) => {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
 
@@ -31,6 +34,13 @@ export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: 
     () => `https://www.youtube.com/watch?v=${stream.video.videoId}&t=${stream.start}`,
     [stream.start, stream.video.videoId],
   );
+
+  const { open } = usePlaylistSelectionModal();
+  const { deletePlaylistItem } = useDeletePlaylistItem(playlistId ?? '');
+
+  function handleAddPlaylistItem() {
+    open(stream.id);
+  }
 
   return (
     <Reorder.Item
@@ -73,11 +83,28 @@ export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: 
           />
         </span>
       </Link>
-      <KebabMenu buttonClassName={styles.menu} size="small" placement="bottom-end">
-        <ExternalLink className={styles.originalLink} href={youtubeUrl}>
-          <T _str="YouTubeで見る" />
-        </ExternalLink>
-      </KebabMenu>
+
+      <Menu>
+        <Menu.Target>
+          <ActionIcon sx={{ marginLeft: 'auto' }}>
+            <IconDotsVertical />
+          </ActionIcon>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item icon={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
+            {t('プレイリストに追加')}
+          </Menu.Item>
+          <Menu.Item
+            icon={<IconBrandYoutube />}
+            component="a"
+            href={getYouTubeURL(stream.video.videoId, stream.start)}
+            target="_blank"
+            rel="noopener"
+          >
+            {t('YouTubeで見る')}
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
     </Reorder.Item>
   );
 });

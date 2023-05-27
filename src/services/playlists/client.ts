@@ -1,10 +1,10 @@
-import type { Playlist, PlaylistItem } from '@prisma/client';
+import type { PlaylistItem } from '@prisma/client';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 
 import type { ApiResponse } from '../../types/api';
 import { apiClient } from '../apiClient';
-import type { PlaylistWithItem } from './type';
+import type { Playlist, PlaylistWithItem } from './type';
 
 const KEY = '/api/playlists';
 

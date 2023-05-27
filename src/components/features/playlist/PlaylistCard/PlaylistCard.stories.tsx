@@ -1,6 +1,6 @@
-import type { Playlist } from '@prisma/client';
 import type { Meta, StoryObj } from '@storybook/react';
 
+import type { Playlist } from '../../../../services/playlists/type';
 import { PlaylistCard } from './PlaylistCard';
 
 const playlist: Playlist = {
@@ -8,9 +8,7 @@ const playlist: Playlist = {
   title: 'title',
   description: 'description',
   thumbnailURLs: [],
-  ownerId: 'bb6f471f-57ff-48d3-8876-ef593a6cb244',
-  createdAt: new Date('2023-05-02T08:16:34.200Z'),
-  updatedAt: new Date('2023-05-02T08:16:34.200Z'),
+  items: [],
 };
 
 export default {

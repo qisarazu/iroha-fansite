@@ -1,4 +1,4 @@
-import type { Playlist } from '@prisma/client';
+import type { Playlist } from '../services/playlists/type';
 
 export type SingingStreamWatchPageQuery = {
   v: string;

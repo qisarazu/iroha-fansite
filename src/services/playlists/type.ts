@@ -1,4 +1,8 @@
-import type { Playlist, PlaylistItem, SingingStream, Song, Video } from '@prisma/client';
+import type { PlaylistItem, SingingStream, Song, Video } from '@prisma/client';
+
+import type { getPlaylists } from './server';
+
+export type Playlist = Awaited<ReturnType<typeof getPlaylists>>[0];
 
 export type PlaylistItemWithMusic = PlaylistItem & {
   music: SingingStream & {

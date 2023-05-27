@@ -93,9 +93,9 @@ export default function SingingStreamsWatchPage() {
     if (playingStreamIndex === 0) return;
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
-      router.push(`/singing-streams/watch?v=${prevStream.id}`);
+      router.push(getMusicWatchURL(prevStream.id, { playlist: playlistId }));
     }
-  }, [currentStream, currentTime, player, router, streams]);
+  }, [currentStream, currentTime, player, playlistId, router, streams]);
 
   const onSkipNext = useCallback(() => {
     if (!streams || !currentStream) return;
@@ -103,9 +103,9 @@ export default function SingingStreamsWatchPage() {
     if (playingStreamIndex === streams.length - 1) return;
     const nextStream = streams[playingStreamIndex + 1];
     if (nextStream) {
-      router.push(`/singing-streams/watch?v=${nextStream.id}`);
+      router.push(getMusicWatchURL(nextStream.id, { playlist: playlistId }));
     }
-  }, [currentStream, router, streams]);
+  }, [currentStream, playlistId, router, streams]);
 
   const onVolumeChange = useCallback(
     (value: number) => {
@@ -184,17 +184,23 @@ export default function SingingStreamsWatchPage() {
     setShuffledOnce(true);
   }, [rawStreams, currentStream, streams]);
 
+  // 初期化処理
   useEffect(() => {
-    if (rawStreams?.length) {
-      if (playlist) {
-        setStreams(rawStreams.filter((stream) => playlist.items.some((item) => item.musicId === stream.id)));
-      } else {
-        setStreams(rawStreams);
-        setStreams(rawStreams);
-        setStreams(rawStreams);
-      }
+    if (!rawStreams?.length) return;
+    if (playlistId && !playlist) return;
+    if (isShuffledOnce) return;
+
+    const filtered = playlist
+      ? rawStreams.filter((stream) => playlist.items.some((item) => item.musicId === stream.id))
+      : rawStreams;
+
+    if (isShuffle && currentStream) {
+      setStreams([currentStream].concat(shuffle(filtered.filter((s) => s.id !== currentStream.id))));
+      setShuffledOnce(true);
+      return;
     }
-  }, [rawStreams?.length, playlist]);
+    setStreams(filtered);
+  }, [rawStreams?.length, playlist, playlistId, isShuffle, isShuffledOnce, currentStream]);
 
   // When repeatType is changed, the local variable is also changed.
   useEffect(() => {

@@ -1,8 +1,8 @@
 import { modals } from '@mantine/modals';
-import type { Playlist } from '@prisma/client';
 import { useT } from '@transifex/react';
 import { useCallback } from 'react';
 
+import type { Playlist } from '../../../../services/playlists/type';
 import { EditPlaylistModal } from './EditPlaylistModal';
 
 export function useEditPlaylistModal() {

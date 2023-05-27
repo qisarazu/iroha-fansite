@@ -1,7 +1,7 @@
 import { modals } from '@mantine/modals';
-import type { Playlist } from '@prisma/client';
 
 import { useCreatePlaylist } from '../../../../services/playlists/client';
+import type { Playlist } from '../../../../services/playlists/type';
 import { PlaylistForm } from '../PlaylistForm/PlaylistForm';
 
 type FormValue = {

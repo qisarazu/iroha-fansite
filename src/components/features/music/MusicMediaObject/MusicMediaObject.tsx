@@ -3,12 +3,13 @@ import { IconPlaylistAdd } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { FaYoutube } from 'react-icons/fa';
 import { MdMoreVert } from 'react-icons/md';
 
-import { useWatchUrl } from '../../../../hooks/useWatchUrl';
 import { useYouTubeUrl } from '../../../../hooks/useYouTubeUrl';
 import type { SingingStreamWithVideoAndSong } from '../../../../types/SingingStream';
+import { getMusicWatchURL } from '../../../../utils/urls';
 import { PublishedAt } from '../../../base/display/PublishedAt/PublishedAt';
 import { usePlaylistSelectionModal } from '../../playlist/PlaylistSelectionModal/usePlaylistSelectionModal';
 
@@ -18,7 +19,7 @@ type Props = {
 
 export function MusicMediaObject({ singingStream }: Props) {
   const t = useT();
-  const watchUrl = useWatchUrl(singingStream.id);
+  const watchUrl = useMemo(() => getMusicWatchURL(singingStream.id), []);
   const youtubeUrl = useYouTubeUrl(singingStream.video.videoId, singingStream.start);
   const { open } = usePlaylistSelectionModal();
 

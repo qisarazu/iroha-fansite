@@ -3,6 +3,7 @@ import { IconArrowsShuffle, IconDotsVertical, IconEdit, IconTrash } from '@table
 import { useT } from '@transifex/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
 import { PlaylistThumbnail } from '../../components/features/playlist/PlaylistCard/PlaylistThumbnail/PlaylistThumbnail';
 import { PlaylistItemList } from '../../components/features/playlist/PlaylistItemList/PlaylistItemList';
@@ -21,6 +22,13 @@ export default function PlaylistIdPage() {
   const { deletePlaylist } = useDeletePlaylist();
 
   const thumbnailSize = { width: isMobile ? 160 : 320, height: isMobile ? 90 : 180 };
+
+  const shuffleURL = useMemo(() => {
+    if (!playlist) return '';
+
+    const firstItemId = playlist.items[Math.floor(Math.random() * playlist.items.length)].musicId;
+    return getMusicWatchURL(firstItemId, { playlist: playlist.id, shuffle: '1' });
+  }, [playlist]);
 
   function handleDelete() {
     if (!playlist) return;
@@ -54,12 +62,7 @@ export default function PlaylistIdPage() {
                 <Text color="dimmed">{playlist.description}</Text>
 
                 <Group sx={{ marginTop: 'auto' }}>
-                  <Button
-                    component={Link}
-                    leftIcon={<IconArrowsShuffle />}
-                    radius="xl"
-                    href={getMusicWatchURL(playlist.items[0]?.id ?? '', { playlist: playlist.id, shuffle: '1' })}
-                  >
+                  <Button component={Link} leftIcon={<IconArrowsShuffle />} radius="xl" href={shuffleURL}>
                     {t('シャッフル')}
                   </Button>
                   <Button leftIcon={<IconEdit />} variant="outline" radius="xl">

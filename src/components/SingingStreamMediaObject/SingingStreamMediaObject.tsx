@@ -6,6 +6,7 @@ import { memo, useMemo } from 'react';
 
 import { useIsMobile } from '../../hooks/useIsMobile';
 import type { SingingStreamWithVideoAndSong } from '../../types/SingingStream';
+import { getMusicWatchURL } from '../../utils/urls';
 import { ExternalLink } from '../ExternalLink/ExternalLink';
 import { KebabMenu } from '../KebabMenu/KebabMenu';
 import styles from './SingingStreamMediaObject.module.scss';
@@ -18,7 +19,7 @@ export const SingingStreamMediaObject = memo(function SingingStreamMediaObject({
   const isMobile = useIsMobile();
   const t = useT();
 
-  const watchPath = useMemo(() => `/singing-streams/watch?v=${singingStream.id}`, [singingStream.id]);
+  const watchPath = useMemo(() => getMusicWatchURL(singingStream.id), [singingStream.id]);
   const youtubeUrl = useMemo(
     () => `https://www.youtube.com/watch?v=${singingStream.video.videoId}&t=${singingStream.start}`,
     [singingStream.video.videoId, singingStream.start],

@@ -1,8 +1,8 @@
-import type { Playlist } from '@prisma/client';
 import type { Session } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { deletePlaylist, editPlaylist, getPlaylistDetails } from '../../../../services/playlists/server';
+import type { Playlist } from '../../../../services/playlists/type';
 import { withSession } from '../../../../utils/api/withSession';
 
 type Query = {

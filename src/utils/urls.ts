@@ -1,4 +1,4 @@
-import type { Playlist } from '@prisma/client';
+import type { Playlist } from '../services/playlists/type';
 
 export function getPlaylistURL(playlistId?: Playlist['id']) {
   let url = '/playlists';

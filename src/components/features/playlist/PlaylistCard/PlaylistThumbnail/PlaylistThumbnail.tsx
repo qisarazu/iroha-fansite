@@ -1,7 +1,8 @@
 import { Box, Center, SimpleGrid } from '@mantine/core';
-import type { Playlist } from '@prisma/client';
 import { IconPlaylist } from '@tabler/icons-react';
 import Image from 'next/image';
+
+import type { Playlist } from '../../../../../services/playlists/type';
 
 type Props = {
   thumbnailURLs: Playlist['thumbnailURLs'];

@@ -1,7 +1,8 @@
 import { Button, Flex, Textarea, TextInput } from '@mantine/core';
-import type { Playlist } from '@prisma/client';
 import { useT } from '@transifex/react';
 import { useForm } from 'react-hook-form';
+
+import type { Playlist } from '../../../../services/playlists/type';
 
 type Props = {
   mode: 'create' | 'edit';
