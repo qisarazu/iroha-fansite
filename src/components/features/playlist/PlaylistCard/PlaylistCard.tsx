@@ -3,11 +3,10 @@ import { useHover } from '@mantine/hooks';
 import { IconArrowsShuffle, IconDotsVertical, IconEdit, IconPlayerPlay, IconTrashFilled } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Link from 'next/link';
-import { useMemo } from 'react';
 
 import { useDeletePlaylist } from '../../../../services/playlists/client';
 import type { Playlist } from '../../../../services/playlists/type';
-import { getMusicWatchURL, getPlaylistURL } from '../../../../utils/urls';
+import { getPlaylistURL, getPlaylistWatchURL } from '../../../../utils/urls';
 import { useEditPlaylistModal } from '../EditPlaylistModal/useEditPlaylistModal';
 import { PlaylistThumbnail } from './PlaylistThumbnail/PlaylistThumbnail';
 
@@ -22,13 +21,6 @@ export function PlaylistCard({ playlist }: Props) {
   const { open } = useEditPlaylistModal();
   const { deletePlaylist } = useDeletePlaylist();
 
-  const shuffleURL = useMemo(() => {
-    if (!playlist) return '';
-
-    const firstItemId = playlist.items[Math.floor(Math.random() * playlist.items.length)].musicId;
-    return getMusicWatchURL(firstItemId, { playlist: playlist.id, shuffle: '1' });
-  }, [playlist]);
-
   function handleDelete() {
     deletePlaylist({ id: playlist.id });
   }
@@ -37,38 +29,32 @@ export function PlaylistCard({ playlist }: Props) {
     open(playlist);
   }
 
-  function handlePlay() {
-    console.log('play');
-  }
-
-  function handleShufflePlay() {
-    console.log('shuffle');
-  }
-
   return (
     <Box>
       <Card.Section sx={{ position: 'relative' }} ref={ref}>
         <Link href={getPlaylistURL(playlist.id)}>
           <PlaylistThumbnail thumbnailURLs={playlist.thumbnailURLs} alt={playlist.title} fill />
         </Link>
-        <ActionIcon
-          component={Link}
-          href={getMusicWatchURL(playlist.items[0].musicId, { playlist: playlist.id })}
-          variant="filled"
-          radius="xl"
-          size="xl"
-          sx={(theme) => ({
-            position: 'absolute',
-            bottom: theme.spacing.xs,
-            right: theme.spacing.xs,
-            opacity: isThumbnailHover ? 0.75 : 0,
-            ':hover': {
-              opacity: 0.9,
-            },
-          })}
-        >
-          <IconPlayerPlay />
-        </ActionIcon>
+        {playlist.items.length ? (
+          <ActionIcon
+            component={Link}
+            href={getPlaylistWatchURL(playlist)}
+            variant="filled"
+            radius="xl"
+            size="xl"
+            sx={(theme) => ({
+              position: 'absolute',
+              bottom: theme.spacing.xs,
+              right: theme.spacing.xs,
+              opacity: isThumbnailHover ? 0.75 : 0,
+              ':hover': {
+                opacity: 0.9,
+              },
+            })}
+          >
+            <IconPlayerPlay />
+          </ActionIcon>
+        ) : null}
       </Card.Section>
 
       <Flex mt="xs" wrap="nowrap" justify="space-between">
@@ -91,9 +77,15 @@ export function PlaylistCard({ playlist }: Props) {
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item icon={<IconArrowsShuffle />} component={Link} href={shuffleURL}>
-              {t('シャッフル再生')}
-            </Menu.Item>
+            {playlist.items.length ? (
+              <Menu.Item
+                icon={<IconArrowsShuffle />}
+                component={Link}
+                href={getPlaylistWatchURL(playlist, { shuffle: true })}
+              >
+                {t('シャッフル再生')}
+              </Menu.Item>
+            ) : null}
             <Menu.Item icon={<IconEdit />} onClick={handleEdit}>
               {t('編集')}
             </Menu.Item>

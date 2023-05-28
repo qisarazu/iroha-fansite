@@ -1,4 +1,4 @@
-import type { Playlist } from '../services/playlists/type';
+import type { Playlist, PlaylistWithItem } from '../services/playlists/type';
 
 export function getPlaylistURL(playlistId?: Playlist['id']) {
   let url = '/playlists';
@@ -24,6 +24,15 @@ export function getMusicWatchURL(watchId: string, query?: MusicWatchQuery) {
   }
 
   return url;
+}
+
+export function getPlaylistWatchURL(playlist: Playlist, option: { shuffle?: boolean } = {}) {
+  if (!playlist.items.length) return '';
+
+  const firstItemId = option.shuffle
+    ? playlist.items[Math.floor(Math.random() * playlist.items.length)].musicId
+    : playlist.items[0].musicId;
+  return getMusicWatchURL(firstItemId, { playlist: playlist.id, shuffle: option.shuffle ? '1' : undefined });
 }
 
 export function getYouTubeURL(videoId: string, start?: number) {
