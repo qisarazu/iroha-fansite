@@ -190,15 +190,28 @@ export default function SingingStreamsWatchPage() {
     if (playlistId && !playlist) return;
     if (isShuffledOnce) return;
 
+    const positionMap = new Map();
+    playlist?.items.forEach((item) => positionMap.set(item.musicId, item.position));
+
     const filtered = playlist
       ? rawStreams.filter((stream) => playlist.items.some((item) => item.musicId === stream.id))
       : rawStreams;
 
+    // シャッフル再生の場合
     if (isShuffle && currentStream) {
       setStreams([currentStream].concat(shuffle(filtered.filter((s) => s.id !== currentStream.id))));
       setShuffledOnce(true);
       return;
     }
+
+    // プレイリスト再生の場合、アイテム順に並び替える
+    if (playlist) {
+      const sortedFiltered = filtered.sort((a, b) => positionMap.get(a.id) - positionMap.get(b.id));
+      setStreams(sortedFiltered);
+      return;
+    }
+
+    // それ以外はそのまま
     setStreams(filtered);
   }, [rawStreams?.length, playlist, playlistId, isShuffle, isShuffledOnce, currentStream]);
 
