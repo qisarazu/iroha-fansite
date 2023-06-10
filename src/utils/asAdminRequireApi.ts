@@ -1,6 +1,9 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 
+import { unauthorized } from '../lib/api/ApiError';
+import { responseError } from '../lib/api/response-error';
+
 export const asAdminRequireApi = async (handler: NextApiHandler, req: NextApiRequest, res: NextApiResponse) => {
   const supabase = createServerSupabaseClient({ req, res });
   const {
@@ -8,7 +11,7 @@ export const asAdminRequireApi = async (handler: NextApiHandler, req: NextApiReq
   } = await supabase.auth.getSession();
 
   if (!session || session.user.id !== process.env.ADMIN_UUID) {
-    res.status(401).json({ message: 'Unauthorized' });
+    responseError(res, unauthorized());
     return;
   }
 

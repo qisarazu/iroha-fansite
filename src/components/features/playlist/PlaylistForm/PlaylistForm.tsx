@@ -2,6 +2,7 @@ import { Button, Flex, Textarea, TextInput } from '@mantine/core';
 import { useT } from '@transifex/react';
 import { useForm } from 'react-hook-form';
 
+import { MAX_PLAYLIST_DESCRIPTION_LENGTH, MAX_PLAYLIST_TITLE_LENGTH } from '../../../../services/playlists/constant';
 import type { Playlist } from '../../../../services/playlists/type';
 
 type Props = {
@@ -14,9 +15,6 @@ type FormValue = {
   title: Playlist['title'];
   description?: Playlist['description'];
 };
-
-const MAX_TITLE_LENGTH = 50;
-const MAX_DESCRIPTION_LENGTH = 200;
 
 export function PlaylistForm({ mode, initialValues, onSubmit }: Props) {
   const t = useT();
@@ -47,8 +45,8 @@ export function PlaylistForm({ mode, initialValues, onSubmit }: Props) {
               message: t('タイトルは必須です'),
             },
             maxLength: {
-              value: MAX_TITLE_LENGTH,
-              message: t(`タイトルは最大{maxLength}文字です`, { maxLength: MAX_TITLE_LENGTH }),
+              value: MAX_PLAYLIST_TITLE_LENGTH,
+              message: t(`タイトルは最大{maxLength}文字です`, { maxLength: MAX_PLAYLIST_TITLE_LENGTH }),
             },
           })}
           withAsterisk
@@ -60,8 +58,8 @@ export function PlaylistForm({ mode, initialValues, onSubmit }: Props) {
           error={errors.description?.message}
           {...register('description', {
             maxLength: {
-              value: MAX_DESCRIPTION_LENGTH,
-              message: t('説明は最大{maxLength}文字です', { maxLength: MAX_DESCRIPTION_LENGTH }),
+              value: MAX_PLAYLIST_DESCRIPTION_LENGTH,
+              message: t('説明は最大{maxLength}文字です', { maxLength: MAX_PLAYLIST_DESCRIPTION_LENGTH }),
             },
           })}
         />

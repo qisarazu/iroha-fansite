@@ -3,10 +3,16 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { ApiError, badRequest, internalServerError, notFound } from '../../lib/api/ApiError';
 import { prisma } from '../../lib/prisma';
+import {
+  MAX_PLAYLIST_DESCRIPTION_LENGTH,
+  MAX_PLAYLIST_ITEMS_PER_PLAYLIST,
+  MAX_PLAYLIST_TITLE_LENGTH,
+  MAX_PLAYLISTS_PER_USER,
+} from './constant';
 
 export async function getPlaylists(ownerId: string) {
   try {
-    return prisma.playlist.findMany({
+    return await prisma.playlist.findMany({
       where: {
         ownerId,
       },
@@ -38,7 +44,7 @@ export async function getPlaylists(ownerId: string) {
 
 export async function getPlaylistDetails(id: string, ownerId: string) {
   try {
-    const playlist = await prisma.playlist.findFirst({
+    return await prisma.playlist.findFirst({
       where: {
         id,
         ownerId,
@@ -59,8 +65,6 @@ export async function getPlaylistDetails(id: string, ownerId: string) {
         },
       },
     });
-
-    return playlist;
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
@@ -74,7 +78,19 @@ export async function getPlaylistDetails(id: string, ownerId: string) {
 
 export async function createPlaylist(title: string, description: string | null | undefined, ownerId: string) {
   try {
-    const playlist = await prisma.playlist.create({
+    // validation
+    if (Array.from(title).length > MAX_PLAYLIST_TITLE_LENGTH) {
+      throw badRequest(`Playlist title must be less than ${MAX_PLAYLIST_TITLE_LENGTH} characters`);
+    }
+    if (description && Array.from(description).length > MAX_PLAYLIST_DESCRIPTION_LENGTH) {
+      throw badRequest(`Playlist description must be less than ${MAX_PLAYLIST_DESCRIPTION_LENGTH} characters`);
+    }
+    const count = await prisma.playlist.count({ where: { ownerId } });
+    if (count >= MAX_PLAYLISTS_PER_USER) {
+      throw badRequest(`You can only create up to ${MAX_PLAYLISTS_PER_USER} playlists.`);
+    }
+
+    return await prisma.playlist.create({
       data: {
         title,
         description,
@@ -87,8 +103,6 @@ export async function createPlaylist(title: string, description: string | null |
         items: true,
       },
     });
-
-    return playlist;
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
@@ -114,7 +128,7 @@ export async function editPlaylist(
       throw notFound();
     }
 
-    return prisma.playlist.update({
+    return await prisma.playlist.update({
       where: { id },
       data,
     });
@@ -217,6 +231,11 @@ export async function addPlaylistItem(
         playlistId,
       },
     });
+
+    // validation
+    if (itemCount >= MAX_PLAYLIST_ITEMS_PER_PLAYLIST) {
+      throw badRequest(`A playlist can only have up to ${MAX_PLAYLIST_ITEMS_PER_PLAYLIST} items.`);
+    }
 
     return await prisma.playlistItem.create({
       data: {
@@ -322,7 +341,7 @@ export async function sortPlaylistItems(
       throw badRequest('Invalid playlist item ID');
     }
 
-    return prisma.$transaction(
+    return await prisma.$transaction(
       sortedIds.map((id, index) =>
         prisma.playlistItem.update({
           where: { id },

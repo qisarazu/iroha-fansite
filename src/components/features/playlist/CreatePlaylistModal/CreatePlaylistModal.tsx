@@ -13,8 +13,9 @@ export function CreatePlaylistModal() {
   const { createPlaylist } = useCreatePlaylist();
 
   function handleSubmit(data: FormValue) {
-    createPlaylist({ title: data.title, description: data.description ?? null });
-    handleClose();
+    createPlaylist({ title: data.title, description: data.description ?? null }).then(() => {
+      handleClose();
+    });
   }
 
   function handleClose() {

@@ -31,8 +31,8 @@ export function useCreatePlaylist() {
 
   const { trigger } = useSWRMutation(KEY, fetcher);
 
-  function createPlaylist(...args: Parameters<typeof trigger>) {
-    trigger(...args).then(() => {
+  async function createPlaylist(...args: Parameters<typeof trigger>) {
+    return trigger(...args).then(() => {
       notifications.show({ message: t('プレイリストを作成しました') });
     });
   }
@@ -49,8 +49,8 @@ export function useEditPlaylist() {
 
   const { trigger } = useSWRMutation(KEY, fetcher);
 
-  function editPlaylist(...args: Parameters<typeof trigger>) {
-    trigger(...args).then(() => {
+  async function editPlaylist(...args: Parameters<typeof trigger>) {
+    return trigger(...args).then(() => {
       notifications.show({ message: t('プレイリストを編集しました') });
     });
   }
@@ -67,9 +67,9 @@ export function useDeletePlaylist() {
 
   const { trigger } = useSWRMutation(KEY, fetcher);
 
-  function deletePlaylist(...args: Parameters<typeof trigger>) {
+  async function deletePlaylist(...args: Parameters<typeof trigger>) {
     if (confirm(t('プレイリストを削除しますか？'))) {
-      trigger(...args).then(() => {
+      return trigger(...args).then(() => {
         notifications.show({ message: t('プレイリストを削除しました') });
       });
     }
@@ -87,8 +87,8 @@ export function useAddPlaylistItem(playlistId: Playlist['id']) {
 
   const { trigger } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
 
-  function addPlaylistItem(...args: Parameters<typeof trigger>) {
-    trigger(...args).then(() => {
+  async function addPlaylistItem(...args: Parameters<typeof trigger>) {
+    return trigger(...args).then(() => {
       notifications.show({ message: t('プレイリストにアイテムを追加しました') });
     });
   }
@@ -105,9 +105,9 @@ export function useDeletePlaylistItem(playlistId: Playlist['id']) {
 
   const { trigger } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
 
-  function deletePlaylistItem(...args: Parameters<typeof trigger>) {
+  async function deletePlaylistItem(...args: Parameters<typeof trigger>) {
     if (confirm('アイテムを削除しますか？')) {
-      trigger(...args).then(() => {
+      return trigger(...args).then(() => {
         notifications.show({ message: t('プレイリストのアイテムを削除しました') });
       });
     }

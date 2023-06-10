@@ -1,6 +1,8 @@
 import { google } from 'googleapis';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { notFound } from '../../../../lib/api/ApiError';
+import { responseError } from '../../../../lib/api/response-error';
 import type { ApiResponse } from '../../../../types/api';
 import { asAdminRequireApi } from '../../../../utils/asAdminRequireApi';
 import { parseDuration } from '../../../../utils/parseDuration';
@@ -47,7 +49,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<GetYouT
     !video.snippet?.thumbnails?.high?.url ||
     !video.contentDetails?.duration
   ) {
-    res.status(404).json({ error: `${videoId} is not found.` });
+    responseError(res, notFound(`${videoId} is not found.`));
     return;
   }
 
