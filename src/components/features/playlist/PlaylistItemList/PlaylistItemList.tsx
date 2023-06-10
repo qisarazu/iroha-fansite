@@ -1,5 +1,15 @@
-import { closestCenter, DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext } from '@dnd-kit/sortable';
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Box, Divider, Sx } from '@mantine/core';
 import { Fragment, useState } from 'react';
 
@@ -11,19 +21,24 @@ import { PlaylistItem } from './PlaylistItem/PlaylistItem';
 type Props = {
   playlistId: Playlist['id'];
   items: PlaylistItemWithMusic[];
+  sortable?: boolean;
   sx?: Sx;
 };
 
-export function PlaylistItemList({ playlistId, items, sx }: Props) {
+export function PlaylistItemList({ playlistId, items, sortable = false, sx }: Props) {
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
   const { sortPlaylistItem } = useSortPlaylistItem(playlistId);
   const [activeId, setActiveId] = useState<PlaylistItemWithMusic['id']>();
-  const [sorted, setSorted] = useState<PlaylistItemWithMusic[]>([]);
 
   function handleDragStart(event: DragStartEvent) {
+    if (!sortable) return;
     setActiveId(event.active.id as string);
   }
 
   function handleDragEnd(event: DragEndEvent) {
+    if (!sortable) return;
+
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -46,13 +61,18 @@ export function PlaylistItemList({ playlistId, items, sx }: Props) {
   }
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <SortableContext items={items}>
+    <DndContext
+      collisionDetection={closestCenter}
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={items} disabled={!sortable} strategy={verticalListSortingStrategy}>
         <Box sx={sx}>
           {items.map((item, i) => (
             <Fragment key={item.id}>
               {i !== 0 ? <Divider sx={{ marginTop: 8, marginBottom: 8 }} /> : null}
-              <PlaylistItem item={item} />
+              <PlaylistItem item={item} sortable={sortable} />
             </Fragment>
           ))}
         </Box>

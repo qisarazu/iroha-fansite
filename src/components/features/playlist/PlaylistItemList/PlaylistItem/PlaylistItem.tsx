@@ -15,10 +15,11 @@ import { MusicLength } from '../../../../base/display/MusicLength/MusicLength';
 
 type Props = {
   item: PlaylistItemWithMusic;
+  sortable?: boolean;
   sx?: Sx;
 };
 
-export function PlaylistItem({ item, sx }: Props) {
+export function PlaylistItem({ item, sortable = false, sx }: Props) {
   const t = useT();
   const isMobile = useIsMobile();
   const { ref: hoverTarget, hovered } = useHover<HTMLAnchorElement>();
@@ -26,6 +27,8 @@ export function PlaylistItem({ item, sx }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: item.id,
   });
+
+  const clickDisabled = isMobile && sortable;
 
   const { deletePlaylistItem } = useDeletePlaylistItem(item.playlistId);
 
@@ -52,7 +55,7 @@ export function PlaylistItem({ item, sx }: Props) {
       <Box
         component={Link}
         href={getMusicWatchURL(item.musicId, { playlist: item.playlistId })}
-        sx={{ position: 'relative', flexShrink: 0 }}
+        sx={{ position: 'relative', flexShrink: 0, pointerEvents: clickDisabled ? 'none' : 'initial' }}
         ref={hoverTarget}
       >
         {hovered ? (
@@ -147,27 +150,29 @@ export function PlaylistItem({ item, sx }: Props) {
       </Box>
 
       {/* メニュー */}
-      <Menu>
-        <Menu.Target>
-          <ActionIcon>
-            <IconDotsVertical />
-          </ActionIcon>
-        </Menu.Target>
-        <Menu.Dropdown>
-          <Menu.Item icon={<IconTrash />} onClick={handleDelete}>
-            {t('削除')}
-          </Menu.Item>
-          <Menu.Item
-            icon={<IconBrandYoutube />}
-            component="a"
-            href={getYouTubeURL(item.music.video.videoId, item.music.start)}
-            target="_blank"
-            rel="noopener"
-          >
-            {t('YouTubeで見る')}
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      {!clickDisabled ? (
+        <Menu>
+          <Menu.Target>
+            <ActionIcon>
+              <IconDotsVertical />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item icon={<IconTrash />} onClick={handleDelete}>
+              {t('削除')}
+            </Menu.Item>
+            <Menu.Item
+              icon={<IconBrandYoutube />}
+              component="a"
+              href={getYouTubeURL(item.music.video.videoId, item.music.start)}
+              target="_blank"
+              rel="noopener"
+            >
+              {t('YouTubeで見る')}
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      ) : null}
     </Group>
   );
 }
