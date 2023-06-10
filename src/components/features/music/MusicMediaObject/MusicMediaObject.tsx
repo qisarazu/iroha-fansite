@@ -1,10 +1,9 @@
 import { ActionIcon, Box, Group, Menu, Stack, Text } from '@mantine/core';
-import { IconPlaylistAdd } from '@tabler/icons-react';
+import { IconBrandYoutube, IconPlaylistAdd } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { FaYoutube } from 'react-icons/fa';
 import { MdMoreVert } from 'react-icons/md';
 
 import { useYouTubeUrl } from '../../../../hooks/useYouTubeUrl';
@@ -19,7 +18,7 @@ type Props = {
 
 export function MusicMediaObject({ singingStream }: Props) {
   const t = useT();
-  const watchUrl = useMemo(() => getMusicWatchURL(singingStream.id), []);
+  const watchUrl = useMemo(() => getMusicWatchURL(singingStream.id), [singingStream.id]);
   const youtubeUrl = useYouTubeUrl(singingStream.video.videoId, singingStream.start);
   const { open } = usePlaylistSelectionModal();
 
@@ -68,7 +67,7 @@ export function MusicMediaObject({ singingStream }: Props) {
             <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
               {t('プレイリストに追加')}
             </Menu.Item>
-            <Menu.Item component="a" href={youtubeUrl} target="_blank" rel="noopener" icon={<FaYoutube />}>
+            <Menu.Item component="a" href={youtubeUrl} target="_blank" rel="noopener" icon={<IconBrandYoutube />}>
               {t('YouTube で見る')}
             </Menu.Item>
           </Menu.Dropdown>
