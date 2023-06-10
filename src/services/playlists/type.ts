@@ -4,15 +4,15 @@ import type { getPlaylists } from './server';
 
 export type Playlist = Awaited<ReturnType<typeof getPlaylists>>[0];
 
+export type PlaylistWithItem = Playlist & {
+  items: PlaylistItemWithMusic[];
+};
+
 export type PlaylistItemWithMusic = PlaylistItem & {
   music: SingingStream & {
     song: Song;
     video: Video;
   };
-};
-
-export type PlaylistWithItem = Playlist & {
-  items: PlaylistItemWithMusic[];
 };
 
 export type PostPlaylistRequest = {

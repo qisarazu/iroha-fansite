@@ -89,7 +89,7 @@ export default function PlaylistIdPage() {
             </Flex>
 
             <Box mt={{ base: 32, md: 64 }}>
-              <PlaylistItemList items={playlist.items} />
+              <PlaylistItemList playlistId={playlist.id} items={playlist.items} />
             </Box>
           </>
         )}

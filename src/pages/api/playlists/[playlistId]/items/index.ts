@@ -1,7 +1,11 @@
 import type { Session } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { addPlaylistItem, updatePlaylistThumbnailURLs } from '../../../../../services/playlists/server';
+import {
+  addPlaylistItem,
+  sortPlaylistItem,
+  updatePlaylistThumbnailURLs,
+} from '../../../../../services/playlists/server';
 import type { Playlist } from '../../../../../services/playlists/type';
 import { withSession } from '../../../../../utils/api/withSession';
 
@@ -32,10 +36,25 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Se
   }
 }
 
+async function handlePut(req: NextApiRequest, res: NextApiResponse, session: Session) {
+  const { playlistId } = req.query as Query;
+  const { sortedIds } = req.body;
+
+  try {
+    const data = await sortPlaylistItem(playlistId, sortedIds, session.user.id);
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(400).json(err);
+  }
+}
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'POST': {
       return withSession(handlePost, req, res);
+    }
+    case 'PUT': {
+      return withSession(handlePut, req, res);
     }
   }
 }

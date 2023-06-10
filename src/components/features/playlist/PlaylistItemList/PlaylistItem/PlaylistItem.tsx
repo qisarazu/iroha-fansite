@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { ActionIcon, Box, Center, Group, Menu, Sx, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconBrandYoutube, IconDotsVertical, IconPlayerPlayFilled, IconTrash } from '@tabler/icons-react';
@@ -21,17 +23,32 @@ export function PlaylistItem({ item, sx }: Props) {
   const isMobile = useIsMobile();
   const { ref: hoverTarget, hovered } = useHover<HTMLAnchorElement>();
 
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: item.id,
+  });
+
   const { deletePlaylistItem } = useDeletePlaylistItem(item.playlistId);
 
   function handleDelete() {
     deletePlaylistItem({
       itemId: item.id,
-      playlistId: item.playlistId,
     });
   }
 
   return (
-    <Group sx={{ ...sx, width: '100%' }} noWrap spacing="xs">
+    <Group
+      sx={(theme) => ({
+        ...sx,
+        width: '100%',
+        backgroundColor: theme.colors.dark[7],
+      })}
+      noWrap
+      spacing="xs"
+      ref={setNodeRef}
+      style={{ transition, transform: CSS.Transform.toString(transform) }}
+      {...attributes}
+    >
+      {/* サムネイル */}
       <Box
         component={Link}
         href={getMusicWatchURL(item.musicId, { playlist: item.playlistId })}
@@ -61,17 +78,20 @@ export function PlaylistItem({ item, sx }: Props) {
         />
       </Box>
 
+      {/* 曲情報 */}
       <Box
         sx={(theme) => ({
           display: 'grid',
           gridTemplateColumns: '2fr 1fr 1fr 0.5fr',
           flexGrow: 1,
           alignItems: 'center',
+          cursor: 'move',
 
           [theme.fn.smallerThan('sm')]: {
             gridTemplateColumns: '1fr 1fr 1fr 0.5fr',
           },
         })}
+        {...listeners}
       >
         <Text
           fw="bold"
@@ -125,6 +145,8 @@ export function PlaylistItem({ item, sx }: Props) {
           })}
         />
       </Box>
+
+      {/* メニュー */}
       <Menu>
         <Menu.Target>
           <ActionIcon>

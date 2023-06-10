@@ -57,10 +57,7 @@ export function useDeletePlaylist() {
 }
 
 export function useAddPlaylistItem(playlistId: Playlist['id']) {
-  async function fetcher(
-    url: string,
-    { arg }: { arg: { playlistId: Playlist['id']; musicId: PlaylistItem['musicId'] } },
-  ) {
+  async function fetcher(url: string, { arg }: { arg: { musicId: PlaylistItem['musicId'] } }) {
     return apiClient(`${url}/items`, 'post', arg);
   }
 
@@ -70,11 +67,24 @@ export function useAddPlaylistItem(playlistId: Playlist['id']) {
 }
 
 export function useDeletePlaylistItem(playlistId: Playlist['id']) {
-  async function fetcher(url: string, { arg }: { arg: { playlistId: Playlist['id']; itemId: PlaylistItem['id'] } }) {
+  async function fetcher(url: string, { arg }: { arg: { itemId: PlaylistItem['id'] } }) {
     return apiClient(`${url}/items/${arg.itemId}`, 'delete', arg);
   }
 
   const { trigger: deletePlaylistItem } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
 
   return { deletePlaylistItem };
+}
+
+/**
+ * プレイリストのアイテムを並び替える
+ */
+export function useSortPlaylistItem(playlistId: Playlist['id']) {
+  async function fetcher(url: string, { arg }: { arg: { sortedIds: PlaylistItem['id'][] } }) {
+    return apiClient(`${url}/items`, 'put', arg);
+  }
+
+  const { trigger: sortPlaylistItem } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
+
+  return { sortPlaylistItem };
 }

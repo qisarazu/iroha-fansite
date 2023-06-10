@@ -39,6 +39,9 @@ export async function getPlaylistDetails(id: string, ownerId: string) {
       },
       include: {
         items: {
+          orderBy: {
+            position: 'asc',
+          },
           include: {
             music: {
               include: {
@@ -236,4 +239,41 @@ export async function deletePlaylistItem(
   ]);
 
   return itemToDelete;
+}
+
+/**
+ * プレイリストのアイテムを並び替える
+ */
+export async function sortPlaylistItem(
+  playlistId: Playlist['id'],
+  sortedIds: PlaylistItem['id'][],
+  ownerId: Playlist['ownerId'],
+) {
+  const targetPlaylist = await prisma.playlist.findFirst({
+    where: {
+      id: playlistId,
+      ownerId,
+    },
+    select: { items: { select: { id: true } } },
+  });
+
+  if (!targetPlaylist) {
+    throw { error: { message: 'NotFound' } };
+  }
+
+  const validIds = targetPlaylist.items.map((item) => item.id);
+
+  const isValid = sortedIds.length === validIds.length && validIds.every((id) => sortedIds.includes(id));
+  if (!isValid) {
+    throw { error: { message: 'Invalid playlist item ID' } };
+  }
+
+  return prisma.$transaction(
+    sortedIds.map((id, index) =>
+      prisma.playlistItem.update({
+        where: { id },
+        data: { position: index },
+      }),
+    ),
+  );
 }
