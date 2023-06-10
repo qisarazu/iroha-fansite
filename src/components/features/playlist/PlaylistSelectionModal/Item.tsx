@@ -1,7 +1,8 @@
 import { Button, Text } from '@mantine/core';
-import type { Playlist, SingingStream } from '@prisma/client';
+import type { SingingStream } from '@prisma/client';
 
 import { useAddPlaylistItem } from '../../../../services/playlists/client';
+import type { Playlist } from '../../../../services/playlists/type';
 import { PlaylistThumbnail } from '../PlaylistCard/PlaylistThumbnail/PlaylistThumbnail';
 
 type Props = {
@@ -14,7 +15,7 @@ export function Item({ playlist, musicId, onClick }: Props) {
   const { addPlaylistItem } = useAddPlaylistItem(playlist.id);
 
   function handleAdd() {
-    addPlaylistItem({ playlistId: playlist.id, musicId });
+    addPlaylistItem({ musicId });
     onClick();
   }
 

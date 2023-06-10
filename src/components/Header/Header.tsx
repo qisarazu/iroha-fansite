@@ -5,8 +5,8 @@ import { useT } from '@transifex/react';
 
 import { useIsMobile } from '../../hooks/ui/useIsMobile';
 import { ActiveLink } from '../ActiveLink/ActiveLink';
+import { AvatarButton } from '../features/auth/AvatarButton/AvatarButton';
 import { LoginButton } from '../features/auth/LoginButton/LoginButton';
-import { UserIcon } from '../features/auth/UserIcon/UserIcon';
 import styles from './Header.module.scss';
 
 export function Header() {
@@ -32,7 +32,7 @@ export function Header() {
       </Group>
 
       {user ? (
-        <UserIcon user={user} size={isMobile ? 'sm' : 'md'} pos="absolute" right={16} />
+        <AvatarButton user={user} size={isMobile ? 'sm' : 'md'} pos="absolute" right={16} />
       ) : (
         <LoginButton variant="outline" size={isMobile ? 'xs' : 'md'} pos="absolute" right={16} />
       )}

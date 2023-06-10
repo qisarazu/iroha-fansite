@@ -1,6 +1,7 @@
 import type { Playlist, PlaylistItem, SingingStream } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
+import { ApiError, badRequest, internalServerError, notFound } from '../../lib/api/ApiError';
 import { prisma } from '../../lib/prisma';
 
 export async function getPlaylists(ownerId: string) {
@@ -25,8 +26,13 @@ export async function getPlaylists(ownerId: string) {
       },
     });
   } catch (error) {
-    console.error('Error getting playlists:', error);
-    throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to get playlists`);
+    }
+    throw internalServerError(`Failed to get playlists`);
   }
 }
 
@@ -56,10 +62,13 @@ export async function getPlaylistDetails(id: string, ownerId: string) {
 
     return playlist;
   } catch (error) {
-    console.error('Error getting playlist details:', error);
-    throw error;
-  } finally {
-    await prisma.$disconnect();
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to get playlist details`);
+    }
+    throw internalServerError(`Failed to get playlist details`);
   }
 }
 
@@ -81,8 +90,13 @@ export async function createPlaylist(title: string, description: string | null |
 
     return playlist;
   } catch (error) {
-    console.error('Error creating playlist:', error);
-    throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to create playlist`);
+    }
+    throw internalServerError(`Failed to create playlist`);
   }
 }
 
@@ -91,18 +105,28 @@ export async function editPlaylist(
   data: Pick<Playlist, 'title' | 'description'>,
   ownerId: Playlist['ownerId'],
 ) {
-  const target = await prisma.playlist.findFirst({
-    where: { id, ownerId },
-  });
+  try {
+    const target = await prisma.playlist.findFirst({
+      where: { id, ownerId },
+    });
 
-  if (!target) {
-    throw { error: { message: 'NotFound' } };
+    if (!target) {
+      throw notFound();
+    }
+
+    return prisma.playlist.update({
+      where: { id },
+      data,
+    });
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to edit playlist`);
+    }
+    throw internalServerError(`Failed to edit playlist`);
   }
-
-  return prisma.playlist.update({
-    where: { id },
-    data,
-  });
 }
 
 export async function deletePlaylist(id: Playlist['id'], ownerId: Playlist['ownerId']) {
@@ -114,7 +138,7 @@ export async function deletePlaylist(id: Playlist['id'], ownerId: Playlist['owne
       },
     });
     if (!target) {
-      throw { error: { message: 'NotFound' } };
+      throw notFound();
     }
 
     await prisma.playlist.delete({
@@ -122,38 +146,53 @@ export async function deletePlaylist(id: Playlist['id'], ownerId: Playlist['owne
     });
     return target;
   } catch (error) {
-    console.error('Error creating playlist:', error);
-    throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to delete playlist`);
+    }
+    throw internalServerError(`Failed to delete playlist`);
   }
 }
 
 export async function updatePlaylistThumbnailURLs(playlistId: Playlist['id']) {
-  const playlistItems = await prisma.playlistItem.findMany({
-    where: { playlistId },
-    orderBy: { createdAt: 'asc' },
-    select: {
-      music: {
-        select: {
-          video: {
-            select: { thumbnailMediumUrl: true },
+  try {
+    const playlistItems = await prisma.playlistItem.findMany({
+      where: { playlistId },
+      orderBy: { createdAt: 'asc' },
+      select: {
+        music: {
+          select: {
+            video: {
+              select: { thumbnailMediumUrl: true },
+            },
           },
         },
       },
-    },
-  });
+    });
 
-  const uniqueThumbnails = Array.from(new Set(playlistItems.map((item) => item.music.video.thumbnailMediumUrl)));
+    const uniqueThumbnails = Array.from(new Set(playlistItems.map((item) => item.music.video.thumbnailMediumUrl)));
 
-  const thumbnailURLs = uniqueThumbnails.length
-    ? uniqueThumbnails.length < 4
-      ? [uniqueThumbnails[0]]
-      : uniqueThumbnails.slice(0, 4)
-    : [];
+    const thumbnailURLs = uniqueThumbnails.length
+      ? uniqueThumbnails.length < 4
+        ? [uniqueThumbnails[0]]
+        : uniqueThumbnails.slice(0, 4)
+      : [];
 
-  await prisma.playlist.update({
-    where: { id: playlistId },
-    data: { thumbnailURLs },
-  });
+    await prisma.playlist.update({
+      where: { id: playlistId },
+      data: { thumbnailURLs },
+    });
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to update playlist thumbnail urls`);
+    }
+    throw internalServerError(`Failed to update playlist thumbnail urls`);
+  }
 }
 
 export async function addPlaylistItem(
@@ -161,24 +200,24 @@ export async function addPlaylistItem(
   musicId: SingingStream['id'],
   ownerId: Playlist['ownerId'],
 ) {
-  const target = await prisma.playlist.findFirst({
-    where: {
-      id: playlistId,
-      ownerId,
-    },
-  });
-
-  if (!target) {
-    throw { error: { message: 'NotFound' } };
-  }
-
-  const itemCount = await prisma.playlistItem.count({
-    where: {
-      playlistId,
-    },
-  });
-
   try {
+    const target = await prisma.playlist.findFirst({
+      where: {
+        id: playlistId,
+        ownerId,
+      },
+    });
+
+    if (!target) {
+      throw notFound();
+    }
+
+    const itemCount = await prisma.playlistItem.count({
+      where: {
+        playlistId,
+      },
+    });
+
     return await prisma.playlistItem.create({
       data: {
         playlistId,
@@ -186,13 +225,17 @@ export async function addPlaylistItem(
         position: itemCount + 1,
       },
     });
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      if (err.code === 'P2002') {
-        throw { error: { message: 'ItemAlreadyExists' } };
-      }
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
     }
-    throw err;
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw badRequest('ItemAlreadyExists');
+      }
+      throw internalServerError(`${[error.code]} Failed to add playlist item`);
+    }
+    throw internalServerError('Failed to add playlist item');
   }
 }
 
@@ -201,79 +244,99 @@ export async function deletePlaylistItem(
   itemId: PlaylistItem['id'],
   ownerId: Playlist['ownerId'],
 ) {
-  const targetPlaylist = await prisma.playlist.findFirst({
-    where: {
-      id: playlistId,
-      ownerId,
-    },
-  });
-
-  if (!targetPlaylist) {
-    throw { error: { message: 'NotFound' } };
-  }
-
-  const itemToDelete = await prisma.playlistItem.findUnique({
-    where: { id: itemId },
-    select: { position: true, music: { select: { video: { select: { thumbnailMediumUrl: true } } } } },
-  });
-
-  if (!itemToDelete) {
-    throw { error: { message: 'NotFound' } };
-  }
-
-  await prisma.$transaction([
-    prisma.playlistItem.updateMany({
+  try {
+    const targetPlaylist = await prisma.playlist.findFirst({
       where: {
-        playlistId,
-        position: { gt: itemToDelete.position },
+        id: playlistId,
+        ownerId,
       },
-      data: {
-        position: {
-          decrement: 1,
-        },
-      },
-    }),
-    prisma.playlistItem.delete({
-      where: { id: itemId },
-    }),
-  ]);
+    });
 
-  return itemToDelete;
+    if (!targetPlaylist) {
+      throw notFound();
+    }
+
+    const itemToDelete = await prisma.playlistItem.findUnique({
+      where: { id: itemId },
+      select: { position: true, music: { select: { video: { select: { thumbnailMediumUrl: true } } } } },
+    });
+
+    if (!itemToDelete) {
+      throw notFound();
+    }
+
+    await prisma.$transaction([
+      prisma.playlistItem.updateMany({
+        where: {
+          playlistId,
+          position: { gt: itemToDelete.position },
+        },
+        data: {
+          position: {
+            decrement: 1,
+          },
+        },
+      }),
+      prisma.playlistItem.delete({
+        where: { id: itemId },
+      }),
+    ]);
+
+    return itemToDelete;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to delete playlist item`);
+    }
+    throw internalServerError('Failed to delete playlist item');
+  }
 }
 
 /**
  * プレイリストのアイテムを並び替える
  */
-export async function sortPlaylistItem(
+export async function sortPlaylistItems(
   playlistId: Playlist['id'],
   sortedIds: PlaylistItem['id'][],
   ownerId: Playlist['ownerId'],
 ) {
-  const targetPlaylist = await prisma.playlist.findFirst({
-    where: {
-      id: playlistId,
-      ownerId,
-    },
-    select: { items: { select: { id: true } } },
-  });
+  try {
+    const targetPlaylist = await prisma.playlist.findFirst({
+      where: {
+        id: playlistId,
+        ownerId,
+      },
+      select: { items: { select: { id: true } } },
+    });
 
-  if (!targetPlaylist) {
-    throw { error: { message: 'NotFound' } };
+    if (!targetPlaylist) {
+      throw notFound();
+    }
+
+    const validIds = targetPlaylist.items.map((item) => item.id);
+
+    const isValid = sortedIds.length === validIds.length && validIds.every((id) => sortedIds.includes(id));
+    if (!isValid) {
+      throw badRequest('Invalid playlist item ID');
+    }
+
+    return prisma.$transaction(
+      sortedIds.map((id, index) =>
+        prisma.playlistItem.update({
+          where: { id },
+          data: { position: index },
+        }),
+      ),
+    );
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw internalServerError(`${[error.code]} Failed to sort playlist items`);
+    }
+    throw internalServerError('Failed to sort playlist items');
   }
-
-  const validIds = targetPlaylist.items.map((item) => item.id);
-
-  const isValid = sortedIds.length === validIds.length && validIds.every((id) => sortedIds.includes(id));
-  if (!isValid) {
-    throw { error: { message: 'Invalid playlist item ID' } };
-  }
-
-  return prisma.$transaction(
-    sortedIds.map((id, index) =>
-      prisma.playlistItem.update({
-        where: { id },
-        data: { position: index },
-      }),
-    ),
-  );
 }

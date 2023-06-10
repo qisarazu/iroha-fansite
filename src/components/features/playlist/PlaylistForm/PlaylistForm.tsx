@@ -15,13 +15,17 @@ type FormValue = {
   description?: Playlist['description'];
 };
 
-const MAX_TITLE_LENGTH = 32;
-const MAX_DESCRIPTION_LENGTH = 32;
+const MAX_TITLE_LENGTH = 50;
+const MAX_DESCRIPTION_LENGTH = 200;
 
 export function PlaylistForm({ mode, initialValues, onSubmit }: Props) {
   const t = useT();
 
-  const { register, handleSubmit } = useForm<FormValue>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValue>({
     defaultValues: initialValues,
   });
 
@@ -32,8 +36,35 @@ export function PlaylistForm({ mode, initialValues, onSubmit }: Props) {
   return (
     <>
       <form onSubmit={handleSubmit(handleValid)}>
-        <TextInput mb="xl" placeholder={t('タイトル')} {...register('title', { maxLength: MAX_TITLE_LENGTH })} />
-        <Textarea placeholder={t('説明')} {...register('description', { maxLength: MAX_DESCRIPTION_LENGTH })} />
+        <TextInput
+          mb="xl"
+          label={t('タイトル')}
+          placeholder={t('タイトル')}
+          error={errors.title?.message}
+          {...register('title', {
+            required: {
+              value: true,
+              message: t('タイトルは必須です'),
+            },
+            maxLength: {
+              value: MAX_TITLE_LENGTH,
+              message: t(`タイトルは最大{maxLength}文字です`, { maxLength: MAX_TITLE_LENGTH }),
+            },
+          })}
+          withAsterisk
+        />
+
+        <Textarea
+          label={t('説明')}
+          placeholder={t('説明')}
+          error={errors.description?.message}
+          {...register('description', {
+            maxLength: {
+              value: MAX_DESCRIPTION_LENGTH,
+              message: t('説明は最大{maxLength}文字です', { maxLength: MAX_DESCRIPTION_LENGTH }),
+            },
+          })}
+        />
 
         <Flex justify="flex-end" mt="lg">
           <Button type="submit">{mode === 'create' ? t('作成') : t('保存')}</Button>

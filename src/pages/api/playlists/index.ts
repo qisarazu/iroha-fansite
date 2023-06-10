@@ -1,14 +1,19 @@
 import type { Session } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { notFound } from '../../../lib/api/ApiError';
+import { responseError } from '../../../lib/api/response-error';
 import { createPlaylist, getPlaylists } from '../../../services/playlists/server';
 import type { PostPlaylistRequest } from '../../../services/playlists/type';
 import { withSession } from '../../../utils/api/withSession';
 
 async function handleGet(_: NextApiRequest, res: NextApiResponse, session: Session) {
-  const items = await getPlaylists(session.user.id);
+  const playlists = await getPlaylists(session.user.id);
+  if (!playlists) {
+    throw notFound();
+  }
 
-  return res.status(200).json({ data: items });
+  return res.status(200).json({ data: playlists });
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Session) {
@@ -18,13 +23,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse, session: Se
   return res.status(200).json({ data: playlist });
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  switch (req.method) {
-    case 'GET': {
-      return withSession(handleGet, req, res);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    switch (req.method) {
+      case 'GET': {
+        return await withSession(handleGet, req, res);
+      }
+      case 'POST': {
+        return await withSession(handlePost, req, res);
+      }
     }
-    case 'POST': {
-      return withSession(handlePost, req, res);
-    }
+  } catch (error) {
+    responseError(res, error);
   }
 }

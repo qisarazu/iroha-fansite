@@ -68,11 +68,11 @@ export default function PlaylistIdPage() {
                 <Text component="h1" size="xl">
                   {playlist.title}
                 </Text>
-                <Text color="dimmed">{playlist.description}</Text>
+                <Text color="dimmed" mb="xs">
+                  {playlist.description}
+                </Text>
 
-                <Group
-                  sx={(theme) => ({ marginTop: 'auto', [theme.fn.smallerThan('sm')]: { marginTop: theme.spacing.xs } })}
-                >
+                <Group sx={{ marginTop: 'auto' }}>
                   <Button
                     component={Link}
                     leftIcon={<IconArrowsShuffle />}

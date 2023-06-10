@@ -1,6 +1,8 @@
 import { createServerSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { unauthorized } from '../../lib/api/ApiError';
+
 type Arg = (req: NextApiRequest, res: NextApiResponse, session: Session) => void;
 
 export async function withSession(api: Arg, req: NextApiRequest, res: NextApiResponse) {
@@ -10,7 +12,7 @@ export async function withSession(api: Arg, req: NextApiRequest, res: NextApiRes
   } = await supabase.auth.getSession();
 
   if (!session) {
-    return res.status(401).json({ error: { message: 'Unauthorized' } });
+    throw unauthorized();
   }
 
   return api(req, res, session);

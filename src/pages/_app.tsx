@@ -2,6 +2,7 @@ import '../styles/global.scss';
 
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
+import { Notifications, notifications } from '@mantine/notifications';
 import { createBrowserSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { tx } from '@transifex/native';
@@ -9,8 +10,10 @@ import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 import { useEffect, useState } from 'react';
+import { Revalidator, RevalidatorOptions, SWRConfig, SWRConfiguration } from 'swr';
 
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
+import { ApiError, unauthorized } from '../lib/api/ApiError';
 import { theme } from '../styles/theme';
 import { GA_TRACKING_ID, pageview } from '../utils/gtag';
 
@@ -21,6 +24,26 @@ tx.init({
 export default function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) {
   const [supabase] = useState(() => createBrowserSupabaseClient());
   const router = useRouter();
+
+  function handleError(error: ApiError) {
+    console.log('debug:error', error);
+    notifications.show({ title: 'Error', message: error.message, color: 'red' });
+  }
+
+  function handleErrorRetry(
+    error: ApiError,
+    _key: string,
+    config: SWRConfiguration,
+    revalidate: Revalidator,
+    { retryCount }: RevalidatorOptions,
+  ) {
+    console.log('debug:error', error);
+    if (error.statusCode === unauthorized().statusCode) return;
+    if (retryCount && retryCount >= 5) return;
+
+    setTimeout(() => revalidate({ retryCount }), config.errorRetryInterval);
+  }
+
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       pageview(url);
@@ -32,16 +55,20 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
   }, [router.events]);
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
-      <ModalsProvider>
-        <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
-          <YTPlayerContextProvider>
-            <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-            <Script
-              id="gtag-init"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
+    <SWRConfig value={{ onError: handleError, onErrorRetry: handleErrorRetry }}>
+      <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+        <ModalsProvider>
+          <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
+            <YTPlayerContextProvider>
+              <Script
+                strategy="afterInteractive"
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              />
+              <Script
+                id="gtag-init"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                  __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -49,12 +76,14 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
             page_path: window.location.pathname,
           });
         `,
-              }}
-            />
-            <Component {...pageProps} />
-          </YTPlayerContextProvider>
-        </SessionContextProvider>
-      </ModalsProvider>
-    </MantineProvider>
+                }}
+              />
+              <Component {...pageProps} />
+              <Notifications position="bottom-left" />
+            </YTPlayerContextProvider>
+          </SessionContextProvider>
+        </ModalsProvider>
+      </MantineProvider>
+    </SWRConfig>
   );
 }
