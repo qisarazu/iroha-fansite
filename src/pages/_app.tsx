@@ -26,7 +26,6 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
   const router = useRouter();
 
   function handleError(error: ApiError) {
-    console.log('debug:error', error);
     notifications.show({ title: 'Error', message: error.message, color: 'red' });
   }
 
@@ -37,7 +36,6 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
     revalidate: Revalidator,
     { retryCount }: RevalidatorOptions,
   ) {
-    console.log('debug:error', error);
     if (error.statusCode === unauthorized().statusCode) return;
     if (retryCount && retryCount >= 5) return;
 
