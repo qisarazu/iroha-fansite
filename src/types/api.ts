@@ -1,3 +1,5 @@
+import type { ApiError } from '../lib/api/ApiError';
+
 export type CursorRequest = {
   cursor?: string | null;
   limit?: number;
@@ -5,7 +7,7 @@ export type CursorRequest = {
 
 export type ApiResponse<T> = {
   data?: T;
-  error?: string;
+  error?: ApiError;
 };
 
 export type CursorResponse<T> = {

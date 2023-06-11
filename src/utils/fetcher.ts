@@ -1,5 +1,3 @@
-import type { ApiResponse, CursorResponse } from '../types/api';
-
 type Method = 'get' | 'post' | 'put' | 'delete';
 
 export const fetcher = <T>(url: string, method: Method = 'get', body?: Record<string, unknown>): Promise<T> =>

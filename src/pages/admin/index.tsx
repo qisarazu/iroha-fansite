@@ -1,5 +1,5 @@
 import { Alert, Button, ThemeProvider, Typography } from '@mui/material';
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { User } from '@supabase/supabase-js';
 import type { GetServerSidePropsContext } from 'next';
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const supabase = createServerSupabaseClient(ctx);
+  const supabase = createPagesServerClient(ctx);
   const {
     data: { session },
   } = await supabase.auth.getSession();

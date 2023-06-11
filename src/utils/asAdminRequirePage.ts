@@ -1,8 +1,8 @@
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs';
 import type { GetServerSidePropsContext } from 'next';
 
 export const asAdminRequirePage = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient(ctx);
+  const supabase = createPagesServerClient(ctx);
   const {
     data: { session },
   } = await supabase.auth.getSession();

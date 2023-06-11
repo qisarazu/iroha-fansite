@@ -16,8 +16,10 @@ import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useIsPlayedVideos } from '../../../hooks/useIsPlayedVideos';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useYTPlayer } from '../../../hooks/useYTPlayer';
+import { usePlaylistDetails } from '../../../services/playlists/client';
 import type { SingingStreamWatchPageQuery } from '../../../types/query';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
+import { getMusicWatchURL } from '../../../utils/urls';
 import styles from './index.module.scss';
 
 // Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
@@ -30,10 +32,12 @@ const SKIP_PREV_TIME = 5;
 export default function SingingStreamsWatchPage() {
   const reqIdRef = useRef<number>();
   const router = useRouter();
-  const { v: streamId } = router.query as SingingStreamWatchPageQuery;
+  const { v: streamId, playlist: playlistId, shuffle: isShuffle } = router.query as SingingStreamWatchPageQuery;
 
   const { data: currentStream } = useGetSingingStreamApi(streamId);
   const { data: rawStreams } = useGetSingingStreamsApi({ request: { all: true } });
+
+  const { playlist } = usePlaylistDetails(playlistId);
 
   const [isPlaying, setPlaying] = useState(false);
   const [isEnded, setEnded] = useState(false);
@@ -89,9 +93,9 @@ export default function SingingStreamsWatchPage() {
     if (playingStreamIndex === 0) return;
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
-      router.push(`/singing-streams/watch?v=${prevStream.id}`);
+      router.push(getMusicWatchURL(prevStream.id, { playlist: playlistId }));
     }
-  }, [currentStream, currentTime, player, router, streams]);
+  }, [currentStream, currentTime, player, playlistId, router, streams]);
 
   const onSkipNext = useCallback(() => {
     if (!streams || !currentStream) return;
@@ -99,9 +103,9 @@ export default function SingingStreamsWatchPage() {
     if (playingStreamIndex === streams.length - 1) return;
     const nextStream = streams[playingStreamIndex + 1];
     if (nextStream) {
-      router.push(`/singing-streams/watch?v=${nextStream.id}`);
+      router.push(getMusicWatchURL(nextStream.id, { playlist: playlistId }));
     }
-  }, [currentStream, router, streams]);
+  }, [currentStream, playlistId, router, streams]);
 
   const onVolumeChange = useCallback(
     (value: number) => {
@@ -180,11 +184,36 @@ export default function SingingStreamsWatchPage() {
     setShuffledOnce(true);
   }, [rawStreams, currentStream, streams]);
 
+  // 初期化処理
   useEffect(() => {
-    if (rawStreams?.length) {
-      setStreams(rawStreams);
+    if (!rawStreams?.length) return;
+    if (playlistId && !playlist) return;
+    if (isShuffledOnce) return;
+
+    const positionMap = new Map();
+    playlist?.items.forEach((item) => positionMap.set(item.musicId, item.position));
+
+    const filtered = playlist
+      ? rawStreams.filter((stream) => playlist.items.some((item) => item.musicId === stream.id))
+      : rawStreams;
+
+    // シャッフル再生の場合
+    if (isShuffle && currentStream) {
+      setStreams([currentStream].concat(shuffle(filtered.filter((s) => s.id !== currentStream.id))));
+      setShuffledOnce(true);
+      return;
     }
-  }, [rawStreams?.length]);
+
+    // プレイリスト再生の場合、アイテム順に並び替える
+    if (playlist) {
+      const sortedFiltered = filtered.sort((a, b) => positionMap.get(a.id) - positionMap.get(b.id));
+      setStreams(sortedFiltered);
+      return;
+    }
+
+    // それ以外はそのまま
+    setStreams(filtered);
+  }, [rawStreams?.length, playlist, playlistId, isShuffle, isShuffledOnce, currentStream]);
 
   // When repeatType is changed, the local variable is also changed.
   useEffect(() => {
@@ -270,9 +299,9 @@ export default function SingingStreamsWatchPage() {
           : null
         : streams[playingStreamIndex + 1]?.id;
     if (nextStreamId) {
-      router.push(`/singing-streams/watch?v=${nextStreamId}`);
+      router.push(getMusicWatchURL(nextStreamId, { playlist: playlistId }));
     }
-  }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType]);
+  }, [isEnded, isPlayedOnce, currentStream, streams, router, repeatType, playlistId]);
 
   useEffect(() => {
     if (!isPlayedOnce || !currentStream) return;

@@ -15,14 +15,19 @@ type Props = {
 
 export const Playlist = memo(({ className, streams }: Props) => {
   const router = useRouter();
-  const { v: currentStreamId } = router.query as SingingStreamWatchPageQuery;
+  const { v: currentStreamId, playlist: playlistId } = router.query as SingingStreamWatchPageQuery;
 
   const onReorder = () => {};
 
   return (
     <Reorder.Group className={clsx(styles.root, className)} axis="y" values={streams} onReorder={onReorder}>
       {streams.map((stream) => (
-        <PlaylistItem stream={stream} isPlaying={stream.id === currentStreamId} key={stream.id} />
+        <PlaylistItem
+          stream={stream}
+          playlistId={playlistId}
+          isPlaying={stream.id === currentStreamId}
+          key={stream.id}
+        />
       ))}
     </Reorder.Group>
   );

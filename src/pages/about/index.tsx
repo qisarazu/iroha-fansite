@@ -9,6 +9,7 @@ import styles from './index.module.scss';
 
 function AboutPage() {
   const t = useT();
+
   return (
     <Layout
       className={styles.root}
@@ -19,7 +20,7 @@ function AboutPage() {
       </h1>
       <p>
         <T
-          _str="gozaru.fans (以下、当サイト) はホロライブ6期生 (holoX) の用心棒、風真いろはさんの{unofficial} ファンサイトです。"
+          _str="gozaru.fans (以下、当サイト) はホロライブ6期生 (holoX) の用心棒、風真いろはさんの {unofficial} ファンサイトです。"
           _comment="unofficial: 非公式"
           unofficial={
             <b>
@@ -57,6 +58,38 @@ function AboutPage() {
         </p>
         <p>
           <T _str="当サイトに掲載された内容によって生じた損害等の一切の責任を負いかねますのでご了承ください。" />
+        </p>
+      </section>
+      <section className={styles.section}>
+        <h2 className={styles.subtitle}>{t('Google アカウントによる認証について')}</h2>
+        <p>
+          {t(
+            '当サイトではプレイリスト機能の提供のために、Google アカウントによる認証を利用しています。認証により取得する情報は以下の通りです。',
+          )}
+        </p>
+        <ul>
+          <li>
+            <ExternalLink
+              className={styles.link}
+              href="https://developers.google.com/identity/protocols/oauth2/scopes#google-sign-in"
+            >
+              {t('Google が提供する Google Sign-In の profile 情報')}
+            </ExternalLink>
+          </li>
+        </ul>
+        <p>
+          {t(
+            'この情報の収集は、ログインボタンを押下することで行われ、サービスの提供のためにのみ利用されます。また、これらの情報は当サイト以外の第三者とは一切共有されません。',
+          )}
+        </p>
+        <p>
+          {t('ユーザー情報の保存には外部サービスの {supabase} を利用しています。', {
+            supabase: (
+              <ExternalLink className={styles.link} href="https://supabase.com/">
+                Supabase
+              </ExternalLink>
+            ),
+          })}
         </p>
       </section>
       <section className={styles.section}>
