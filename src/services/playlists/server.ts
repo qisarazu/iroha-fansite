@@ -1,7 +1,7 @@
 import type { Playlist, PlaylistItem, SingingStream } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-import { ApiError, badRequest, internalServerError, notFound } from '../../lib/api/ApiError';
+import { ApiError, badRequest, conflict, internalServerError, notFound } from '../../lib/api/ApiError';
 import { prisma } from '../../lib/prisma';
 import {
   MAX_PLAYLIST_DESCRIPTION_LENGTH,
@@ -250,7 +250,7 @@ export async function addPlaylistItem(
     }
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
-        throw badRequest('ItemAlreadyExists');
+        throw conflict('ItemAlreadyExists');
       }
       throw internalServerError(`${[error.code]} Failed to add playlist item`);
     }
