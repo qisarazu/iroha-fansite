@@ -3,7 +3,7 @@ import '../styles/global.scss';
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications, notifications } from '@mantine/notifications';
-import { createBrowserSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
+import { createPagesBrowserClient, type Session } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { tx } from '@transifex/native';
 import type { AppProps } from 'next/app';
@@ -22,8 +22,8 @@ tx.init({
 });
 
 export default function MyApp({ Component, pageProps }: AppProps<{ initialSession: Session }>) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
   const router = useRouter();
+  const [supabase] = useState(() => createPagesBrowserClient());
 
   function handleError(error: ApiError) {
     notifications.show({ title: 'Error', message: error.message, color: 'red' });
