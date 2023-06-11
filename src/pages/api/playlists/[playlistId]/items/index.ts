@@ -2,6 +2,7 @@ import type { Session } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { responseError } from '../../../../../lib/api/response-error';
+import { prisma } from '../../../../../lib/prisma';
 import {
   addPlaylistItem,
   sortPlaylistItems,
