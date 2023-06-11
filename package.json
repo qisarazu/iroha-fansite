@@ -23,7 +23,8 @@
     "db:seed": "dotenv -e .env.local tsx prisma/seed.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=40e407e6fabc"
+    "chromatic": "npx chromatic --project-token=40e407e6fabc",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "license": "MIT",
   "dependencies": {
