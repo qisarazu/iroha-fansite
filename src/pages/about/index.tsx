@@ -73,7 +73,7 @@ function AboutPage() {
               className={styles.link}
               href="https://developers.google.com/identity/protocols/oauth2/scopes#google-sign-in"
             >
-              {t('Google が提供する Google Sign-In の profile 情報')}
+              {t('Google が提供する Google Sign-In で取得可能な情報')}
             </ExternalLink>
           </li>
           <li>
