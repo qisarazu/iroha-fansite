@@ -1,4 +1,5 @@
 import { ActionIcon, Box, Group, Menu, Stack, Text } from '@mantine/core';
+import { useUser } from '@supabase/auth-helpers-react';
 import { IconBrandYoutube, IconPlaylistAdd } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export function MusicMediaObject({ singingStream }: Props) {
+  const user = useUser();
   const t = useT();
   const watchUrl = useMemo(() => getMusicWatchURL(singingStream.id), [singingStream.id]);
   const youtubeUrl = useYouTubeUrl(singingStream.video.videoId, singingStream.start);
@@ -64,9 +66,11 @@ export function MusicMediaObject({ singingStream }: Props) {
           </Menu.Target>
 
           <Menu.Dropdown>
-            <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
-              {t('プレイリストに追加')}
-            </Menu.Item>
+            {user ? (
+              <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
+                {t('プレイリストに追加')}
+              </Menu.Item>
+            ) : null}
             <Menu.Item component="a" href={youtubeUrl} target="_blank" rel="noopener" icon={<IconBrandYoutube />}>
               {t('YouTube で見る')}
             </Menu.Item>
