@@ -1,4 +1,5 @@
 import { ActionIcon, Menu } from '@mantine/core';
+import { useUser } from '@supabase/auth-helpers-react';
 import { IconBrandYoutube, IconDotsVertical, IconPlaylistAdd } from '@tabler/icons-react';
 import { T, useT } from '@transifex/react';
 import clsx from 'clsx';
@@ -6,11 +7,10 @@ import { format } from 'date-fns';
 import { Reorder } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { memo, useMemo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import { MdPlayArrow, MdVolumeUp } from 'react-icons/md';
 
 import { useHovering } from '../../../hooks/useHovering';
-import { useDeletePlaylistItem } from '../../../services/playlists/client';
 import type { Playlist } from '../../../services/playlists/type';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
 import { getMusicWatchURL, getYouTubeURL } from '../../../utils/urls';
@@ -26,17 +26,12 @@ type Props = {
 
 export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: Props) => {
   const t = useT();
+  const user = useUser();
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
 
   const watchPath = getMusicWatchURL(stream.id, { playlist: playlistId });
-  const youtubeUrl = useMemo(
-    () => `https://www.youtube.com/watch?v=${stream.video.videoId}&t=${stream.start}`,
-    [stream.start, stream.video.videoId],
-  );
-
   const { open } = usePlaylistSelectionModal();
-  const { deletePlaylistItem } = useDeletePlaylistItem(playlistId ?? '');
 
   function handleAddPlaylistItem() {
     open(stream.id);
@@ -91,9 +86,11 @@ export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: 
           </ActionIcon>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item icon={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
-            {t('プレイリストに追加')}
-          </Menu.Item>
+          {user ? (
+            <Menu.Item icon={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
+              {t('プレイリストに追加')}
+            </Menu.Item>
+          ) : null}
           <Menu.Item
             icon={<IconBrandYoutube />}
             component="a"

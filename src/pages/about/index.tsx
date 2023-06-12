@@ -61,10 +61,10 @@ function AboutPage() {
         </p>
       </section>
       <section className={styles.section}>
-        <h2 className={styles.subtitle}>{t('Google アカウントによる認証について')}</h2>
+        <h2 className={styles.subtitle}>{t('アカウントによる認証について')}</h2>
         <p>
           {t(
-            '当サイトではプレイリスト機能の提供のために、Google アカウントによる認証を利用しています。認証により取得する情報は以下の通りです。',
+            '当サイトではプレイリスト機能の提供のために、Google、Twitter アカウントによる認証を利用しています。認証により利用する情報は以下の通りです。',
           )}
         </p>
         <ul>
@@ -73,7 +73,15 @@ function AboutPage() {
               className={styles.link}
               href="https://developers.google.com/identity/protocols/oauth2/scopes#google-sign-in"
             >
-              {t('Google が提供する Google Sign-In の profile 情報')}
+              {t('Google が提供する Google Sign-In で取得可能な情報')}
+            </ExternalLink>
+          </li>
+          <li>
+            <ExternalLink
+              className={styles.link}
+              href="https://developer.twitter.com/ja/docs/basics/apps/guides/app-permissions"
+            >
+              {t('Twitter 連携アプリが取得できる Read only の権限で取得可能な情報、及びメールアドレス')}
             </ExternalLink>
           </li>
         </ul>
