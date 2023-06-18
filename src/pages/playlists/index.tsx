@@ -21,11 +21,9 @@ export default function LibraryIndexPage() {
       <Container size="xl">
         <Group position="apart">
           <Title>{t('プレイリスト一覧')}</Title>
-          {user ? (
-            <Button sx={{ marginLeft: 'auto' }} leftIcon={<IconPlus />} onClick={open}>
-              {t('プレイリスト作成')}
-            </Button>
-          ) : null}
+          <Button sx={{ marginLeft: 'auto' }} leftIcon={<IconPlus />} onClick={open}>
+            {t('プレイリスト作成')}
+          </Button>
         </Group>
 
         <Box sx={{ marginTop: 32 }}>

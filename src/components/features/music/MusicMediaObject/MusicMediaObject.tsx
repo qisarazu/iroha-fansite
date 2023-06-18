@@ -66,11 +66,9 @@ export function MusicMediaObject({ singingStream }: Props) {
           </Menu.Target>
 
           <Menu.Dropdown>
-            {user ? (
-              <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
-                {t('プレイリストに追加')}
-              </Menu.Item>
-            ) : null}
+            <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
+              {t('プレイリストに追加')}
+            </Menu.Item>
             <Menu.Item component="a" href={youtubeUrl} target="_blank" rel="noopener" icon={<IconBrandYoutube />}>
               {t('YouTube で見る')}
             </Menu.Item>
