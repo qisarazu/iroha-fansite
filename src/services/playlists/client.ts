@@ -1,44 +1,31 @@
 import { notifications } from '@mantine/notifications';
 import type { PlaylistItem } from '@prisma/client';
-import { useUser } from '@supabase/auth-helpers-react';
 import { useT } from '@transifex/react';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 
 import type { ApiResponse } from '../../types/api';
-import { apiClient } from '../apiClient';
-import {
-  addLocalPlaylistItem,
-  createFetcher,
-  createLocalPlaylist,
-  deleteLocalPlaylist,
-  deleteLocalPlaylistItem,
-  getLocalPlaylistDetail,
-  getLocalPlaylists,
-} from './local';
+import { createClient } from './local';
 import type { Playlist, PlaylistWithItem } from './type';
 
 const KEY = '/api/playlists';
 
+const client = createClient();
+
 export function usePlaylists() {
-  const fetcher = createFetcher(apiClient, getLocalPlaylists);
-  const { data, error } = useSWR<ApiResponse<Playlist[]>>(KEY, fetcher);
+  const { data, error } = useSWR<ApiResponse<Playlist[]>>(KEY, client);
 
   return { playlists: data?.data, isLoading: !data && !error };
 }
 
 export function usePlaylistDetails(playlistId: Playlist['id'] | undefined) {
-  const fetcher = createFetcher(apiClient, getLocalPlaylistDetail);
-
-  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
+  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(playlistId ? `${KEY}/${playlistId}` : null, client);
 
   return { playlist: data?.data, isLoading: !data && !error };
 }
 
 export function useCreatePlaylist() {
   const t = useT();
-
-  const client = createFetcher(apiClient, createLocalPlaylist);
 
   async function fetcher(key: string, { arg }: { arg: Pick<Playlist, 'title' | 'description'> }) {
     return client(key, 'post', arg);
@@ -59,7 +46,7 @@ export function useEditPlaylist() {
   const t = useT();
 
   async function fetcher(key: string, { arg }: { arg: Pick<Playlist, 'id' | 'title' | 'description'> }) {
-    return apiClient<Playlist & PlaylistItem[]>(`${key}/${arg.id}`, 'put', arg);
+    return client(`${key}/${arg.id}`, 'put', arg);
   }
 
   const { trigger } = useSWRMutation(KEY, fetcher);
@@ -75,8 +62,6 @@ export function useEditPlaylist() {
 
 export function useDeletePlaylist() {
   const t = useT();
-
-  const client = createFetcher(apiClient, deleteLocalPlaylist);
 
   async function fetcher(key: string, { arg }: { arg: Pick<Playlist, 'id'> }) {
     return client(`${key}/${arg.id}`, 'delete', arg);
@@ -98,8 +83,6 @@ export function useDeletePlaylist() {
 export function useAddPlaylistItem(playlistId: Playlist['id']) {
   const t = useT();
 
-  const client = createFetcher(apiClient, addLocalPlaylistItem);
-
   async function fetcher(url: string, { arg }: { arg: { musicId: PlaylistItem['musicId'] } }) {
     return client(`${url}/items`, 'post', arg);
   }
@@ -117,8 +100,6 @@ export function useAddPlaylistItem(playlistId: Playlist['id']) {
 
 export function useDeletePlaylistItem(playlistId: Playlist['id']) {
   const t = useT();
-
-  const client = createFetcher(apiClient, deleteLocalPlaylistItem);
 
   async function fetcher(url: string, { arg }: { arg: { itemId: PlaylistItem['id'] } }) {
     return client(`${url}/items/${arg.itemId}`, 'delete', arg);
@@ -142,7 +123,7 @@ export function useDeletePlaylistItem(playlistId: Playlist['id']) {
  */
 export function useSortPlaylistItem(playlistId: Playlist['id']) {
   async function fetcher(url: string, { arg }: { arg: { sortedIds: PlaylistItem['id'][] } }) {
-    return apiClient(`${url}/items`, 'put', arg);
+    return client(`${url}/items`, 'put', arg);
   }
 
   const { trigger: sortPlaylistItem } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
