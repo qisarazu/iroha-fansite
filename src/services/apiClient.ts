@@ -1,4 +1,4 @@
-type Method = 'get' | 'post' | 'put' | 'delete';
+export type Method = 'get' | 'post' | 'put' | 'delete';
 
 export const apiClient = <T>(url: string, method: Method = 'get', body?: Record<string, unknown>): Promise<T> =>
   fetch(url, {

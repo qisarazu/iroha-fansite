@@ -128,6 +128,14 @@ export async function editPlaylist(
       throw notFound();
     }
 
+    // validation
+    if (Array.from(data.title).length > MAX_PLAYLIST_TITLE_LENGTH) {
+      throw badRequest(`Playlist title must be less than ${MAX_PLAYLIST_TITLE_LENGTH} characters`);
+    }
+    if (data.description && Array.from(data.description).length > MAX_PLAYLIST_DESCRIPTION_LENGTH) {
+      throw badRequest(`Playlist description must be less than ${MAX_PLAYLIST_DESCRIPTION_LENGTH} characters`);
+    }
+
     return await prisma.playlist.update({
       where: { id },
       data,

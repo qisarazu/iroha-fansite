@@ -4,7 +4,7 @@ import type { getPlaylistDetails, getPlaylists } from './server';
 
 export type Playlist = Awaited<ReturnType<typeof getPlaylists>>[0];
 
-export type PlaylistWithItem = Awaited<ReturnType<typeof getPlaylistDetails>>;
+export type PlaylistWithItem = Exclude<Awaited<ReturnType<typeof getPlaylistDetails>>, null>;
 
 export type PlaylistItemWithMusic = PlaylistItem & {
   music: SingingStream & {

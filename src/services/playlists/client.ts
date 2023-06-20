@@ -5,19 +5,21 @@ import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 
 import type { ApiResponse } from '../../types/api';
-import { apiClient } from '../apiClient';
+import { createClient } from './local';
 import type { Playlist, PlaylistWithItem } from './type';
 
 const KEY = '/api/playlists';
 
+const client = createClient();
+
 export function usePlaylists() {
-  const { data, error } = useSWR<ApiResponse<Playlist[]>>(KEY, apiClient);
+  const { data, error } = useSWR<ApiResponse<Playlist[]>>(KEY, client);
 
   return { playlists: data?.data, isLoading: !data && !error };
 }
 
 export function usePlaylistDetails(playlistId: Playlist['id'] | undefined) {
-  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(playlistId ? `${KEY}/${playlistId}` : null, apiClient);
+  const { data, error } = useSWR<ApiResponse<PlaylistWithItem>>(playlistId ? `${KEY}/${playlistId}` : null, client);
 
   return { playlist: data?.data, isLoading: !data && !error };
 }
@@ -26,7 +28,7 @@ export function useCreatePlaylist() {
   const t = useT();
 
   async function fetcher(key: string, { arg }: { arg: Pick<Playlist, 'title' | 'description'> }) {
-    return apiClient<Playlist & PlaylistItem[]>(key, 'post', arg);
+    return client(key, 'post', arg);
   }
 
   const { trigger } = useSWRMutation(KEY, fetcher);
@@ -44,7 +46,7 @@ export function useEditPlaylist() {
   const t = useT();
 
   async function fetcher(key: string, { arg }: { arg: Pick<Playlist, 'id' | 'title' | 'description'> }) {
-    return apiClient<Playlist & PlaylistItem[]>(`${key}/${arg.id}`, 'put', arg);
+    return client(`${key}/${arg.id}`, 'put', arg);
   }
 
   const { trigger } = useSWRMutation(KEY, fetcher);
@@ -62,7 +64,7 @@ export function useDeletePlaylist() {
   const t = useT();
 
   async function fetcher(key: string, { arg }: { arg: Pick<Playlist, 'id'> }) {
-    return apiClient<Playlist & PlaylistItem[]>(`${key}/${arg.id}`, 'delete', arg);
+    return client(`${key}/${arg.id}`, 'delete', arg);
   }
 
   const { trigger } = useSWRMutation(KEY, fetcher);
@@ -82,7 +84,7 @@ export function useAddPlaylistItem(playlistId: Playlist['id']) {
   const t = useT();
 
   async function fetcher(url: string, { arg }: { arg: { musicId: PlaylistItem['musicId'] } }) {
-    return apiClient(`${url}/items`, 'post', arg);
+    return client(`${url}/items`, 'post', arg);
   }
 
   const { trigger } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
@@ -100,7 +102,7 @@ export function useDeletePlaylistItem(playlistId: Playlist['id']) {
   const t = useT();
 
   async function fetcher(url: string, { arg }: { arg: { itemId: PlaylistItem['id'] } }) {
-    return apiClient(`${url}/items/${arg.itemId}`, 'delete', arg);
+    return client(`${url}/items/${arg.itemId}`, 'delete', arg);
   }
 
   const { trigger } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
@@ -121,7 +123,7 @@ export function useDeletePlaylistItem(playlistId: Playlist['id']) {
  */
 export function useSortPlaylistItem(playlistId: Playlist['id']) {
   async function fetcher(url: string, { arg }: { arg: { sortedIds: PlaylistItem['id'][] } }) {
-    return apiClient(`${url}/items`, 'put', arg);
+    return client(`${url}/items`, 'put', arg);
   }
 
   const { trigger: sortPlaylistItem } = useSWRMutation(playlistId ? `${KEY}/${playlistId}` : null, fetcher);
