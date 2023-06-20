@@ -39,18 +39,20 @@ export default function LibraryIndexPage() {
             <Accordion.Item value="caution">
               <Accordion.Control icon={<IconAlertTriangle color="red" />}>
                 <Text fw="bold" color="red">
-                  {t('非ログイン時の注意点')}
+                  {t('ログインせず利用する際の注意点')}
                 </Text>
               </Accordion.Control>
               <Accordion.Panel>
-                {t('プレイリストはログインなしでもご利用いただけますが、以下の点にご注意ください')}
+                {t('プレイリスト機能はログインしていなくてもご利用いただけますが、以下の点にご注意ください')}
                 <List mt="xs" withPadding={!isMobile}>
                   <List.Item>
                     {t(
                       'データはブラウザのローカルストレージに保存されるため、キャッシュクリアなどを行うとプレイリストも削除されます。',
                     )}
                   </List.Item>
-                  <List.Item>{t('異なるブラウザ、デバイス間 (PC ↔ スマホなど) で共有はされません。')}</List.Item>
+                  <List.Item>
+                    {t('異なるブラウザ、デバイス間 (PC ↔ スマホなど) でデータの共有はされません。')}
+                  </List.Item>
                 </List>
               </Accordion.Panel>
             </Accordion.Item>
