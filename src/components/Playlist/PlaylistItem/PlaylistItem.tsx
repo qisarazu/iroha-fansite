@@ -1,5 +1,4 @@
 import { ActionIcon, Menu } from '@mantine/core';
-import { useUser } from '@supabase/auth-helpers-react';
 import { IconBrandYoutube, IconDotsVertical, IconPlaylistAdd } from '@tabler/icons-react';
 import { T, useT } from '@transifex/react';
 import clsx from 'clsx';
@@ -26,7 +25,6 @@ type Props = {
 
 export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: Props) => {
   const t = useT();
-  const user = useUser();
   const ref = useRef<HTMLDivElement>(null);
   const isHovering = useHovering(ref);
 
@@ -86,11 +84,9 @@ export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: 
           </ActionIcon>
         </Menu.Target>
         <Menu.Dropdown>
-          {user ? (
-            <Menu.Item icon={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
-              {t('プレイリストに追加')}
-            </Menu.Item>
-          ) : null}
+          <Menu.Item icon={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
+            {t('プレイリストに追加')}
+          </Menu.Item>
           <Menu.Item
             icon={<IconBrandYoutube />}
             component="a"

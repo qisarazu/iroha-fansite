@@ -1,5 +1,4 @@
 import { ActionIcon, Box, Group, Menu, Stack, Text } from '@mantine/core';
-import { useUser } from '@supabase/auth-helpers-react';
 import { IconBrandYoutube, IconPlaylistAdd } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
@@ -18,7 +17,6 @@ type Props = {
 };
 
 export function MusicMediaObject({ singingStream }: Props) {
-  const user = useUser();
   const t = useT();
   const watchUrl = useMemo(() => getMusicWatchURL(singingStream.id), [singingStream.id]);
   const youtubeUrl = useYouTubeUrl(singingStream.video.videoId, singingStream.start);
