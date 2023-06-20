@@ -65,6 +65,8 @@
 }
 
 .listItem {
+  list-style: none;
+
   & + & {
     margin-top: 1em;
     padding-top: 1em;

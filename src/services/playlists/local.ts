@@ -1,4 +1,4 @@
-import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
+import { createPagesBrowserClient, User } from '@supabase/auth-helpers-nextjs';
 import { nanoid } from 'nanoid';
 import { Key, pathToRegexp } from 'path-to-regexp';
 
@@ -34,13 +34,24 @@ const routeMap: Record<string, (...args: any[]) => ReturnType> = {
 };
 
 export const createClient = () => {
-  return async <T>(url: string, method: Method = 'get', body?: Record<string, unknown>): Promise<T> => {
-    const supabase = createPagesBrowserClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const supabase = createPagesBrowserClient();
+  let cachedUser: User | null | undefined = undefined;
 
-    if (user) {
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN')) {
+      cachedUser = session.user;
+    }
+    if (event === 'SIGNED_OUT') {
+      cachedUser = null;
+    }
+  });
+
+  return async <T>(url: string, method: Method = 'get', body?: Record<string, unknown>): Promise<T> => {
+    if (cachedUser === undefined) {
+      cachedUser = (await supabase.auth.getUser()).data.user;
+    }
+
+    if (cachedUser) {
       return apiClient<T>(url, method, body);
     } else {
       for (const route in routeMap) {
