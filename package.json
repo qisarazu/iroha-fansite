@@ -50,7 +50,7 @@
     "@transifex/cli": "^5.2.0",
     "@transifex/native": "^5.2.0",
     "@transifex/react": "^5.2.0",
-    "clsx": "^1.2.1",
+    "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.12.8",
     "googleapis": "^118.0.0",
