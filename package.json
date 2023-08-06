@@ -81,7 +81,7 @@
     "@storybook/blocks": "^7.0.9",
     "@storybook/nextjs": "^7.0.9",
     "@storybook/react": "^7.0.9",
-    "@storybook/testing-library": "^0.1.0",
+    "@storybook/testing-library": "^0.2.0",
     "@testing-library/react": "^14.0.0",
     "@types/gtag.js": "^0.0.12",
     "@types/jest": "^29.5.1",
