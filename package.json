@@ -101,7 +101,7 @@
     "jest-environment-jsdom": "^29.5.0",
     "lint-staged": "^13.2.2",
     "mockdate": "^3.0.5",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.0",
     "sass-loader": "^13.2.2",
     "storybook": "^7.0.9",
     "tsx": "^3.12.7",
