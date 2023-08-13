@@ -14,13 +14,15 @@ export function usePutSongApi({ mutate }: Props) {
   const [isLoading, setLoading] = useState(false);
 
   const api = useCallback(
-    async (request: PutSongApiRequest): Promise<void> => {
+    async (request: PutSongApiRequest): Promise<Song | undefined> => {
       setLoading(true);
 
-      await fetcher(`/api/songs/${request.id}`, 'put', request);
+      const { data } = await fetcher<ApiResponse<Song>>(`/api/songs/${request.id}`, 'put', request);
 
       mutate();
       setLoading(false);
+
+      return data;
     },
     [mutate],
   );
