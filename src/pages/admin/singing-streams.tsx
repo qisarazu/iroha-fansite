@@ -2,8 +2,8 @@ import { Box, Button, ThemeProvider } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
-  type GridCellEditCommitParams,
   type GridColDef,
+  type GridRowModel,
   type GridRowParams,
   type GridRowsProp,
 } from '@mui/x-data-grid';
@@ -24,6 +24,7 @@ import { useGetSingingStreamsApi } from '../../hooks/api/singing-streams/useGetS
 import { usePostSingingStreamApi } from '../../hooks/api/singing-streams/usePostSingingStreamApi';
 import { usePutSingingStreamApi } from '../../hooks/api/singing-streams/usePutSingingStreamApi';
 import { muiTheme } from '../../styles/theme';
+import type { SingingStreamWithVideoAndSong } from '../../types/SingingStream';
 import { asAdminRequirePage } from '../../utils/asAdminRequirePage';
 
 export const getServerSideProps = asAdminRequirePage;
@@ -77,13 +78,11 @@ const AdminSingingStreamsPage = () => {
   );
 
   const onChange = useCallback(
-    ({ id, field, value }: GridCellEditCommitParams) => {
-      if (!id || typeof id !== 'string') return;
+    async ({ id, start, end }: GridRowModel<SingingStreamWithVideoAndSong>) => {
+      const res = await putApi({ id, start, end });
+      if (!res) throw new Error('put error');
 
-      putApi({
-        id,
-        [field]: parseInt(value, 10),
-      });
+      return res;
     },
     [putApi],
   );
@@ -97,28 +96,26 @@ const AdminSingingStreamsPage = () => {
     [deleteApi],
   );
 
-  const rows = useMemo<GridRowsProp>(
-    () =>
-      (singingStreams || []).map((stream) => ({
-        id: stream.id,
-        song: `${stream.song.title} / ${stream.song.artist}`,
-        video: stream.video.title,
-        start: stream.start,
-        end: stream.end,
-        createdAt: format(new Date(stream.createdAt), 'yyyy/MM/dd HH:mm:ss'),
-        updatedAt: format(new Date(stream.updatedAt), 'yyyy/MM/dd HH:mm:ss'),
-      })),
-    [singingStreams],
-  );
+  const rows = useMemo<GridRowsProp<SingingStreamWithVideoAndSong>>(() => singingStreams || [], [singingStreams]);
 
-  const columns = useMemo<GridColDef[]>(
+  const columns = useMemo<GridColDef<SingingStreamWithVideoAndSong>[]>(
     () => [
-      { field: 'song', headerName: '曲', flex: 1 },
-      { field: 'video', headerName: '動画', flex: 2 },
+      { field: 'song', headerName: '曲', flex: 1, valueFormatter: ({ value }) => `${value.title} / ${value.artist}` },
+      { field: 'video', headerName: '動画', flex: 2, valueFormatter: ({ value }) => value.title },
       { field: 'start', headerName: '開始時間', editable: true, type: 'number' },
       { field: 'end', headerName: '終了時間', editable: true, type: 'number' },
-      { field: 'createdAt', headerName: '作成日時', width: 160 },
-      { field: 'updatedAt', headerName: '更新日時', width: 160 },
+      {
+        field: 'createdAt',
+        headerName: '作成日時',
+        width: 160,
+        valueFormatter: ({ value }) => format(new Date(value), 'yyyy/MM/dd HH:mm:ss'),
+      },
+      {
+        field: 'updatedAt',
+        headerName: '更新日時',
+        width: 160,
+        valueFormatter: ({ value }) => format(new Date(value), 'yyyy/MM/dd HH:mm:ss'),
+      },
       {
         field: 'actions',
         type: 'actions',
@@ -140,7 +137,7 @@ const AdminSingingStreamsPage = () => {
           Add
         </Button>
         <Box sx={{ my: 1, height: muiTheme.spacing(100) }}>
-          <DataGrid rows={rows} columns={columns} onCellEditCommit={onChange} />
+          <DataGrid rows={rows} columns={columns} processRowUpdate={onChange} />
         </Box>
         <EditSingingStreamModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
       </Layout>

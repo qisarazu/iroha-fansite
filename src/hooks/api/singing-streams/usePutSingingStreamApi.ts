@@ -14,13 +14,18 @@ export function usePutSingingStreamApi({ mutate }: Props) {
   const [isLoading, setLoading] = useState(false);
 
   const api = useCallback(
-    async (request: PutSingingStreamRequest): Promise<void> => {
+    async (request: PutSingingStreamRequest): Promise<SingingStreamWithVideoAndSong | undefined> => {
       setLoading(true);
 
-      await fetcher<SingingStreamWithVideoAndSong>(`/api/singing-streams/${request.id}`, 'put', request);
+      const { data } = await fetcher<CursorResponse<SingingStreamWithVideoAndSong>>(
+        `/api/singing-streams/${request.id}`,
+        'put',
+        request,
+      );
 
       mutate();
       setLoading(false);
+      return data;
     },
     [mutate],
   );

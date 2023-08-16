@@ -2,8 +2,8 @@ import { Box, Button, ThemeProvider } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
-  type GridCellEditCommitParams,
   type GridColDef,
+  GridRowModel,
   type GridRowParams,
   type GridRowsProp,
 } from '@mui/x-data-grid';
@@ -54,13 +54,10 @@ const AdminSongsPage = () => {
   }, []);
 
   const onChange = useCallback(
-    ({ id, field, value }: GridCellEditCommitParams) => {
-      if (!id || typeof id !== 'string') return;
-
-      putApi({
-        id,
-        [field]: value,
-      });
+    async ({ id, artist, title }: GridRowModel<Song>) => {
+      const data = await putApi({ id, artist, title });
+      if (!data) throw new Error('put error');
+      return data;
     },
     [putApi],
   );
@@ -82,22 +79,22 @@ const AdminSongsPage = () => {
     [onModalClose, postApi],
   );
 
-  const rows = useMemo<GridRowsProp>(() => {
-    return songs.map((song) => ({
-      id: song.id,
-      title: song.title,
-      artist: song.artist,
-      createdAt: format(new Date(song.createdAt), 'yyyy/MM/dd HH:mm:ss'),
-      updatedAt: format(new Date(song.updatedAt), 'yyyy/MM/dd HH:mm:ss'),
-    }));
-  }, [songs]);
-
   const columns = useMemo<GridColDef[]>(() => {
     return [
       { field: 'title', headerName: '曲名', flex: 2, editable: true },
       { field: 'artist', headerName: 'アーティスト', flex: 1, editable: true },
-      { field: 'createdAt', headerName: '作成日', width: 160 },
-      { field: 'updatedAt', headerName: '更新日', width: 160 },
+      {
+        field: 'createdAt',
+        headerName: '作成日',
+        width: 160,
+        valueFormatter: ({ value }) => format(new Date(value), 'yyyy/MM/dd HH:mm:ss'),
+      },
+      {
+        field: 'updatedAt',
+        headerName: '更新日',
+        width: 160,
+        valueFormatter: ({ value }) => format(new Date(value), 'yyyy/MM/dd HH:mm:ss'),
+      },
       {
         field: 'actions',
         type: 'actions',
@@ -118,7 +115,7 @@ const AdminSongsPage = () => {
           Add
         </Button>
         <Box sx={{ my: muiTheme.spacing(1), height: muiTheme.spacing(100) }}>
-          <DataGrid rows={rows} columns={columns} loading={isLoading} onCellEditCommit={onChange} />
+          <DataGrid rows={songs} columns={columns} loading={isLoading} processRowUpdate={onChange} />
         </Box>
         <EditSongModal open={isModalOpen} onSave={onSave} onClose={onModalClose} />
       </Layout>

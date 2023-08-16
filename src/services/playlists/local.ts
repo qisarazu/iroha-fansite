@@ -73,10 +73,13 @@ export const createClient = () => {
 };
 
 function parseParams(keys: Key[], result: RegExpExecArray) {
-  return keys.reduce((acc, cur, i) => {
-    acc[`${cur.name}`] = result[i + 1];
-    return acc;
-  }, {} as Record<string, unknown>);
+  return keys.reduce(
+    (acc, cur, i) => {
+      acc[`${cur.name}`] = result[i + 1];
+      return acc;
+    },
+    {} as Record<string, unknown>,
+  );
 }
 
 /**

@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { addMilliseconds } from 'date-fns';
 import MockDate from 'mockdate';
+import { describe, expect, test } from 'vitest';
 
 import { useIsPlayedVideos, VALID_TIME } from './useIsPlayedVideos';
 
