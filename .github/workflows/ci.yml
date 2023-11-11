@@ -28,10 +28,10 @@ jobs:
       - name: Setup node@lts
         uses: actions/setup-node@v3
         with:
-          node-versions: lts/*
+          node-version: lts/*
 
       - name: Installation
-        if: steps.ache-node-modules.outputs.cache-hit != 'true'
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
   type-check:
