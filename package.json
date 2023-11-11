@@ -48,7 +48,7 @@
     "@supabase/supabase-js": "^2.38.4",
     "@tabler/icons-react": "^2.40.0",
     "@transifex/cli": "^5.4.0",
-    "@transifex/native": "^5.4.0",
+    "@transifex/native": "^6.0.0",
     "@transifex/react": "^5.4.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
