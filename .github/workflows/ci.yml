@@ -8,29 +8,76 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  setup:
     runs-on: ubuntu-latest
-
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.cache-key }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Setup node@lts
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-versions: lts/*
 
       - name: Installation
+        if: steps.ache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Generate prisma client library from scheme
-        run: npm run prisma:generate
+  type-check:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Type checking
         run: npm run type-check
 
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ needs.setup.outputs.cache-key }}
+
       - name: Lint
         run: npm run lint
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Test
         run: npm test
