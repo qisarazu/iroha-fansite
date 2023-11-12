@@ -46,7 +46,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Type checking
@@ -62,7 +64,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Lint
@@ -78,7 +82,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Test
