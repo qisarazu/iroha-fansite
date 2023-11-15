@@ -1,5 +1,11 @@
-
-# [gozaru.fans](https://gozaru.fans)
+<p align="center">
+  <a href="https://gozaru.fans">
+    <picture>
+      <img src="https://gozaru.fans/logo128.png">
+    </picture>
+  </a>
+  <h1 align="center">gozaru.fans</h1>
+</p>
 
 **Unofficial** fan site for Hololive 6th generation, Iroha Kazama.
 
@@ -24,4 +30,3 @@
 ## License
 
 [MIT](https://github.com/qisarazu/iroha-fansite/blob/main/LICENSE)
-
