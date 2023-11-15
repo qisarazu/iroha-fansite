@@ -1,6 +1,6 @@
+import { IconBrandTiktok, IconBrandX, IconBrandYoutube } from '@tabler/icons-react';
 import { T, useT } from '@transifex/react';
 import Link from 'next/link';
-import { FaTwitter, FaYoutube } from 'react-icons/fa';
 
 import { IconLink } from '../components/IconLink/IconLink';
 import { Layout } from '../components/Layout/Layout';
@@ -56,8 +56,8 @@ function IndexPage() {
         <div>
           <IconLink
             className={styles.socialLink}
-            Icon={FaYoutube}
-            href="https://www.youtube.com/channel/UC_vMYWcDjmfdpH6r4TTn1MQ?sub_confirmation=1"
+            Icon={IconBrandYoutube}
+            href="https://youtube.com/@kazamairoha?si=n5_1qKRF7wGE-Uyl&sub_confirmation=1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -67,12 +67,23 @@ function IndexPage() {
         <div>
           <IconLink
             className={styles.socialLink}
-            Icon={FaTwitter}
-            href="https://twitter.com/kazamairohach"
+            Icon={IconBrandX}
+            href="https://x.com/kazamairohach"
             target="_blank"
             rel="noopener noreferrer"
           >
             @kazamairohach
+          </IconLink>
+        </div>
+        <div>
+          <IconLink
+            className={styles.socialLink}
+            Icon={IconBrandTiktok}
+            href="https://www.tiktok.com/@kazamairoha_hololive?is_from_webapp=1&sender_device=pc"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            kazamairoha_hololive
           </IconLink>
         </div>
       </div>
