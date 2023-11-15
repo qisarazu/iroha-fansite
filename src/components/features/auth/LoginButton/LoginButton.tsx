@@ -1,6 +1,6 @@
 import { Button, ButtonProps, Menu } from '@mantine/core';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { IconBrandGoogle, IconBrandTwitter, IconBrandX } from '@tabler/icons-react';
+import { IconBrandGoogle, IconBrandX } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 
 type Props = ButtonProps;
