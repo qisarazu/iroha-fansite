@@ -1,6 +1,6 @@
 import { Button, ButtonProps, Menu } from '@mantine/core';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { IconBrandGoogle, IconBrandTwitter } from '@tabler/icons-react';
+import { IconBrandGoogle, IconBrandTwitter, IconBrandX } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 
 type Props = ButtonProps;
@@ -27,8 +27,8 @@ export function LoginButton(props: Props) {
         <Menu.Item icon={<IconBrandGoogle />} onClick={handleGoogleLogin}>
           Google
         </Menu.Item>
-        <Menu.Item icon={<IconBrandTwitter />} onClick={handleTwitterLogin}>
-          Twitter
+        <Menu.Item icon={<IconBrandX />} onClick={handleTwitterLogin}>
+          X
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>
