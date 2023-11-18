@@ -25,6 +25,13 @@ export const Layout = memo(function Layout({ className, title, description, padd
       <Head>
         <title>{`${title} | gozaru.fans`}</title>
         <meta name="description" content={description ?? DEFAULT_DESCRIPTION} />
+        <meta property="og:title" content={`${title} | gozaru.fans`} />
+        <meta property="og:description" content={description ?? DEFAULT_DESCRIPTION} />
+        <meta property="og:image" content="https://gozaru.fans/api/og" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${title} | gozaru.fans`} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://gozaru.fans/api/og" />
       </Head>
       <div>
         <Header />

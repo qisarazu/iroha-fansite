@@ -50,6 +50,7 @@
     "@transifex/cli": "^5.4.0",
     "@transifex/native": "^5.4.0",
     "@transifex/react": "^5.4.0",
+    "@vercel/og": "^0.5.20",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.16.4",
