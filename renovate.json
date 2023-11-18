@@ -9,7 +9,7 @@
       "matchPackageNames": ["prettier"]
     },
     {
-      "updateTypes": ["minor"],
+      "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "automergeType": "pr",
       "requiredStatusChecks": ["type-check", "lint", "test"]
