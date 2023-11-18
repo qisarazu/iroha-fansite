@@ -9,7 +9,7 @@ export const config: NextConfig = {
 };
 
 async function fetchComfortaa() {
-  return fetch(new URL('assets/fonts/comfortaa-bold-webfont.ttf', import.meta.url)).then((res) => res.arrayBuffer());
+  return fetch(new URL('assets/fonts/comfortaa-bold.woff', import.meta.url)).then((res) => res.arrayBuffer());
 }
 
 async function fetchMPlusRounded1c() {
