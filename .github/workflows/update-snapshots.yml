@@ -42,6 +42,6 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ steps.waitFor200.outputs.url }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: '[CI] Update snapshots'
