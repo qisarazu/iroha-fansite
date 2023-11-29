@@ -39,14 +39,14 @@ export const RepeatButton = memo(({ type, onClick }: Props) => {
               _comment: 'The aria-label applied to the button to repeat a whole playlist',
             })
           : type === 'repeatOne'
-          ? t('曲をリピート', {
-              _context: 'aria-label',
-              _comment: 'The aria-label applied to the button to repeat a single track',
-            })
-          : t('リピートを解除', {
-              _context: 'aria-label',
-              _comment: 'The aria-label applied to the button to disable repeating',
-            })
+            ? t('曲をリピート', {
+                _context: 'aria-label',
+                _comment: 'The aria-label applied to the button to repeat a single track',
+              })
+            : t('リピートを解除', {
+                _context: 'aria-label',
+                _comment: 'The aria-label applied to the button to disable repeating',
+              })
       }
       onClick={onClickHandler}
     >
