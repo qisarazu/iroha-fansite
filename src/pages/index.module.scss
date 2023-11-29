@@ -10,6 +10,61 @@
   margin-bottom: 1.5rem;
 }
 
+.anniversaryTitle {
+  position: relative;
+  z-index: 1;
+  font-size: 64px;
+  text-align: center;
+  color: #44bfb7;
+  margin: 0;
+
+  text-shadow:
+    0 0 10px #44bfb7,
+    0 0 20px #338f89,
+    0 0 40px #22605c,
+    0 0 80px #11302e;
+
+  @media screen and (max-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.anniversaryDate {
+  position: relative;
+  z-index: 1;
+  font-size: 48px;
+  text-align: center;
+  color: #ddaa71;
+  margin: 16px 0 0;
+
+  text-shadow:
+    0 0 10px #ddaa71,
+    0 0 20px #a68055,
+    0 0 40px #6f5539,
+    0 0 80px #372b1c;
+
+  @media screen and (max-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.live {
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16/9;
+}
+
+.live iframe {
+  border: 0;
+  box-shadow:
+    0 0 20px #7be6be,
+    0 0 40px #5cad8f,
+    0 0 80px #3e735f,
+    0 0 120px #1f3a30;
+}
+
 .message {
   margin: 1rem 0;
 }
