@@ -3,6 +3,7 @@ import { T, useT } from '@transifex/react';
 import clsx from 'clsx';
 import { isAfter, isBefore, parse } from 'date-fns';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import { EmojiBackground } from '../components/effects/EmojiBackground/EmojiBackground';
 import { IconLink } from '../components/IconLink/IconLink';
@@ -23,10 +24,13 @@ function checkDateRange() {
   }
 }
 
-const status = checkDateRange();
-
 function IndexPage() {
   const t = useT();
+  const [status, setStatus] = useState<'before' | 'after' | 'within'>('before');
+
+  useEffect(() => {
+    setStatus(checkDateRange());
+  }, []);
 
   return (
     <Layout
