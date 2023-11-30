@@ -37,15 +37,22 @@
   color: #ddaa71;
   margin: 16px 0 0;
 
-  text-shadow:
-    0 0 10px #ddaa71,
-    0 0 20px #a68055,
-    0 0 40px #6f5539,
-    0 0 80px #372b1c;
+  animation: flickerDateBefore 3s infinite alternate;
 
   @media screen and (max-width: 768px) {
     font-size: 24px;
   }
+}
+
+.anniversaryDateWithinOnAir {
+  color: #db1818;
+  display: inline-flex;
+  padding: 4px 32px;
+  border: 4px solid #db1818;
+  border-radius: 12px;
+  background-color: #0a0a0a;
+
+  animation: flickerDateWithin 3s infinite alternate;
 }
 
 .live {
@@ -59,10 +66,52 @@
 .live iframe {
   border: 0;
   box-shadow:
-    0 0 20px #7be6be,
-    0 0 40px #5cad8f,
-    0 0 80px #3e735f,
-    0 0 120px #1f3a30;
+    0 0 20px #bfbfbf,
+    0 0 40px #8f8f8f,
+    0 0 80px #606060,
+    0 0 120px #303030;
+}
+
+@keyframes flickerDateBefore {
+  0%,
+  31.5%,
+  32.5%,
+  79%,
+  81%,
+  100% {
+    text-shadow:
+      0 0 10px #ddaa71,
+      0 0 20px #a68055,
+      0 0 40px #6f5539,
+      0 0 80px #372b1c;
+  }
+
+  32%,
+  80% {
+    text-shadow: none;
+  }
+}
+
+@keyframes flickerDateWithin {
+  0%,
+  24%,
+  26%,
+  100% {
+    box-shadow:
+      inset 0 0 0 2px rgba(0, 0, 0, 0.15),
+      0 0 0 2px rgba(0, 0, 0, 0.15),
+      inset 0 0 20px #db1818,
+      0 0 40px #800b08;
+
+    text-shadow:
+      0 0 1.75rem #db1818,
+      0 0 4rem #a41212;
+  }
+
+  25% {
+    box-shadow: none;
+    text-shadow: none;
+  }
 }
 
 .message {

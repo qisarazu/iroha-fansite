@@ -1,30 +1,66 @@
 import { IconBrandTiktok, IconBrandTwitch, IconBrandX, IconBrandYoutube } from '@tabler/icons-react';
 import { T, useT } from '@transifex/react';
+import clsx from 'clsx';
+import { isAfter, isBefore, parse } from 'date-fns';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-import { ConfettiBackground } from '../components/effects/ConfettiBackground/ConfettiBackground';
+import { EmojiBackground } from '../components/effects/EmojiBackground/EmojiBackground';
 import { IconLink } from '../components/IconLink/IconLink';
 import { Layout } from '../components/Layout/Layout';
 import styles from './index.module.scss';
 
+function checkDateRange() {
+  const startDate = parse('2023/12/02 21:00', 'yyyy/MM/dd HH:mm', new Date());
+  const endDate = parse('2023/12/02 22:00', 'yyyy/MM/dd HH:mm', new Date());
+  const now = new Date();
+
+  if (isBefore(now, startDate)) {
+    return 'before'; // 現在の日時が開始日時より前
+  } else if (isAfter(now, endDate)) {
+    return 'after'; // 現在の日時が終了日時より後
+  } else {
+    return 'within'; // 現在の日時が範囲内
+  }
+}
+
 function IndexPage() {
   const t = useT();
+  const [status, setStatus] = useState<'before' | 'after' | 'within'>('before');
+
+  useEffect(() => {
+    setStatus(checkDateRange());
+  }, []);
+
   return (
     <Layout
       className={styles.root}
       title={t('ホーム', { _context: 'meta', _comment: 'The page title of the index page' })}
     >
-      <ConfettiBackground />
+      <EmojiBackground />
       <div className={styles.anniversary}>
-        <h1 className={styles.anniversaryTitle}>2nd ANNIVERSARY LIVE</h1>
-        <h2 className={styles.anniversaryDate}>2023/11/30 20:00 START</h2>
+        <h1 className={styles.anniversaryTitle}>holoX 2nd ANNIVERSARY LIVE</h1>
+        <h2
+          className={clsx(styles.anniversaryDate, {
+            [styles.anniversaryDateBefore]: status === 'before',
+            [styles.anniversaryDateWithin]: status === 'within',
+          })}
+        >
+          {status === 'before' ? (
+            '2023/12/02 21:00 START'
+          ) : status === 'within' ? (
+            <div className={styles.anniversaryDateWithinOnAir}>ON AIR</div>
+          ) : (
+            ''
+          )}
+        </h2>
 
         <div className={styles.live}>
           <iframe
             width="100%"
             height="100%"
-            src="https://www.youtube.com/embed/jrUa3JpsNt4?si=fAWsRQitN39p-n12&controls=0"
-            title="YouTube video player"
+            src="https://www.youtube.com/embed/7R2Q1xjz8eU?si=7Cp-_dPkEP04tccS&controls=0"
+            title="【LIVEあり！ゲストあり！】holoXついに◯◯進出！？刮目せよ！我ら #SSholoX2周年"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           />
         </div>
