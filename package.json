@@ -24,7 +24,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "npx chromatic --project-token=40e407e6fabc",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "plop": "plop"
   },
   "license": "MIT",
   "dependencies": {
@@ -102,6 +103,7 @@
     "jsdom": "^22.1.0",
     "lint-staged": "^15.0.0",
     "mockdate": "^3.0.5",
+    "plop": "^4.0.0",
     "prettier": "^3.0.3",
     "sass-loader": "^13.3.2",
     "storybook": "^7.5.3",

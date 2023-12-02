@@ -6,5 +6,5 @@ module.exports = {
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
   },
-  ignorePatterns: ['!.storybook'],
+  ignorePatterns: ['!.storybook', 'plopfile.mjs'],
 };

@@ -1,0 +1,14 @@
+import clsx from 'clsx';
+
+import styles from './{{pascalCase name}}.module.css';
+
+type Props = {
+  className?: string;
+}
+
+export function {{pascalCase name}}({ className }: Props) {
+  return (
+    <div className={clsx(styles.root, className)}>
+    </div>
+  )
+}
