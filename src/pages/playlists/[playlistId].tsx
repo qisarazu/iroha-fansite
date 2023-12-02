@@ -6,12 +6,14 @@ import { useRouter } from 'next/router';
 
 import { useEditPlaylistModal } from '../../components/features/playlist/EditPlaylistModal/useEditPlaylistModal';
 import { PlaylistThumbnail } from '../../components/features/playlist/PlaylistCard/PlaylistThumbnail/PlaylistThumbnail';
+import { PlaylistGuide } from '../../components/features/playlist/PlaylistGuide/PlaylistGuide';
 import { PlaylistItemList } from '../../components/features/playlist/PlaylistItemList/PlaylistItemList';
 import { useSortPlaylistItemModal } from '../../components/features/playlist/SortPlaylistItemModal/useSortPlaylistItemModal';
 import { Layout } from '../../components/Layout/Layout';
 import { useIsMobile } from '../../hooks/ui/useIsMobile';
 import { useDeletePlaylist, usePlaylistDetails } from '../../services/playlists/client';
 import { getPlaylistURL, getPlaylistWatchURL } from '../../utils/urls';
+import styles from './[playlistId].module.css';
 
 export default function PlaylistIdPage() {
   const t = useT();
@@ -107,7 +109,14 @@ export default function PlaylistIdPage() {
             </Flex>
 
             <Box mt={{ base: 32, md: 64 }}>
-              <PlaylistItemList playlistId={playlist.id} items={playlist.items} sortable={!isMobile} />
+              {playlist.items.length ? (
+                <PlaylistItemList playlistId={playlist.id} items={playlist.items} sortable={!isMobile} />
+              ) : (
+                <div>
+                  <p>プレイリストにアイテムがありません。</p>
+                  <PlaylistGuide className={styles.playlistGuide} />
+                </div>
+              )}
             </Box>
           </>
         )}

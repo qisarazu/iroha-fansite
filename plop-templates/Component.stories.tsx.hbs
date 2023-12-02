@@ -1,0 +1,15 @@
+import type { Meta, StoryFn } from '@storybook/react';
+
+import { {{pascalCase name}} } from './{{pascalCase name}}';
+
+export default {
+  title: '{{formatPath directory subdirectory}}/{{pascalCase name}}',
+  component: {{pascalCase name}},
+} as Meta<typeof {{pascalCase name}}>;
+
+const StoryTemplate: StoryFn<typeof {{pascalCase name}}> = (args) => <{{pascalCase name}} {...args} />;
+
+export const Default = StoryTemplate.bind({});
+Default.args = {
+  // TODO
+};
