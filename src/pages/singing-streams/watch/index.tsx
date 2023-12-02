@@ -64,6 +64,14 @@ export default function SingingStreamsWatchPage() {
     [streams, streamId],
   );
 
+  const isSkipPrevDisabled = useMemo(() => {
+    return isFirstStream && currentTime < SKIP_PREV_TIME && ['none', 'repeatOne'].includes(repeatType);
+  }, [currentTime, isFirstStream, repeatType]);
+
+  const isSkipNextDisabled = useMemo(() => {
+    return isLastStream && ['none', 'repeatOne'].includes(repeatType);
+  }, [isLastStream, repeatType]);
+
   const { player, ...ytPlayerProps } = useYTPlayer({
     mountId: 'singing-stream-player',
     controls: false,
@@ -84,28 +92,53 @@ export default function SingingStreamsWatchPage() {
 
   const onSkipPrev = useCallback(() => {
     if (!streams || !currentStream || !player) return;
+
+    // SKIP_PREV_TIME 以上経過している場合、前の曲には戻らず最初に再生時間を戻す
     if (currentTime >= SKIP_PREV_TIME) {
       player.seekTo(currentStream.start);
       setCurrentTime(0);
       return;
     }
     const playingStreamIndex = streams.findIndex((stream) => stream.id === currentStream.id);
-    if (playingStreamIndex === 0) return;
+    if (playingStreamIndex === 0) {
+      if (repeatType === 'repeat') {
+        // 最初の曲かつ、リピート再生の場合は最後の曲に移動
+        router.push(getMusicWatchURL(streams[streams.length - 1].id, { playlist: playlistId }));
+        return;
+      } else {
+        // そうでなければ何もしない
+        return;
+      }
+    }
+
+    // 前の曲へ遷移
     const prevStream = streams[playingStreamIndex - 1];
     if (prevStream) {
       router.push(getMusicWatchURL(prevStream.id, { playlist: playlistId }));
     }
-  }, [currentStream, currentTime, player, playlistId, router, streams]);
+  }, [currentStream, currentTime, player, playlistId, repeatType, router, streams]);
 
   const onSkipNext = useCallback(() => {
     if (!streams || !currentStream) return;
+
     const playingStreamIndex = streams.findIndex((stream) => stream.id === currentStream.id);
-    if (playingStreamIndex === streams.length - 1) return;
+    if (playingStreamIndex === streams.length - 1) {
+      if (repeatType === 'repeat') {
+        // 最後の曲かつ、リピート再生の場合は最初の曲に戻る
+        router.push(getMusicWatchURL(streams[0].id, { playlist: playlistId }));
+        return;
+      } else {
+        // それ以外は何もしない
+        return;
+      }
+    }
+
+    // 次の曲へ遷移
     const nextStream = streams[playingStreamIndex + 1];
     if (nextStream) {
       router.push(getMusicWatchURL(nextStream.id, { playlist: playlistId }));
     }
-  }, [currentStream, playlistId, router, streams]);
+  }, [currentStream, playlistId, repeatType, router, streams]);
 
   const onVolumeChange = useCallback(
     (value: number) => {
@@ -337,8 +370,8 @@ export default function SingingStreamsWatchPage() {
           {isMobile ? (
             <MobilePlayerController
               isPlaying={isPlaying}
-              isSkipPrevDisabled={isFirstStream && currentTime < SKIP_PREV_TIME}
-              isSkipNextDisabled={isLastStream}
+              isSkipPrevDisabled={isSkipPrevDisabled}
+              isSkipNextDisabled={isSkipNextDisabled}
               isShuffled={isShuffledOnce}
               needNativePlayPush={!isPlayedVideo(currentStream.video.videoId)}
               length={currentStream.end - currentStream.start}
@@ -360,8 +393,8 @@ export default function SingingStreamsWatchPage() {
             <PlayerController
               isPlaying={isPlaying}
               isMute={isMute}
-              isSkipPrevDisabled={isFirstStream && currentTime < SKIP_PREV_TIME}
-              isSkipNextDisabled={isLastStream}
+              isSkipPrevDisabled={isSkipPrevDisabled}
+              isSkipNextDisabled={isSkipNextDisabled}
               isShuffled={isShuffledOnce}
               needNativePlayPush={!isPlayedVideo(currentStream.video.videoId)}
               length={currentStream.end - currentStream.start}
