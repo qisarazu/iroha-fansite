@@ -1,71 +1,85 @@
 import { IconBrandTiktok, IconBrandTwitch, IconBrandX, IconBrandYoutube } from '@tabler/icons-react';
 import { T, useT } from '@transifex/react';
-import clsx from 'clsx';
-import { isAfter, isBefore, parse } from 'date-fns';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
-import { EmojiBackground } from '../components/effects/EmojiBackground/EmojiBackground';
+import { Information, InformationList } from '../components/features/information/InformationList/InformationList';
 import { IconLink } from '../components/IconLink/IconLink';
 import { Layout } from '../components/Layout/Layout';
 import styles from './index.module.scss';
 
-function checkDateRange() {
-  const startDate = parse('2023/12/02 21:00', 'yyyy/MM/dd HH:mm', new Date());
-  const endDate = parse('2023/12/02 22:00', 'yyyy/MM/dd HH:mm', new Date());
-  const now = new Date();
-
-  if (isBefore(now, startDate)) {
-    return 'before'; // 現在の日時が開始日時より前
-  } else if (isAfter(now, endDate)) {
-    return 'after'; // 現在の日時が終了日時より後
-  } else {
-    return 'within'; // 現在の日時が範囲内
-  }
-}
-
 function IndexPage() {
   const t = useT();
-  const [status, setStatus] = useState<'before' | 'after' | 'within'>('before');
 
-  useEffect(() => {
-    setStatus(checkDateRange());
-  }, []);
+  const informationList = useMemo<Information[]>(
+    () => [
+      {
+        title: '【キャラスト × 風真いろは】SSコンテスト',
+        startAt: new Date(2023, 11, 5),
+        endAt: new Date(2023, 11, 19, 12, 0),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/caravan_stories_2023_ss.webp',
+        href: 'https://masters.caravan-stories.com/news/pxemhrhn',
+        showTime: true,
+      },
+      {
+        title: 'ほろーかる 京都編',
+        startAt: new Date(2023, 11, 7),
+        endAt: new Date(2023, 11, 19),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holocal_kyoto.webp',
+        href: 'https://hololive.hololivepro.com/events/holocal-kyoto2023/',
+      },
+      {
+        title: '【キャラスト × 風真いろは】風真いろは、推して参る！',
+        startAt: new Date(2023, 11, 5),
+        endAt: new Date(2023, 11, 26),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/caravan_stories_2023.webp',
+        href: 'https://masters.caravan-stories.com/news/odaezvoh',
+      },
+      {
+        title: '風真いろは 活動2周年記念',
+        startAt: new Date(2023, 10, 30, 21, 0),
+        endAt: new Date(2024, 0, 4, 18, 0),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/iroha_2nd_aniv.webp',
+        href: 'https://shop.hololivepro.com/products/kazamairoha_an2nd',
+        showTime: true,
+      },
+      {
+        title: '秘密結社 holoX × ドラマチック謎解きゲーム 〜秘密結社 holoX からの招待状〜 迷宮なラビリンスからの脱出',
+        startAt: new Date(2023, 11, 9),
+        endAt: new Date(2024, 0, 8),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/labyrinth_of_labyrinth_escape_game.webp',
+        href: 'https://www.edith.co.jp/lp/holoX/',
+      },
+      {
+        title: '秘密結社holoX 活動2周年記念',
+        startAt: new Date(2023, 11, 2, 22, 0),
+        endAt: new Date(2024, 0, 9, 18, 0),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/ssholox_2nd_aniv.webp',
+        href: 'https://shop.hololivepro.com/products/holox_an2nd',
+        showTime: true,
+      },
+      {
+        title: 'hololive × HoneyWorks（ホロハニ）1stアルバム『ほろはにヶ丘高校』 ゲーマーズ店舗特典',
+        startAt: new Date(2023, 11, 15),
+        endAt: 'なくなり次第終了',
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holo_honey_studio_benefit.webp',
+        href: 'https://www.gamers.co.jp/pd/10699043/',
+      },
+    ],
+    [],
+  );
 
   return (
     <Layout
       className={styles.root}
       title={t('ホーム', { _context: 'meta', _comment: 'The page title of the index page' })}
     >
-      <EmojiBackground />
-      <div className={styles.anniversary}>
-        <h1 className={styles.anniversaryTitle}>holoX 2nd ANNIVERSARY LIVE</h1>
-        <h2
-          className={clsx(styles.anniversaryDate, {
-            [styles.anniversaryDateBefore]: status === 'before',
-            [styles.anniversaryDateWithin]: status === 'within',
-          })}
-        >
-          {status === 'before' ? (
-            '2023/12/02 21:00 START'
-          ) : status === 'within' ? (
-            <div className={styles.anniversaryDateWithinOnAir}>ON AIR</div>
-          ) : (
-            ''
-          )}
-        </h2>
-
-        <div className={styles.live}>
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/7R2Q1xjz8eU?si=7Cp-_dPkEP04tccS&controls=0"
-            title="【LIVEあり！ゲストあり！】holoXついに◯◯進出！？刮目せよ！我ら #SSholoX2周年"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          />
-        </div>
-      </div>
-
+      <section>
+        <h2 className={styles.informationTitle}>グッズ / イベント情報</h2>
+        <main>
+          <InformationList items={informationList} />
+        </main>
+      </section>
       <div className={styles.socialLinks}>
         <div>
           <IconLink

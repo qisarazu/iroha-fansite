@@ -1,0 +1,5 @@
+.item + .item {
+  margin-top: 8px;
+  border-top: 1px solid #868e96;
+  padding-top: 8px;
+}
