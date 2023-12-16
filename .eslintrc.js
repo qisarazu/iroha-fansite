@@ -5,6 +5,7 @@ module.exports = {
     'react/display-name': 'off',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
+    '@next/next/no-img-element': 'off',
   },
   ignorePatterns: ['!.storybook', 'plopfile.mjs'],
 };

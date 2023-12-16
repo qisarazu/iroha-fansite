@@ -1,0 +1,75 @@
+.root {
+  display: grid;
+  grid-template-columns: 160px minmax(100px, 1fr) minmax(300px, auto);
+  column-gap: 16px;
+  row-gap: 8px;
+}
+
+@media (width <= 768px) {
+  .root {
+    grid-template-columns: 64px minmax(100px, 1fr);
+  }
+}
+
+.link {
+  display: flex;
+  align-items: center;
+}
+
+.thumbnail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+}
+
+@media (width <= 768px) {
+  .thumbnail {
+    height: 64px;
+  }
+}
+
+.thumbnailImage {
+  width: 100%;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 18px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+@media (width <= 768px) {
+  .title {
+    font-size: 14px;
+  }
+}
+
+.term {
+  display: flex;
+  text-align: right;
+  align-self: center;
+  justify-self: flex-end;
+}
+
+@media (width <= 768px) {
+  .term {
+    flex-direction: column;
+    grid-column: span 2;
+    grid-row-start: 2;
+    font-size: 12px;
+    margin-left: auto;
+  }
+}
+
+.term .isNearly {
+  color: #fa5252;
+  font-weight: 700;
+}
+
+.termEnd {
+  margin-left: 4px;
+}
