@@ -14,26 +14,18 @@ function IndexPage() {
   const informationList = useMemo<Information[]>(
     () => [
       {
-        title: '【キャラスト × 風真いろは】SSコンテスト',
-        startAt: new Date(2023, 11, 5),
-        endAt: new Date(2023, 11, 19, 12, 0),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/caravan_stories_2023_ss.webp',
-        href: 'https://masters.caravan-stories.com/news/pxemhrhn',
-        showTime: true,
-      },
-      {
-        title: 'ほろーかる 京都編',
-        startAt: new Date(2023, 11, 7),
-        endAt: new Date(2023, 11, 19),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holocal_kyoto.webp',
-        href: 'https://hololive.hololivepro.com/events/holocal-kyoto2023/',
-      },
-      {
         title: '【キャラスト × 風真いろは】風真いろは、推して参る！',
         startAt: new Date(2023, 11, 5),
         endAt: new Date(2023, 11, 26),
         src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/caravan_stories_2023.webp',
         href: 'https://masters.caravan-stories.com/news/odaezvoh',
+      },
+      {
+        title: 'コミックマーケット103',
+        startAt: new Date(2023, 11, 30),
+        endAt: new Date(2023, 11, 31),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/c103.webp',
+        href: 'https://hololive.hololivepro.com/events/c103/',
       },
       {
         title: '風真いろは 活動2周年記念',
@@ -57,6 +49,29 @@ function IndexPage() {
         src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/ssholox_2nd_aniv.webp',
         href: 'https://shop.hololivepro.com/products/holox_an2nd',
         showTime: true,
+      },
+      {
+        title: 'hololive production official shop in Tokyo Station',
+        startAt: new Date(2023, 10, 16, 10, 0),
+        endAt: new Date(2024, 0, 18, 18, 0),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/tokyo_station_2023.webp',
+        href: 'https://hololive.hololivepro.com/events/tokyocs/',
+        showTime: true,
+      },
+      {
+        title: 'ほろーかる 京都編 グッズ後日販売',
+        startAt: new Date(2023, 11, 20, 12),
+        endAt: '',
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holocal_kyoto.webp',
+        href: 'https://www.crux-onlinestore.com/shopbrand/ct192/',
+        showTime: true,
+      },
+      {
+        title: '【アニメイト】hololive closet 正月衣装',
+        startAt: new Date(2024, 0, 1),
+        endAt: '',
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/closet_newyear_2024.webp',
+        href: 'https://twitter.com/animateinfo/status/1737052773743518150',
       },
       {
         title: 'hololive × HoneyWorks（ホロハニ）1stアルバム『ほろはにヶ丘高校』 ゲーマーズ店舗特典',
