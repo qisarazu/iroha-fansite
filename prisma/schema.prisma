@@ -69,3 +69,30 @@ model Playlist {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
+
+model Activity {
+  id           String         @id @default(nanoid(12))
+  status       ActivityStatus
+  type         ActivityType
+  title        String
+  thumbnailURL String
+  detailURL    String
+  isShowTime   Boolean
+  startAt      DateTime
+  endAt        DateTime?
+  endNote      String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+enum ActivityType {
+  GOODS
+  EVENT
+}
+
+enum ActivityStatus {
+  ACTIVE
+  HIDDEN
+  SCHEDULED
+  CLOSED
+}
