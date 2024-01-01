@@ -14,20 +14,6 @@ function IndexPage() {
   const informationList = useMemo<Information[]>(
     () => [
       {
-        title: '【キャラスト × 風真いろは】風真いろは、推して参る！',
-        startAt: new Date(2023, 11, 5),
-        endAt: new Date(2023, 11, 26),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/caravan_stories_2023.webp',
-        href: 'https://masters.caravan-stories.com/news/odaezvoh',
-      },
-      {
-        title: 'コミックマーケット103',
-        startAt: new Date(2023, 11, 30),
-        endAt: new Date(2023, 11, 31),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/c103.webp',
-        href: 'https://hololive.hololivepro.com/events/c103/',
-      },
-      {
         title: '風真いろは 活動2周年記念',
         startAt: new Date(2023, 10, 30, 21, 0),
         endAt: new Date(2024, 0, 4, 18, 0),
