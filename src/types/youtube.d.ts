@@ -1,11 +1,12 @@
 declare namespace YT {
   export class Player {
     constructor(
-      mountId: string,
+      mountId: string | HTMLElement,
       options?: {
         width?: string | number;
         height?: string | number;
         videoId?: string;
+        host?: string;
         playerVars?: Record<string, unknown>;
         events?: {
           onReady?: (event: { target: Player }) => void;

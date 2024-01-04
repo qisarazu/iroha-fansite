@@ -30,6 +30,7 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
       setPlayer(
         new YT.Player(mountId, {
           ...options,
+          host: 'https://www.youtube-nocookie.com',
           events: {
             onReady: onPlayerReady,
           },
