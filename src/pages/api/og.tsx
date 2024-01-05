@@ -9,7 +9,7 @@ export const config: NextConfig = {
 };
 
 async function fetchComfortaa() {
-  return fetch(new URL('assets/fonts/comfortaa-bold.woff', import.meta.url)).then((res) => res.arrayBuffer());
+  return fetch(new URL('../../assets/fonts/comfortaa-bold.woff', import.meta.url)).then((res) => res.arrayBuffer());
 }
 
 function Container({ style, children }: { style?: CSSProperties; children: ReactNode }) {
