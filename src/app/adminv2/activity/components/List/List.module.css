@@ -1,0 +1,27 @@
+.root {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 1px solid black;
+  border-spacing: 0;
+}
+
+.thead {
+  border-bottom: 1px solid black;
+}
+
+.th + .th {
+  border-left: 1px solid black;
+}
+
+.th:nth-child(4) {
+  width: 12rem;
+}
+
+.tr {
+  height: 160px;
+  border-top: 1px solid black;
+}
+
+.td + .td {
+  border-left: 1px solid black;
+}

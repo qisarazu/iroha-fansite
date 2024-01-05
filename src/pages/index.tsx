@@ -1,66 +1,17 @@
 import { IconBrandTiktok, IconBrandTwitch, IconBrandX, IconBrandYoutube } from '@tabler/icons-react';
 import { T, useT } from '@transifex/react';
 import Link from 'next/link';
-import { useMemo } from 'react';
 
-import { Information, InformationList } from '../components/features/information/InformationList/InformationList';
+import { ActivityList } from '../components/features/activity/ActivityList/ActivityList';
+import { ActivityListSkeleton } from '../components/features/activity/ActivityList/ActivityListSkeleton/ActivityListSkeleton';
 import { IconLink } from '../components/IconLink/IconLink';
 import { Layout } from '../components/Layout/Layout';
+import { useActivities } from '../services/activities/client';
 import styles from './index.module.scss';
 
 function IndexPage() {
   const t = useT();
-
-  const informationList = useMemo<Information[]>(
-    () => [
-      {
-        title: 'ほろーかる 京都編 グッズ後日販売',
-        startAt: new Date(2023, 11, 20, 12),
-        endAt: new Date(2024, 0, 5, 23, 59),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holocal_kyoto.webp',
-        href: 'https://www.crux-onlinestore.com/shopbrand/ct192/',
-        showTime: true,
-      },
-      {
-        title: '秘密結社 holoX × ドラマチック謎解きゲーム 〜秘密結社 holoX からの招待状〜 迷宮なラビリンスからの脱出',
-        startAt: new Date(2023, 11, 9),
-        endAt: new Date(2024, 0, 8),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/labyrinth_of_labyrinth_escape_game.webp',
-        href: 'https://www.edith.co.jp/lp/holoX/',
-      },
-      {
-        title: '秘密結社holoX 活動2周年記念',
-        startAt: new Date(2023, 11, 2, 22, 0),
-        endAt: new Date(2024, 0, 9, 18, 0),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/ssholox_2nd_aniv.webp',
-        href: 'https://shop.hololivepro.com/products/holox_an2nd',
-        showTime: true,
-      },
-      {
-        title: 'hololive production official shop in Tokyo Station',
-        startAt: new Date(2023, 10, 16, 10, 0),
-        endAt: new Date(2024, 0, 18, 18, 0),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/tokyo_station_2023.webp',
-        href: 'https://hololive.hololivepro.com/events/tokyocs/',
-        showTime: true,
-      },
-      {
-        title: '【アニメイト】hololive closet 正月衣装',
-        startAt: new Date(2024, 0, 1),
-        endAt: '',
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/closet_newyear_2024.webp',
-        href: 'https://twitter.com/animateinfo/status/1737052773743518150',
-      },
-      {
-        title: 'hololive × HoneyWorks（ホロハニ）1stアルバム『ほろはにヶ丘高校』 ゲーマーズ店舗特典',
-        startAt: new Date(2023, 11, 15),
-        endAt: 'なくなり次第終了',
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holo_honey_studio_benefit.webp',
-        href: 'https://www.gamers.co.jp/pd/10699043/',
-      },
-    ],
-    [],
-  );
+  const { activities } = useActivities();
 
   return (
     <Layout
@@ -70,7 +21,13 @@ function IndexPage() {
       <section>
         <h2 className={styles.informationTitle}>グッズ / イベント情報</h2>
         <main>
-          <InformationList items={informationList} />
+          {!activities ? (
+            <ActivityListSkeleton />
+          ) : activities.length ? (
+            <ActivityList items={activities} />
+          ) : (
+            <p>現在グッズ / イベント情報はありません</p>
+          )}
         </main>
       </section>
       <div className={styles.socialLinks}>
