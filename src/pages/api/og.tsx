@@ -63,7 +63,7 @@ export default async function handler(req: NextRequest) {
 
   const validParams = hasTitle && hasArtist && hasVideoTitle && hasVideoPublishedAt;
 
-  const comfortaa = await fetch(new URL('../../assets/comfortaa-bold.woff', import.meta.url)).then((res) =>
+  const comfortaa = await fetch(new URL('../../../assets/comfortaa-bold.woff', import.meta.url)).then((res) =>
     res.arrayBuffer(),
   );
 
