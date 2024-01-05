@@ -20,7 +20,7 @@ export function InformationListItem({ className, src, href, title, startAt, endA
     if (typeof endAt === 'string') return false;
 
     const diffDays = differenceInDays(endAt, new Date());
-    return 0 <= diffDays && diffDays < 7;
+    return 0 <= diffDays && diffDays < 3;
   }, [endAt]);
 
   const dateFormat = useCallback(

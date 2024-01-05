@@ -14,11 +14,11 @@ function IndexPage() {
   const informationList = useMemo<Information[]>(
     () => [
       {
-        title: '風真いろは 活動2周年記念',
-        startAt: new Date(2023, 10, 30, 21, 0),
-        endAt: new Date(2024, 0, 4, 18, 0),
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/iroha_2nd_aniv.webp',
-        href: 'https://shop.hololivepro.com/products/kazamairoha_an2nd',
+        title: 'ほろーかる 京都編 グッズ後日販売',
+        startAt: new Date(2023, 11, 20, 12),
+        endAt: new Date(2024, 0, 5, 23, 59),
+        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holocal_kyoto.webp',
+        href: 'https://www.crux-onlinestore.com/shopbrand/ct192/',
         showTime: true,
       },
       {
@@ -42,14 +42,6 @@ function IndexPage() {
         endAt: new Date(2024, 0, 18, 18, 0),
         src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/tokyo_station_2023.webp',
         href: 'https://hololive.hololivepro.com/events/tokyocs/',
-        showTime: true,
-      },
-      {
-        title: 'ほろーかる 京都編 グッズ後日販売',
-        startAt: new Date(2023, 11, 20, 12),
-        endAt: '',
-        src: 'https://rxhqujttltbkuggtavtr.supabase.co/storage/v1/object/public/information-thumbnail/holocal_kyoto.webp',
-        href: 'https://www.crux-onlinestore.com/shopbrand/ct192/',
         showTime: true,
       },
       {
