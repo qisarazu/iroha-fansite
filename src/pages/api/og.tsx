@@ -8,10 +8,6 @@ export const config: NextConfig = {
   runtime: 'edge',
 };
 
-async function fetchComfortaa() {
-  return fetch(new URL('assets/fonts/comfortaa-bold.woff', import.meta.url)).then((res) => res.arrayBuffer());
-}
-
 function Container({ style, children }: { style?: CSSProperties; children: ReactNode }) {
   return (
     <div
@@ -67,7 +63,9 @@ export default async function handler(req: NextRequest) {
 
   const validParams = hasTitle && hasArtist && hasVideoTitle && hasVideoPublishedAt;
 
-  const comfortaa = await fetchComfortaa();
+  const comfortaa = await fetch(new URL('../../../assets/fonts/comfortaa-bold.woff', import.meta.url)).then((res) =>
+    res.arrayBuffer(),
+  );
 
   if (!validParams) {
     return new ImageResponse(
