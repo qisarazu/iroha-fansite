@@ -50,7 +50,7 @@
     "@tabler/icons-react": "^2.40.0",
     "@transifex/cli": "^5.4.0",
     "@transifex/native": "^5.4.0",
-    "@transifex/react": "^5.4.0",
+    "@transifex/react": "^6.0.0",
     "@vercel/og": "^0.6.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
