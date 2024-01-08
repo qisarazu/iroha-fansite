@@ -1,5 +1,6 @@
 import type { Activity, ActivityStatus, ActivityType } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { startOfDay } from 'date-fns';
 
 import { internalServerError } from '../../lib/api/ApiError';
 import { prisma } from '../../lib/prisma';
@@ -35,7 +36,7 @@ export async function getActivities(params?: GetActivitiesParams) {
           },
           {
             endAt: {
-              gte: new Date(),
+              gte: startOfDay(new Date()),
             },
           },
         ],
