@@ -101,7 +101,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.15",
     "husky": "^8.0.3",
-    "jsdom": "^22.1.0",
+    "jsdom": "^24.0.0",
     "lint-staged": "^15.0.0",
     "mockdate": "^3.0.5",
     "plop": "^4.0.0",
