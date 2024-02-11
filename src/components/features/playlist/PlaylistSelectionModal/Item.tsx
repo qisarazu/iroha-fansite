@@ -21,19 +21,20 @@ export function Item({ playlist, musicId, onClick }: Props) {
 
   return (
     <Button
-      sx={{
+      style={{
         display: 'flex',
         justifyItems: 'flex-start',
-        backgroundColor: 'transparent',
         height: 'auto',
       }}
+      color="white"
+      variant="subtle"
       py={8}
       key={playlist.id}
       radius="sm"
       onClick={handleAdd}
     >
       <PlaylistThumbnail thumbnailURLs={playlist.thumbnailURLs} alt={playlist.title} width={64} height={36} />
-      <Text fw="bold" sx={{ marginLeft: 16 }}>
+      <Text fw="bold" style={{ marginLeft: 16 }}>
         {playlist.title}
       </Text>
     </Button>

@@ -17,7 +17,7 @@ export function PlaylistSelectionModal({ musicId }: Props) {
   }
 
   return (
-    <Stack spacing={0}>
+    <Stack gap={4}>
       {playlists?.map((playlist) => (
         <Item playlist={playlist} musicId={musicId} onClick={handleClose} key={playlist.id} />
       ))}

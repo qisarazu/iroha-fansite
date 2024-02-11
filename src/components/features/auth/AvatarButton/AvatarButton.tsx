@@ -5,7 +5,7 @@ import type { User } from '@supabase/supabase-js';
 import { IconLogout } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import { useRouter } from 'next/router';
-import { mutate, useSWRConfig } from 'swr';
+import { mutate } from 'swr';
 
 type Props = {
   user: User;
@@ -44,7 +44,7 @@ export function AvatarButton({ user, ...props }: Props) {
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Item icon={<IconLogout />} onClick={handleSignOut}>
+        <Menu.Item leftSection={<IconLogout />} onClick={handleSignOut}>
           {t('ログアウト')}
         </Menu.Item>
       </Menu.Dropdown>

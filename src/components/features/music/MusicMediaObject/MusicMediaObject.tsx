@@ -28,7 +28,7 @@ export function MusicMediaObject({ singingStream }: Props) {
 
   return (
     <div>
-      <Group noWrap>
+      <Group wrap="nowrap">
         <Link href={watchUrl}>
           <Box w={{ base: 128, lg: 256 }} h={{ base: 72, lg: 144 }} pos="relative">
             <Image
@@ -39,10 +39,10 @@ export function MusicMediaObject({ singingStream }: Props) {
             />
           </Box>
         </Link>
-        <Stack sx={{ flexGrow: 1, alignSelf: 'stretch' }} spacing={0}>
-          <Box component={Link} href={watchUrl} sx={{ ':hover': { textDecoration: 'underline' } }}>
+        <Stack style={{ flexGrow: 1, alignSelf: 'stretch' }} gap={0}>
+          <Box component={Link} href={watchUrl} style={{ ':hover': { textDecoration: 'underline' } }}>
             <Text fz={{ base: 'xs', md: 'sm' }}>{singingStream.song.artist}</Text>
-            <Text component="h2" fz={{ base: 'sm', md: 'xl' }} weight="bold" lineClamp={1}>
+            <Text component="h2" fz={{ base: 'sm', md: 'xl' }} fw="bold" lineClamp={1}>
               {singingStream.song.title}
             </Text>
           </Box>
@@ -58,16 +58,22 @@ export function MusicMediaObject({ singingStream }: Props) {
         </Stack>
         <Menu position="bottom-end">
           <Menu.Target>
-            <ActionIcon size="lg" sx={{ alignSelf: 'flex-start' }}>
+            <ActionIcon variant="filled" size="lg" style={{ alignSelf: 'flex-start' }}>
               <MdMoreVert size={24} />
             </ActionIcon>
           </Menu.Target>
 
           <Menu.Dropdown>
-            <Menu.Item icon={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
+            <Menu.Item leftSection={<IconPlaylistAdd />} onClick={handlePlaylistSelectionModalOpen}>
               {t('プレイリストに追加')}
             </Menu.Item>
-            <Menu.Item component="a" href={youtubeUrl} target="_blank" rel="noopener" icon={<IconBrandYoutube />}>
+            <Menu.Item
+              component="a"
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener"
+              leftSection={<IconBrandYoutube />}
+            >
               {t('YouTube で見る')}
             </Menu.Item>
           </Menu.Dropdown>

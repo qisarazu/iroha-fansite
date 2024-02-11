@@ -14,6 +14,5 @@ export const muiTheme = createTheme({
 
 export const theme: MantineThemeOverride = {
   fontFamily: "'M PLUS Rounded 1c', 'Nunito', sans-serif",
-  colorScheme: 'dark',
   primaryColor: 'teal',
 };

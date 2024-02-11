@@ -1,3 +1,5 @@
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import '../styles/global.scss';
 
 import { MantineProvider } from '@mantine/core';
@@ -54,7 +56,7 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
 
   return (
     <SWRConfig value={{ onError: handleError, onErrorRetry: handleErrorRetry }}>
-      <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+      <MantineProvider theme={theme} defaultColorScheme="dark">
         <ModalsProvider>
           <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
             <YTPlayerContextProvider>

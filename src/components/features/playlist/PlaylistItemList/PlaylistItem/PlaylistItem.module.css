@@ -1,0 +1,41 @@
+.meta {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.5fr;
+  flex-grow: 1;
+  align-items: center;
+  cursor: move;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-template-columns: 1fr 1fr 1fr 0.5fr;
+  }
+}
+
+.songTitle {
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-column: span 3;
+  }
+}
+
+.songArtist {
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-column: span 2;
+    grid-row-start: 2;
+  }
+}
+
+.videoTitle {
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-column: span 1;
+    grid-row-start: 2;
+  }
+}
+
+.videoLength {
+  justify-self: flex-end;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    align-self: center;
+    grid-row: span 2;
+    grid-column-start: 4;
+  }
+}

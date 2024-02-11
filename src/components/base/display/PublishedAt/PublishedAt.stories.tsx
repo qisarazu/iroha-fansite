@@ -18,6 +18,6 @@ export const Default: Story = {};
 
 export const Bold: Story = {
   args: {
-    weight: 'bold',
+    fw: 'bold',
   },
 };

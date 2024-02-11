@@ -10,7 +10,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Box, Divider, Sx } from '@mantine/core';
+import { Box, CSSProperties, Divider } from '@mantine/core';
 import { Fragment, useState } from 'react';
 
 import { useSortPlaylistItem } from '../../../../services/playlists/client';
@@ -22,10 +22,9 @@ type Props = {
   playlistId: Playlist['id'];
   items: PlaylistItemWithMusic[];
   sortable?: boolean;
-  sx?: Sx;
 };
 
-export function PlaylistItemList({ playlistId, items, sortable = false, sx }: Props) {
+export function PlaylistItemList({ playlistId, items, sortable = false }: Props) {
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   const { sortPlaylistItem } = useSortPlaylistItem(playlistId);
@@ -68,10 +67,10 @@ export function PlaylistItemList({ playlistId, items, sortable = false, sx }: Pr
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} disabled={!sortable} strategy={verticalListSortingStrategy}>
-        <Box sx={sx}>
+        <Box>
           {items.map((item, i) => (
             <Fragment key={item.id}>
-              {i !== 0 ? <Divider sx={{ marginTop: 8, marginBottom: 8 }} /> : null}
+              {i !== 0 ? <Divider style={{ marginTop: 8, marginBottom: 8 }} /> : null}
               <PlaylistItem item={item} sortable={sortable} />
             </Fragment>
           ))}
