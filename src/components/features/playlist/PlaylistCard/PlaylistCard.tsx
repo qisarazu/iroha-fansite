@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Card, Flex, Menu, Text } from '@mantine/core';
+import { ActionIcon, Card, Flex, Menu, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconArrowsShuffle, IconDotsVertical, IconEdit, IconPlayerPlay, IconTrashFilled } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
@@ -30,8 +30,8 @@ export function PlaylistCard({ playlist }: Props) {
   }
 
   return (
-    <Box>
-      <Card.Section sx={{ position: 'relative' }} ref={ref}>
+    <Card>
+      <Card.Section style={{ position: 'relative' }} ref={ref}>
         <Link href={getPlaylistURL(playlist.id)}>
           <PlaylistThumbnail thumbnailURLs={playlist.thumbnailURLs} alt={playlist.title} fill />
         </Link>
@@ -42,7 +42,7 @@ export function PlaylistCard({ playlist }: Props) {
             variant="filled"
             radius="xl"
             size="xl"
-            sx={(theme) => ({
+            style={(theme) => ({
               position: 'absolute',
               bottom: theme.spacing.xs,
               right: theme.spacing.xs,
@@ -65,31 +65,31 @@ export function PlaylistCard({ playlist }: Props) {
           fz="lg"
           lineClamp={2}
           title={playlist.title}
-          sx={{ ':hover': { textDecoration: 'underline' } }}
+          style={{ ':hover': { textDecoration: 'underline' } }}
         >
           {playlist.title}
         </Text>
 
         <Menu position="bottom-end" shadow="sm" withinPortal>
           <Menu.Target>
-            <ActionIcon>
+            <ActionIcon color="white" variant="subtle">
               <IconDotsVertical />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
             {playlist.items.length ? (
               <Menu.Item
-                icon={<IconArrowsShuffle />}
+                leftSection={<IconArrowsShuffle />}
                 component={Link}
                 href={getPlaylistWatchURL(playlist, { shuffle: true })}
               >
                 {t('シャッフル再生')}
               </Menu.Item>
             ) : null}
-            <Menu.Item icon={<IconEdit />} onClick={handleEdit}>
+            <Menu.Item leftSection={<IconEdit />} onClick={handleEdit}>
               {t('編集')}
             </Menu.Item>
-            <Menu.Item icon={<IconTrashFilled />} onClick={handleDelete}>
+            <Menu.Item leftSection={<IconTrashFilled />} onClick={handleDelete}>
               {t('削除')}
             </Menu.Item>
           </Menu.Dropdown>
@@ -97,10 +97,10 @@ export function PlaylistCard({ playlist }: Props) {
       </Flex>
 
       {playlist.description ? (
-        <Text color="dimmed" lineClamp={3} title={playlist.description}>
+        <Text c="dimmed" lineClamp={3} title={playlist.description}>
           {playlist.description}
         </Text>
       ) : null}
-    </Box>
+    </Card>
   );
 }

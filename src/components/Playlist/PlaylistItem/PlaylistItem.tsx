@@ -79,16 +79,16 @@ export const PlaylistItem = memo(({ className, stream, playlistId, isPlaying }: 
 
       <Menu>
         <Menu.Target>
-          <ActionIcon sx={{ marginLeft: 'auto' }}>
+          <ActionIcon color="white" variant="subtle" style={{ marginLeft: 'auto' }}>
             <IconDotsVertical />
           </ActionIcon>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item icon={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
+          <Menu.Item leftSection={<IconPlaylistAdd />} onClick={handleAddPlaylistItem}>
             {t('プレイリストに追加')}
           </Menu.Item>
           <Menu.Item
-            icon={<IconBrandYoutube />}
+            leftSection={<IconBrandYoutube />}
             component="a"
             href={getYouTubeURL(stream.video.videoId, stream.start)}
             target="_blank"

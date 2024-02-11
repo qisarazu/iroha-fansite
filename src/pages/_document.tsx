@@ -1,11 +1,7 @@
-import { createGetInitialProps } from '@mantine/next';
+import { ColorSchemeScript } from '@mantine/core';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 
-const getInitialProps = createGetInitialProps();
-
 class MyDocument extends Document {
-  static getInitialProps = getInitialProps;
-
   render() {
     return (
       <Html lang="ja">
@@ -15,6 +11,7 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Nunito:wght@400;700&display=swap"
             rel="stylesheet"
           />
+          <ColorSchemeScript defaultColorScheme="dark" />
         </Head>
         <body>
           <Main />

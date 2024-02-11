@@ -3,7 +3,7 @@ import { useMediaQuery } from '@mantine/hooks';
 
 export function useIsMobile() {
   const theme = useMantineTheme();
-  const matches = useMediaQuery(theme.fn.smallerThan('sm').split('@media ')[1]);
+  const matches = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   return matches;
 }

@@ -17,17 +17,17 @@ export function PlaylistThumbnail({ thumbnailURLs, alt, width, height, fill = fa
 
   if (!thumbnailURLs.length) {
     return (
-      <Center sx={{ aspectRatio: '16/9', borderRadius: 4 }} w={width} h={height} bg="gray">
+      <Center style={{ aspectRatio: '16/9', borderRadius: 4 }} w={width} h={height} bg="gray">
         <IconPlaylist />
       </Center>
     );
   }
 
   return (
-    <SimpleGrid cols={cols} spacing={0} sx={{ aspectRatio: '16/9', borderRadius: 4 }} w={width} h={height}>
+    <SimpleGrid cols={cols} spacing={0} style={{ aspectRatio: '16/9', borderRadius: 4 }} w={width} h={height}>
       {thumbnailURLs.map((url) => (
         <Box
-          sx={{ position: 'relative' }}
+          style={{ position: 'relative' }}
           w={width ? width / cols : '100%'}
           h={height ? height / cols : '100%'}
           key={url}

@@ -1,3 +1,13 @@
+.header {
+  gap: 24px;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    gap: 8px;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .playlistGuide {
   margin-top: 8px;
 }

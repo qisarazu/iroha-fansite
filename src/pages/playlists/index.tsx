@@ -27,9 +27,9 @@ export default function LibraryIndexPage() {
   return (
     <Layout title={t('プレイリスト一覧')}>
       <Container size="xl">
-        <Group position="apart">
+        <Group justify="space-between">
           <Title>{t('プレイリスト一覧')}</Title>
-          <Button sx={{ marginLeft: 'auto' }} leftIcon={<IconPlus />} onClick={open}>
+          <Button style={{ marginLeft: 'auto' }} leftSection={<IconPlus />} onClick={open}>
             {t('プレイリスト作成')}
           </Button>
         </Group>
@@ -59,7 +59,7 @@ export default function LibraryIndexPage() {
           </Accordion>
         ) : null}
 
-        <Box sx={{ marginTop: 32 }}>
+        <Box style={{ marginTop: 32 }}>
           {isLoading ? (
             <Loader />
           ) : !playlists ? (
@@ -69,11 +69,11 @@ export default function LibraryIndexPage() {
             </div>
           ) : (
             <SimpleGrid
-              breakpoints={[
-                { minWidth: 'xs', cols: 1 },
-                { minWidth: 'sm', cols: 3 },
-                { minWidth: 'md', cols: 5 },
-              ]}
+              cols={{
+                base: 1,
+                xs: 3,
+                lg: 5,
+              }}
             >
               {playlists.map((playlist) => (
                 <PlaylistCard playlist={playlist} key={playlist.id} />

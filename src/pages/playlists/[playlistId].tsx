@@ -54,19 +54,10 @@ export default function PlaylistIdPage() {
           'プレイリストがありません'
         ) : (
           <>
-            <Flex
-              sx={(theme) => ({
-                gap: 24,
-                [theme.fn.smallerThan('sm')]: {
-                  gap: 8,
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                },
-              })}
-            >
+            <Flex className={styles.header}>
               <PlaylistThumbnail width={320} height={180} thumbnailURLs={playlist.thumbnailURLs} alt={playlist.title} />
 
-              <Stack spacing={0} sx={{ width: '100%' }}>
+              <Stack gap={0} style={{ width: '100%' }}>
                 <Text component="h1" size="xl">
                   {playlist.title}
                 </Text>
@@ -74,16 +65,16 @@ export default function PlaylistIdPage() {
                   {playlist.description}
                 </Text>
 
-                <Group sx={{ marginTop: 'auto' }}>
+                <Group style={{ marginTop: 'auto' }}>
                   <Button
                     component={Link}
-                    leftIcon={<IconArrowsShuffle />}
+                    leftSection={<IconArrowsShuffle />}
                     radius="xl"
                     href={getPlaylistWatchURL(playlist, { shuffle: true })}
                   >
                     {t('シャッフル')}
                   </Button>
-                  <Button leftIcon={<IconEdit />} variant="outline" radius="xl" onClick={handleEdit}>
+                  <Button leftSection={<IconEdit />} variant="outline" radius="xl" onClick={handleEdit}>
                     {t('編集')}
                   </Button>
                   <Menu>
@@ -95,11 +86,11 @@ export default function PlaylistIdPage() {
 
                     <Menu.Dropdown>
                       {isMobile ? (
-                        <Menu.Item icon={<IconArrowsSort />} onClick={handleSort}>
+                        <Menu.Item leftSection={<IconArrowsSort />} onClick={handleSort}>
                           {t('並び替え')}
                         </Menu.Item>
                       ) : null}
-                      <Menu.Item icon={<IconTrash />} onClick={handleDelete}>
+                      <Menu.Item leftSection={<IconTrash />} onClick={handleDelete}>
                         {t('削除')}
                       </Menu.Item>
                     </Menu.Dropdown>

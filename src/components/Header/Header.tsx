@@ -15,8 +15,8 @@ export function Header() {
   const user = useUser();
 
   return (
-    <Group position="center" pos="relative" mx="auto" py={8} px={16} maw={1320} h={54}>
-      <Group spacing="lg">
+    <Group justify="center" pos="relative" mx="auto" py={8} px={16} maw={1320} h={54}>
+      <Group gap="lg">
         <ActiveLink href="/" className={styles.link} activeClassName={styles.activeLink}>
           {isMobile ? <IconHome /> : t('ホーム')}
         </ActiveLink>

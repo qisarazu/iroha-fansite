@@ -24,10 +24,10 @@ export function LoginButton(props: Props) {
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Item icon={<IconBrandGoogle />} onClick={handleGoogleLogin}>
+        <Menu.Item leftSection={<IconBrandGoogle />} onClick={handleGoogleLogin}>
           Google
         </Menu.Item>
-        <Menu.Item icon={<IconBrandX />} onClick={handleTwitterLogin}>
+        <Menu.Item leftSection={<IconBrandX />} onClick={handleTwitterLogin}>
           X
         </Menu.Item>
       </Menu.Dropdown>
