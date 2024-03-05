@@ -108,7 +108,7 @@
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.0.3",
-    "sass-loader": "^13.3.2",
+    "sass-loader": "^14.0.0",
     "storybook": "^7.5.3",
     "tsx": "^4.0.0",
     "typescript": "^5.2.2",
