@@ -112,7 +112,7 @@
     "storybook": "^7.5.3",
     "tsx": "^4.0.0",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "vitest": "^3.0.0"
   },
   "readme": "ERROR: No README data found!",
   "_id": "iroha-fansite@1.0.0"
