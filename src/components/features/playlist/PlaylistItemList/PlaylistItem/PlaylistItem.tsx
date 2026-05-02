@@ -1,11 +1,11 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ActionIcon, Box, Center, CSSProperties, Group, Menu, Text } from '@mantine/core';
-import { useHover } from '@mantine/hooks';
 import { IconBrandYoutube, IconDotsVertical, IconPlayerPlayFilled, IconTrash } from '@tabler/icons-react';
 import { useT } from '@transifex/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { useIsMobile } from '../../../../../hooks/ui/useIsMobile';
 import { useDeletePlaylistItem } from '../../../../../services/playlists/client';
@@ -23,7 +23,7 @@ type Props = {
 export function PlaylistItem({ item, sortable = false, sx }: Props) {
   const t = useT();
   const isMobile = useIsMobile();
-  const { ref: hoverTarget, hovered } = useHover<HTMLAnchorElement>();
+  const [hovered, setHovered] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: item.id,
@@ -58,7 +58,8 @@ export function PlaylistItem({ item, sortable = false, sx }: Props) {
         component={Link}
         href={getMusicWatchURL(item.musicId, { playlist: item.playlistId })}
         style={{ position: 'relative', flexShrink: 0, pointerEvents: clickDisabled ? 'none' : 'initial' }}
-        ref={hoverTarget}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
         {hovered ? (
           <Center
