@@ -246,7 +246,7 @@ export default function SingingStreamsWatchPage() {
 
     // それ以外はそのまま
     setStreams(filtered);
-  }, [rawStreams?.length, playlist, playlistId, isShuffle, isShuffledOnce, currentStream]);
+  }, [rawStreams, playlist, playlistId, isShuffle, isShuffledOnce, currentStream]);
 
   // When repeatType is changed, the local variable is also changed.
   useEffect(() => {
