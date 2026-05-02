@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 
 import type { GetSingingStreamsRequest } from '../../../pages/api/singing-streams';
@@ -43,7 +44,10 @@ export function useGetSingingStreamsApi({ request }: Props = {}) {
     },
   );
 
-  const flattenData = data?.flatMap((page) => page.data?.filter((d): d is SingingStreamWithVideoAndSong => !!d) ?? []);
+  const flattenData = useMemo(
+    () => data?.flatMap((page) => page.data?.filter((d): d is SingingStreamWithVideoAndSong => !!d) ?? []),
+    [data],
+  );
   const hasNext = data?.at(-1)?.hasNext;
 
   return { data: flattenData, isLoading: !data || isLoading, isValidating, hasNext, setSize, mutate };
