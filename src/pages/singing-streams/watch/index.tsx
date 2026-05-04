@@ -291,9 +291,6 @@ export default function SingingStreamsWatchPage() {
   useEffect(() => {
     if (!player) return;
     player.addEventListener('onStateChange', onStateChange);
-    return () => {
-      player.removeEventListener('onStateChange', onStateChange);
-    };
   }, [onStateChange, player]);
 
   // when stream changes, load the video.

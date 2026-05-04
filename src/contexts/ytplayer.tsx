@@ -1,9 +1,8 @@
 import Script from 'next/script';
-import { createContext, type ReactNode, useCallback, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 type YTPlayerContext = {
   player: YT.Player | null;
-  scriptLoaded: boolean;
   apiReady: boolean;
   setYTPlayer: (mountId: string, options?: ConstructorParameters<typeof YT.Player>[1]) => void;
   unmountYTPlayer: () => void;
@@ -12,53 +11,91 @@ type YTPlayerContext = {
 export const YTPlayerContext = createContext<YTPlayerContext>({} as YTPlayerContext);
 
 export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
   const [apiReady, setApiReady] = useState(false);
-  const [playerReady, setPlayerReady] = useState(false);
   const [player, setPlayer] = useState<YTPlayerContext['player']>(null);
 
-  const onScriptLoad = useCallback(() => {
-    setScriptLoaded(true);
-  }, []);
+  // 初期化中の player と利用可能な player を分けて保持し、古い onReady の反映を防ぐ。
+  const playerRef = useRef<YT.Player | null>(null);
+  const pendingPlayerRef = useRef<YT.Player | null>(null);
+  const playerIdRef = useRef(0);
 
-  const onPlayerReady = useCallback(() => {
-    setPlayerReady(true);
+  // ページ遷移や Strict Mode の再マウント時に残った iframe player を破棄する。
+  const destroyYTPlayer = useCallback((ytPlayer: YT.Player | null) => {
+    try {
+      ytPlayer?.destroy();
+    } catch {
+      // iframe の初期化と cleanup が競合すると IFrame API が例外を投げることがある。
+    }
   }, []);
 
   const setYTPlayer = useCallback(
     (mountId: string, options?: ConstructorParameters<typeof YT.Player>[1]) => {
-      setPlayer(
-        new YT.Player(mountId, {
-          ...options,
-          host: 'https://www.youtube-nocookie.com',
-          events: {
-            onReady: onPlayerReady,
+      // 新しい player を作る前に既存の player を無効化し、後続の onReady を世代で判定する。
+      playerIdRef.current += 1;
+
+      destroyYTPlayer(playerRef.current);
+      if (pendingPlayerRef.current !== playerRef.current) {
+        destroyYTPlayer(pendingPlayerRef.current);
+      }
+      playerRef.current = null;
+      pendingPlayerRef.current = null;
+      setPlayer(null);
+
+      const playerId = playerIdRef.current;
+      const ytPlayer = new YT.Player(mountId, {
+        ...options,
+        host: 'https://www.youtube-nocookie.com',
+        events: {
+          ...options?.events,
+          onReady: (event) => {
+            options?.events?.onReady?.(event);
+
+            // 古い player の onReady が後から発火した場合は context に公開しない。
+            if (playerId !== playerIdRef.current) {
+              destroyYTPlayer(event.target);
+              return;
+            }
+
+            pendingPlayerRef.current = null;
+            playerRef.current = event.target;
+            setPlayer(event.target);
           },
-        }),
-      );
+        },
+      });
+
+      // onReady 前に unmount された player も破棄できるよう、初期化中のインスタンスを保持する。
+      pendingPlayerRef.current = ytPlayer;
     },
-    [onPlayerReady],
+    [destroyYTPlayer],
   );
 
+  // YouTube IFrame API の ready callback を登録し、登録前に ready 済みのケースも拾う。
   useEffect(() => {
-    if (scriptLoaded) {
-      window.onYouTubeIframeAPIReady = () => {
-        setApiReady(true);
-      };
-    }
-  }, [scriptLoaded]);
+    window.onYouTubeIframeAPIReady = () => {
+      setApiReady(true);
+    };
 
-  const unmountYTPlayer = useCallback(() => {
-    setPlayerReady(false);
-    setPlayer(null);
+    if (window.YT?.Player) {
+      setApiReady(true);
+    }
   }, []);
 
+  // watch ページの unmount 時に現在の player を無効化し、iframe の後始末を provider 側に集約する。
+  const unmountYTPlayer = useCallback(() => {
+    playerIdRef.current += 1;
+    destroyYTPlayer(playerRef.current);
+    if (pendingPlayerRef.current !== playerRef.current) {
+      destroyYTPlayer(pendingPlayerRef.current);
+    }
+    playerRef.current = null;
+    pendingPlayerRef.current = null;
+    setPlayer(null);
+  }, [destroyYTPlayer]);
+
   return (
-    <YTPlayerContext.Provider
-      value={{ player: playerReady ? player : null, scriptLoaded, apiReady, setYTPlayer, unmountYTPlayer }}
-    >
+    <YTPlayerContext.Provider value={{ player, apiReady, setYTPlayer, unmountYTPlayer }}>
       {children}
-      <Script src="https://www.youtube.com/iframe_api" strategy="afterInteractive" onLoad={onScriptLoad} />
+      <Script src="https://www.youtube.com/iframe_api" strategy="afterInteractive" />
     </YTPlayerContext.Provider>
   );
 }

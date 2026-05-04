@@ -18,10 +18,10 @@ export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args
 > & {
   player: YT.Player | null;
 } {
-  const { player, setYTPlayer, scriptLoaded, apiReady, unmountYTPlayer } = useContext(YTPlayerContext);
+  const { player, setYTPlayer, apiReady, unmountYTPlayer } = useContext(YTPlayerContext);
 
   useEffect(() => {
-    if (!scriptLoaded || !apiReady) return;
+    if (!apiReady) return;
     setYTPlayer(mountId, {
       width: width,
       height: height,
@@ -35,7 +35,7 @@ export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args
     return () => {
       unmountYTPlayer();
     };
-  }, [apiReady, autoplay, controls, height, mountId, scriptLoaded, setYTPlayer, unmountYTPlayer, width]);
+  }, [apiReady, autoplay, controls, height, mountId, setYTPlayer, unmountYTPlayer, width]);
 
   return useMemo(
     () => ({
