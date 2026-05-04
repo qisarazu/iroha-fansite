@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { forwardRef, memo } from 'react';
 
 type Props = {
   className?: string;
@@ -13,6 +13,10 @@ type Props = {
  * const { player, ytPlayerProps } = useYTPlayer({ ... });
  * return <YTPlayer {...ytPlayerProps} />
  */
-export const YTPlayer = memo(({ className, id, hidden = false }: Props) => {
-  return <div className={className} id={id} hidden={hidden} />;
+const YTPlayerComponent = forwardRef<HTMLDivElement, Props>(({ className, id, hidden = false }, ref) => {
+  return <div ref={ref} className={className} id={id} hidden={hidden} />;
 });
+
+YTPlayerComponent.displayName = 'YTPlayer';
+
+export const YTPlayer = memo(YTPlayerComponent);

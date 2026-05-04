@@ -4,7 +4,7 @@ import { createContext, type ReactNode, useCallback, useEffect, useRef, useState
 type YTPlayerContext = {
   player: YT.Player | null;
   apiReady: boolean;
-  setYTPlayer: (mountId: string, options?: ConstructorParameters<typeof YT.Player>[1]) => void;
+  setYTPlayer: (mountElement: HTMLElement, options?: ConstructorParameters<typeof YT.Player>[1]) => void;
   unmountYTPlayer: () => void;
 };
 
@@ -29,7 +29,7 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setYTPlayer = useCallback(
-    (mountId: string, options?: ConstructorParameters<typeof YT.Player>[1]) => {
+    (mountElement: HTMLElement, options?: ConstructorParameters<typeof YT.Player>[1]) => {
       // 新しい player を作る前に既存の player を無効化し、後続の onReady を世代で判定する。
       playerIdRef.current += 1;
 
@@ -42,7 +42,7 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
       setPlayer(null);
 
       const playerId = playerIdRef.current;
-      const ytPlayer = new YT.Player(mountId, {
+      const ytPlayer = new YT.Player(mountElement, {
         ...options,
         host: 'https://www.youtube-nocookie.com',
         events: {

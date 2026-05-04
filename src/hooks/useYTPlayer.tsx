@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef, useContext, useEffect, useMemo } from 'react';
+import { type ComponentPropsWithRef, useContext, useEffect, useMemo, useRef } from 'react';
 
 import type { YTPlayer } from '../components/YTPlayer/YTPlayer';
 import { YTPlayerContext } from '../contexts/ytplayer';
@@ -13,16 +13,26 @@ type Args = {
   controls?: boolean;
 };
 
-export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args): ComponentPropsWithoutRef<
+export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args): ComponentPropsWithRef<
   typeof YTPlayer
 > & {
   player: YT.Player | null;
 } {
   const { player, setYTPlayer, apiReady, unmountYTPlayer } = useContext(YTPlayerContext);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!apiReady) return;
-    setYTPlayer(mountId, {
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.replaceChildren();
+
+    const mountElement = document.createElement('div');
+    container.appendChild(mountElement);
+
+    setYTPlayer(mountElement, {
       width: width,
       height: height,
       playerVars: {
@@ -34,13 +44,15 @@ export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args
     });
     return () => {
       unmountYTPlayer();
+      container.replaceChildren();
     };
-  }, [apiReady, autoplay, controls, height, mountId, setYTPlayer, unmountYTPlayer, width]);
+  }, [apiReady, autoplay, controls, height, setYTPlayer, unmountYTPlayer, width]);
 
   return useMemo(
     () => ({
       player,
       id: mountId,
+      ref: containerRef,
     }),
     [player, mountId],
   );

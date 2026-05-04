@@ -31,6 +31,7 @@ const SKIP_PREV_TIME = 5;
 
 export default function SingingStreamsWatchPage() {
   const reqIdRef = useRef<number>();
+  const currentTimeRef = useRef(0);
   const router = useRouter();
   const { v: streamId, playlist: playlistId, shuffle: isShuffle } = router.query as SingingStreamWatchPageQuery;
 
@@ -96,6 +97,7 @@ export default function SingingStreamsWatchPage() {
     // SKIP_PREV_TIME 以上経過している場合、前の曲には戻らず最初に再生時間を戻す
     if (currentTime >= SKIP_PREV_TIME) {
       player.seekTo(currentStream.start);
+      currentTimeRef.current = 0;
       setCurrentTime(0);
       return;
     }
@@ -263,8 +265,12 @@ export default function SingingStreamsWatchPage() {
   useEffect(() => {
     const step = () => {
       if (!player || !currentStream) return;
-      const currentTime = player.getCurrentTime() - currentStream.start;
-      setCurrentTime(isNaN(currentTime) ? 0 : Math.max(0, currentTime));
+      const playerCurrentTime = player.getCurrentTime() - currentStream.start;
+      const nextCurrentTime = isNaN(playerCurrentTime) ? 0 : Math.max(0, playerCurrentTime);
+      if (Math.abs(currentTimeRef.current - nextCurrentTime) >= 1) {
+        currentTimeRef.current = nextCurrentTime;
+        setCurrentTime(nextCurrentTime);
+      }
       if (isPlaying) {
         reqIdRef.current = requestAnimationFrame(step);
       }
@@ -307,6 +313,7 @@ export default function SingingStreamsWatchPage() {
 
   useEffect(() => {
     const handleRouteChange = () => {
+      currentTimeRef.current = 0;
       setCurrentTime(0);
       setPlayedOnce(false);
       setEnded(false);
