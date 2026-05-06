@@ -22,7 +22,7 @@ import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream
 import { getMusicWatchURL } from '../../../utils/urls';
 import styles from './index.module.scss';
 
-// Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
+// Manage state used in onStateChange as local variable to avoid stale closures in the YouTube callback.
 let repeatTypeVariable: RepeatType = 'none';
 let startSeconds = 0;
 let endSeconds = 0;
@@ -31,6 +31,7 @@ const SKIP_PREV_TIME = 5;
 
 export default function SingingStreamsWatchPage() {
   const reqIdRef = useRef<number>();
+  const currentTimeRef = useRef(0);
   const router = useRouter();
   const { v: streamId, playlist: playlistId, shuffle: isShuffle } = router.query as SingingStreamWatchPageQuery;
 
@@ -53,6 +54,42 @@ export default function SingingStreamsWatchPage() {
 
   const isMobile = useIsMobile();
   const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideos();
+
+  const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
+    // unplayed
+    if (event.data === -1) {
+      setPlayedOnce(false);
+    }
+
+    // ended
+    if (event.data === 0) {
+      if (repeatTypeVariable === 'repeatOne') {
+        event.target.seekTo(startSeconds);
+      } else {
+        setEnded(true);
+      }
+    } else {
+      setEnded(false);
+    }
+
+    // playing
+    if (event.data === 1) {
+      const currentTime = event.target.getCurrentTime();
+      if (currentTime < startSeconds) {
+        event.target.seekTo(startSeconds);
+      } else if (currentTime > endSeconds) {
+        setEnded(true);
+        setPlaying(false);
+      } else {
+        setPlaying(true);
+        setPlayedOnce(true);
+      }
+    } else {
+      setPlaying(false);
+    }
+  }, []);
+
+  const ytPlayerEvents = useMemo(() => ({ onStateChange }), [onStateChange]);
 
   const isFirstStream = useMemo(
     () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
@@ -78,6 +115,7 @@ export default function SingingStreamsWatchPage() {
     autoplay: false,
     width: '100%',
     height: '100%',
+    events: ytPlayerEvents,
   });
 
   const onPlay = useCallback(() => {
@@ -96,6 +134,7 @@ export default function SingingStreamsWatchPage() {
     // SKIP_PREV_TIME 以上経過している場合、前の曲には戻らず最初に再生時間を戻す
     if (currentTime >= SKIP_PREV_TIME) {
       player.seekTo(currentStream.start);
+      currentTimeRef.current = 0;
       setCurrentTime(0);
       return;
     }
@@ -173,40 +212,6 @@ export default function SingingStreamsWatchPage() {
     [setRepeatType],
   );
 
-  const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
-    // unplayed
-    if (event.data === -1) {
-      setPlayedOnce(false);
-    }
-
-    // ended
-    if (event.data === 0) {
-      if (repeatTypeVariable === 'repeatOne') {
-        event.target.seekTo(startSeconds);
-      } else {
-        setEnded(true);
-      }
-    } else {
-      setEnded(false);
-    }
-
-    // playing
-    if (event.data === 1) {
-      const currentTime = event.target.getCurrentTime();
-      if (currentTime < startSeconds) {
-        event.target.seekTo(startSeconds);
-      } else if (currentTime > endSeconds) {
-        setEnded(true);
-        setPlaying(false);
-      } else {
-        setPlaying(true);
-        setPlayedOnce(true);
-      }
-    } else {
-      setPlaying(false);
-    }
-  }, []);
-
   const onMobilePlayerVisibleChange = useCallback(() => {
     setMobilePlaylistVisible((visible) => !visible);
   }, []);
@@ -263,8 +268,12 @@ export default function SingingStreamsWatchPage() {
   useEffect(() => {
     const step = () => {
       if (!player || !currentStream) return;
-      const currentTime = player.getCurrentTime() - currentStream.start;
-      setCurrentTime(isNaN(currentTime) ? 0 : Math.max(0, currentTime));
+      const playerCurrentTime = player.getCurrentTime() - currentStream.start;
+      const nextCurrentTime = isNaN(playerCurrentTime) ? 0 : Math.max(0, playerCurrentTime);
+      if (Math.abs(currentTimeRef.current - nextCurrentTime) >= 1) {
+        currentTimeRef.current = nextCurrentTime;
+        setCurrentTime(nextCurrentTime);
+      }
       if (isPlaying) {
         reqIdRef.current = requestAnimationFrame(step);
       }
@@ -287,15 +296,6 @@ export default function SingingStreamsWatchPage() {
     player.setVolume(volume);
   }, [player, volume]);
 
-  // Add onStateChange event listener.
-  useEffect(() => {
-    if (!player) return;
-    player.addEventListener('onStateChange', onStateChange);
-    return () => {
-      player.removeEventListener('onStateChange', onStateChange);
-    };
-  }, [onStateChange, player]);
-
   // when stream changes, load the video.
   useEffect(() => {
     if (currentStream && player && !isPlayedOnce) {
@@ -310,6 +310,7 @@ export default function SingingStreamsWatchPage() {
 
   useEffect(() => {
     const handleRouteChange = () => {
+      currentTimeRef.current = 0;
       setCurrentTime(0);
       setPlayedOnce(false);
       setEnded(false);
