@@ -22,7 +22,7 @@ import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream
 import { getMusicWatchURL } from '../../../utils/urls';
 import styles from './index.module.scss';
 
-// Since player.removeEventListener doesn't work, manage state used in onStateChange as local variable.
+// Manage state used in onStateChange as local variable to avoid stale closures in the YouTube callback.
 let repeatTypeVariable: RepeatType = 'none';
 let startSeconds = 0;
 let endSeconds = 0;
@@ -55,6 +55,42 @@ export default function SingingStreamsWatchPage() {
   const isMobile = useIsMobile();
   const { isPlayedVideo, addPlayedVideo } = useIsPlayedVideos();
 
+  const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
+    // unplayed
+    if (event.data === -1) {
+      setPlayedOnce(false);
+    }
+
+    // ended
+    if (event.data === 0) {
+      if (repeatTypeVariable === 'repeatOne') {
+        event.target.seekTo(startSeconds);
+      } else {
+        setEnded(true);
+      }
+    } else {
+      setEnded(false);
+    }
+
+    // playing
+    if (event.data === 1) {
+      const currentTime = event.target.getCurrentTime();
+      if (currentTime < startSeconds) {
+        event.target.seekTo(startSeconds);
+      } else if (currentTime > endSeconds) {
+        setEnded(true);
+        setPlaying(false);
+      } else {
+        setPlaying(true);
+        setPlayedOnce(true);
+      }
+    } else {
+      setPlaying(false);
+    }
+  }, []);
+
+  const ytPlayerEvents = useMemo(() => ({ onStateChange }), [onStateChange]);
+
   const isFirstStream = useMemo(
     () => (streams ? streams.findIndex((stream) => stream.id === streamId) === 0 : false),
     [streams, streamId],
@@ -79,6 +115,7 @@ export default function SingingStreamsWatchPage() {
     autoplay: false,
     width: '100%',
     height: '100%',
+    events: ytPlayerEvents,
   });
 
   const onPlay = useCallback(() => {
@@ -175,40 +212,6 @@ export default function SingingStreamsWatchPage() {
     [setRepeatType],
   );
 
-  const onStateChange = useCallback((event: { target: YT.Player; data: number }) => {
-    // unplayed
-    if (event.data === -1) {
-      setPlayedOnce(false);
-    }
-
-    // ended
-    if (event.data === 0) {
-      if (repeatTypeVariable === 'repeatOne') {
-        event.target.seekTo(startSeconds);
-      } else {
-        setEnded(true);
-      }
-    } else {
-      setEnded(false);
-    }
-
-    // playing
-    if (event.data === 1) {
-      const currentTime = event.target.getCurrentTime();
-      if (currentTime < startSeconds) {
-        event.target.seekTo(startSeconds);
-      } else if (currentTime > endSeconds) {
-        setEnded(true);
-        setPlaying(false);
-      } else {
-        setPlaying(true);
-        setPlayedOnce(true);
-      }
-    } else {
-      setPlaying(false);
-    }
-  }, []);
-
   const onMobilePlayerVisibleChange = useCallback(() => {
     setMobilePlaylistVisible((visible) => !visible);
   }, []);
@@ -292,12 +295,6 @@ export default function SingingStreamsWatchPage() {
     if (!player) return;
     player.setVolume(volume);
   }, [player, volume]);
-
-  // Add onStateChange event listener.
-  useEffect(() => {
-    if (!player) return;
-    player.addEventListener('onStateChange', onStateChange);
-  }, [onStateChange, player]);
 
   // when stream changes, load the video.
   useEffect(() => {

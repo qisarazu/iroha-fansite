@@ -3,17 +3,18 @@ import { type ComponentPropsWithRef, useContext, useEffect, useMemo, useRef } fr
 import type { YTPlayer } from '../components/YTPlayer/YTPlayer';
 import { YTPlayerContext } from '../contexts/ytplayer';
 
+type YTPlayerOptions = NonNullable<ConstructorParameters<typeof YT.Player>[1]>;
+
 type Args = {
   mountId: string;
-  width?: string | number;
-  height?: string | number;
-  start?: number;
-  end?: number;
+  width?: YTPlayerOptions['width'];
+  height?: YTPlayerOptions['height'];
   autoplay?: boolean;
   controls?: boolean;
+  events?: YTPlayerOptions['events'];
 };
 
-export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args): ComponentPropsWithRef<
+export function useYTPlayer({ mountId, width, height, autoplay, controls, events }: Args): ComponentPropsWithRef<
   typeof YTPlayer
 > & {
   player: YT.Player | null;
@@ -41,12 +42,13 @@ export function useYTPlayer({ mountId, width, height, autoplay, controls }: Args
         origin: location.origin,
         widget_referrer: location.origin,
       },
+      events,
     });
     return () => {
       unmountYTPlayer();
       container.replaceChildren();
     };
-  }, [apiReady, autoplay, controls, height, setYTPlayer, unmountYTPlayer, width]);
+  }, [apiReady, autoplay, controls, events, height, setYTPlayer, unmountYTPlayer, width]);
 
   return useMemo(
     () => ({

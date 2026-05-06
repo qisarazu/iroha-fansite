@@ -28,18 +28,24 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  /**
+   * 現在の player を無効化し、初期化中または利用中の player を破棄して context の公開状態をリセットする。
+   */
+  const resetYTPlayer = useCallback(() => {
+    playerIdRef.current += 1;
+    destroyYTPlayer(playerRef.current);
+    if (pendingPlayerRef.current !== playerRef.current) {
+      destroyYTPlayer(pendingPlayerRef.current);
+    }
+    playerRef.current = null;
+    pendingPlayerRef.current = null;
+    setPlayer(null);
+  }, [destroyYTPlayer]);
+
   const setYTPlayer = useCallback(
     (mountElement: HTMLElement, options?: ConstructorParameters<typeof YT.Player>[1]) => {
       // 新しい player を作る前に既存の player を無効化し、後続の onReady を世代で判定する。
-      playerIdRef.current += 1;
-
-      destroyYTPlayer(playerRef.current);
-      if (pendingPlayerRef.current !== playerRef.current) {
-        destroyYTPlayer(pendingPlayerRef.current);
-      }
-      playerRef.current = null;
-      pendingPlayerRef.current = null;
-      setPlayer(null);
+      resetYTPlayer();
 
       const playerId = playerIdRef.current;
       const ytPlayer = new YT.Player(mountElement, {
@@ -66,7 +72,7 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
       // onReady 前に unmount された player も破棄できるよう、初期化中のインスタンスを保持する。
       pendingPlayerRef.current = ytPlayer;
     },
-    [destroyYTPlayer],
+    [destroyYTPlayer, resetYTPlayer],
   );
 
   // YouTube IFrame API の ready callback を登録し、登録前に ready 済みのケースも拾う。
@@ -82,15 +88,8 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
 
   // watch ページの unmount 時に現在の player を無効化し、iframe の後始末を provider 側に集約する。
   const unmountYTPlayer = useCallback(() => {
-    playerIdRef.current += 1;
-    destroyYTPlayer(playerRef.current);
-    if (pendingPlayerRef.current !== playerRef.current) {
-      destroyYTPlayer(pendingPlayerRef.current);
-    }
-    playerRef.current = null;
-    pendingPlayerRef.current = null;
-    setPlayer(null);
-  }, [destroyYTPlayer]);
+    resetYTPlayer();
+  }, [resetYTPlayer]);
 
   return (
     <YTPlayerContext.Provider value={{ player, apiReady, setYTPlayer, unmountYTPlayer }}>
