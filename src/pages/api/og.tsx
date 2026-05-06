@@ -69,11 +69,9 @@ export default async function handler(req: NextRequest) {
 
   if (!validParams) {
     return new ImageResponse(
-      (
-        <Container>
-          <Logo imageSize={256} />
-        </Container>
-      ),
+      <Container>
+        <Logo imageSize={256} />
+      </Container>,
       {
         width: 1200,
         height: 630,
@@ -88,58 +86,56 @@ export default async function handler(req: NextRequest) {
   const videoPublishedAt = searchParams.get('video-published-at');
 
   return new ImageResponse(
-    (
-      <Container>
-        <div
+    <Container>
+      <div
+        style={{
+          position: 'absolute',
+          top: 32,
+          left: 32,
+          right: 32,
+          display: 'flex',
+          alignItems: 'flex-start',
+          flexDirection: 'column',
+          gap: 8,
+          color: '#d0efed',
+        }}
+      >
+        <p style={{ margin: 0, fontSize: 20 }}>{videoPublishedAt} 配信</p>
+        <p style={{ display: 'block', margin: 0, fontSize: 24, lineClamp: 2 }}>{videoTitle}</p>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          color: '#d0efed',
+        }}
+      >
+        <p
           style={{
-            position: 'absolute',
-            top: 32,
-            left: 32,
-            right: 32,
-            display: 'flex',
-            alignItems: 'flex-start',
-            flexDirection: 'column',
-            gap: 8,
-            color: '#d0efed',
+            margin: 0,
+            display: 'block',
+            lineClamp: 1,
+            fontSize: 40,
           }}
         >
-          <p style={{ margin: 0, fontSize: 20 }}>{videoPublishedAt} 配信</p>
-          <p style={{ display: 'block', margin: 0, fontSize: 24, lineClamp: 2 }}>{videoTitle}</p>
-        </div>
-        <div
+          {artist}
+        </p>
+        <p
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            color: '#d0efed',
+            margin: 0,
+            display: 'block',
+            lineClamp: 1,
+            fontSize: 64,
           }}
         >
-          <p
-            style={{
-              margin: 0,
-              display: 'block',
-              lineClamp: 1,
-              fontSize: 40,
-            }}
-          >
-            {artist}
-          </p>
-          <p
-            style={{
-              margin: 0,
-              display: 'block',
-              lineClamp: 1,
-              fontSize: 64,
-            }}
-          >
-            {title}
-          </p>
-        </div>
-        <div style={{ position: 'absolute', display: 'flex', right: 32, bottom: 32 }}>
-          <Logo imageSize={96} />
-        </div>
-      </Container>
-    ),
+          {title}
+        </p>
+      </div>
+      <div style={{ position: 'absolute', display: 'flex', right: 32, bottom: 32 }}>
+        <Logo imageSize={96} />
+      </div>
+    </Container>,
     {
       width: 1200,
       height: 630,
