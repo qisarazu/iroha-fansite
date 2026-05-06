@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import Script from 'next/script';
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -65,6 +66,19 @@ export function YTPlayerContextProvider({ children }: { children: ReactNode }) {
             pendingPlayerRef.current = null;
             playerRef.current = event.target;
             setPlayer(event.target);
+          },
+          onError: (event) => {
+            options?.events?.onError?.(event);
+            Sentry.captureMessage('YouTube player error', {
+              level: 'error',
+              tags: {
+                feature: 'youtube-player',
+                operation: 'player-error',
+              },
+              extra: {
+                errorCode: event.data,
+              },
+            });
           },
         },
       });

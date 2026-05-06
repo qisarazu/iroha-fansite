@@ -11,6 +11,8 @@ export class ApiError extends Error {
   }
 }
 
+export type ApiClientError = Pick<ApiError, 'message'> & Partial<Pick<ApiError, 'statusCode'>>;
+
 /**
  * Unauthorized
  * 401

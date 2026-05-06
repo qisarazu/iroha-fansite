@@ -5,6 +5,7 @@ import '../styles/global.scss';
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications, notifications } from '@mantine/notifications';
+import * as Sentry from '@sentry/nextjs';
 import { createPagesBrowserClient, type Session } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { tx } from '@transifex/native';
@@ -15,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { Revalidator, RevalidatorOptions, SWRConfig, SWRConfiguration } from 'swr';
 
 import { YTPlayerContextProvider } from '../contexts/ytplayer';
-import { ApiError, unauthorized } from '../lib/api/ApiError';
+import { type ApiClientError, ApiError, unauthorized } from '../lib/api/ApiError';
 import { theme } from '../styles/theme';
 import { GA_TRACKING_ID, pageview } from '../utils/gtag';
 
@@ -27,8 +28,20 @@ export default function MyApp({ Component, pageProps }: AppProps<{ initialSessio
   const router = useRouter();
   const [supabase] = useState(() => createPagesBrowserClient());
 
-  function handleError(error: ApiError) {
+  function handleError(error: ApiClientError, key: string) {
     notifications.show({ title: 'Error', message: error.message, color: 'red' });
+
+    if (error.statusCode && error.statusCode < 500) return;
+
+    Sentry.captureException(error, {
+      tags: {
+        feature: 'swr',
+      },
+      extra: {
+        key,
+        statusCode: error.statusCode,
+      },
+    });
   }
 
   function handleErrorRetry(
