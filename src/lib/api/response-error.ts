@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import type { NextApiResponse } from 'next';
 
 import { ApiError, internalServerError } from './ApiError';
@@ -8,6 +9,7 @@ export function responseError(res: NextApiResponse, error: unknown) {
   }
 
   console.error(error);
+  Sentry.captureException(error);
   const e = internalServerError();
   return res.status(e.statusCode).json({ error: { statusCode: e.statusCode, message: e.message } });
 }

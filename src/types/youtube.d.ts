@@ -11,6 +11,7 @@ declare namespace YT {
         events?: {
           onReady?: (event: { target: Player }) => void;
           onStateChange?: (event: { target: Player; data: number }) => void;
+          onError?: (event: { target: Player; data: number }) => void;
         };
       },
     );

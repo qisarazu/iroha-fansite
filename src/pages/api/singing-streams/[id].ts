@@ -1,6 +1,7 @@
 import type { SingingStream } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { responseError } from '../../../lib/api/response-error';
 import { prisma } from '../../../lib/prisma';
 import type { ApiResponse } from '../../../types/api';
 import type { SingingStreamWithVideoAndSong } from '../../../types/SingingStream';
@@ -64,16 +65,20 @@ async function deleteSingingStream(
   res.status(200).json({ data: singingStream });
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  switch (req.method) {
-    case 'GET': {
-      return getSingingStream(req, res);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    switch (req.method) {
+      case 'GET': {
+        return await getSingingStream(req, res);
+      }
+      case 'PUT': {
+        return await asAdminRequireApi(putSingingStream, req, res);
+      }
+      case 'DELETE': {
+        return await asAdminRequireApi(deleteSingingStream, req, res);
+      }
     }
-    case 'PUT': {
-      return asAdminRequireApi(putSingingStream, req, res);
-    }
-    case 'DELETE': {
-      return asAdminRequireApi(deleteSingingStream, req, res);
-    }
+  } catch (error) {
+    return responseError(res, error);
   }
 }
